@@ -1,15 +1,25 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import express, { Express, Request, Response } from 'express'
+import { websites } from './config/websites'
+import dotenv from 'dotenv'
+import cheerio from 'cheerio'
+import axios from 'axios'
 
-dotenv.config();
+dotenv.config()
 
-const app: Express = express();
-const port = process.env.PORT;
+const app = express()
+app.use(express.json())
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
-});
+app.use("/api/news", require('./routes/news'))
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+app.get("/", async (req: Request, res: Response) => {
+
+    for await (let [key, value] of websites) {
+        console.log(`Key: ${key}, Value: ${value()}`);
+    }
+
+    res.send("get news")
+})
+
+app.listen(process.env.PORT, () => {
+  console.log(`⚡️[server]: Server is running at http://localhost:${process.env.PORT}`)
+})
