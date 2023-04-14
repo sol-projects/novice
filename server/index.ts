@@ -17,7 +17,7 @@ app.get("/", async (req: Request, res: Response) => {
         console.log(`Key: ${key}, Value: ${value()}`);
     }
 
-    res.send("get news")
+    res.send("get news(test)")
 })
 
 app.listen(process.env.PORT, () => {
