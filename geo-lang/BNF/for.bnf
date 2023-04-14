@@ -1,0 +1,3 @@
+@requires SCOPE
+
+FOR ::= for VARIABLE_NAME in ARRAY SCOPE
