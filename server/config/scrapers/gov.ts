@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import axios from 'axios'
 
-async function _gov() {
+async function _gov(n: number) {
     axios.get('https://www.gov.si/novice/')
           .then(response => {
             const $ = cheerio.load(response.data);
@@ -15,7 +15,12 @@ async function _gov() {
                 urls.push("https://www.gov.si" + url);
               }
               titles.push(title.trim());
+                if(i == n - 1) {
+                    return false;
+                }
             });
+
+
 
             console.log('Titles:', titles);
             console.log('URLs:', urls);

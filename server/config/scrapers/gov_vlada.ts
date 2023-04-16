@@ -1,19 +1,18 @@
 import cheerio from 'cheerio'
 import axios from 'axios'
 
-async function _siol(n: number) {
-    const date = new Date();
-    axios.get(`https://siol.net/pregled-dneva/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`)
+async function _gov_vlada(n: number) {
+    axios.get('https://www.gov.si/drzavni-organi/vlada/novice/')
           .then(response => {
             const $ = cheerio.load(response.data);
             const titles: string[] = [];
             const urls: string[] = [];
 
-            $('.timemachine__article_item').each((i, element) => {
-              const title: string = $(element).find('.card__title').text();
+            $('.title').each((i, element) => {
+              const title: string = $(element).text();
               const url: string | undefined = $(element).find('a').attr('href');
               if (url) {
-                urls.push("https://siol.net" + url);
+                urls.push("https://www.gov.si" + url);
               }
               titles.push(title.trim());
 
@@ -24,6 +23,7 @@ async function _siol(n: number) {
 
             console.log('Titles:', titles);
             console.log('URLs:', urls);
+
           })
           .catch(error => {
             console.log(error);
@@ -33,4 +33,4 @@ async function _siol(n: number) {
 
 }
 
-export = _siol;
+export = _gov_vlada;

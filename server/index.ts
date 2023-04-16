@@ -14,7 +14,7 @@ app.use("/api/news", require('./routes/news'))
 app.get("/", async (req: Request, res: Response) => {
 
     for await (let [key, value] of websites) {
-        console.log(`Key: ${key}, Value: ${value()}`);
+        console.log(`Key: ${key}, Value: ${value(5)}`);
     }
 
     res.send("get news(test)")

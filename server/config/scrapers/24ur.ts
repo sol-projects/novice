@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import axios from 'axios'
 
-async function _24ur() {
+async function _24ur(n: number) {
     axios.get('https://www.24ur.com/novice')
           .then(response => {
             const $ = cheerio.load(response.data);
@@ -20,10 +20,16 @@ async function _24ur() {
                     if(title2.length > 0) {
                         urls.push('https://www.24ur.com' + href);
                         titles.push(title2);
+                        if(titles.length == n) {
+                            return false;
+                        }
                     }
                   }
               }
+
+
             });
+
             console.log('Titles:', titles);
             console.log('URLs:', urls);
           })

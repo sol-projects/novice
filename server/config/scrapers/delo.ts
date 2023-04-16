@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import axios from 'axios'
 
-async function _delo() {
+async function _delo(n: number) {
     axios.get('https://www.delo.si/zadnje/')
           .then(response => {
             const $ = cheerio.load(response.data);
@@ -15,6 +15,10 @@ async function _delo() {
                 urls.push("https://www.delo.si" + url);
               }
               titles.push(title.trim());
+
+                if(i == n - 1) {
+                    return false;
+                }
             });
 
             console.log('Titles:', titles);
