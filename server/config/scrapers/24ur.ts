@@ -11,8 +11,8 @@ async function _24ur(n: number) {
             $('a:not(:has(div:contains("OGLAS")))').each((i, element) => {
               const href = $(element).attr('href');
               if (href && href.startsWith('/novice/')) {
-                  let title = $(element).find('div h1, div h2, div h3, div h4, div h5, div h6')
-                  if(title.text().trim().length > 0) {
+                let title = $(element).find('div h1, div h2, div h3, div h4, div h5, div h6')
+                if(title.text().trim().length > 0) {
                 urls.push('https://www.24ur.com' + href);
                 titles.push(title.text().trim());
                   } else {
