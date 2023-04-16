@@ -20,8 +20,6 @@ async function _gov(n: number) {
                 }
             });
 
-
-
             console.log('Titles:', titles);
             console.log('URLs:', urls);
           })
