@@ -1,33 +1,46 @@
 import cheerio from 'cheerio';
 import axios from 'axios';
+import { INews } from '../model/News';
 
 async function _gov_vlada(n: number) {
-  axios
-    .get('https://www.gov.si/drzavni-organi/vlada/novice/')
-    .then((response) => {
-      const $ = cheerio.load(response.data);
-      const titles: string[] = [];
-      const urls: string[] = [];
+  const news: INews[] = [];
+  try {
+    const response = await axios.get(
+      'https://www.gov.si/drzavni-organi/vlada/novice/'
+    );
+    const $ = cheerio.load(response.data);
 
-      $('.title').each((i, element) => {
-        const title: string = $(element).text();
-        const url: string | undefined = $(element).find('a').attr('href');
-        if (url) {
-          urls.push('https://www.gov.si' + url);
-        }
-        titles.push(title.trim());
+    $('.title').each((i, element) => {
+      const title: string = $(element).text();
+      const url: string | undefined = $(element).find('a').attr('href');
+      if (!url) {
+        console.log('Cannot get url');
+        return false;
+      }
 
-        if (i == n - 1) {
-          return false;
-        }
-      });
+      const new_news: INews = {
+        title: title.trim(),
+        url: `http://www.gov.si${url}`,
+        website: 'gov.si',
+        date: new Date(),
+        author: '',
+        content: '',
+        image_info: '',
+        categories: [],
+        location: '',
+      };
 
-      console.log('Titles:', titles);
-      console.log('URLs:', urls);
-    })
-    .catch((error) => {
-      console.log(error);
+      news.push(new_news);
+
+      if (i == n - 1) {
+        return false;
+      }
     });
+
+    return news;
+  } catch (error) {
+    console.log(error);
+  }
 
   return '';
 }
