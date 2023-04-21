@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:latest
 
 WORKDIR /app
 
@@ -6,9 +6,9 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm install -g nodemon
-
 COPY . .
 
-CMD ["npm", "run", "dev"]
+EXPOSE 8000
+
+CMD ["npx", "nodemon", "index.ts"]
 
