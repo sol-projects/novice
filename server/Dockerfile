@@ -8,7 +8,5 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8000
-
-CMD ["npx", "nodemon", "index.ts"]
+CMD ["npx", "ts-node", "index.ts"]
 
