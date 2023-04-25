@@ -1,11 +1,13 @@
 import cheerio from 'cheerio';
 import axios from 'axios';
-import { INews } from '../model/News';
+import { INews } from '../../model/News';
 
-async function _gov(n: number) {
+async function _gov_vlada(n: number) {
   const news: INews[] = [];
   try {
-    const response = await axios.get('https://www.gov.si/novice/');
+    const response = await axios.get(
+      'https://www.gov.si/drzavni-organi/vlada/novice/'
+    );
     const $ = cheerio.load(response.data);
 
     $('.title').each((i, element) => {
@@ -39,6 +41,8 @@ async function _gov(n: number) {
   } catch (error) {
     console.log(error);
   }
+
+  return '';
 }
 
-export = _gov;
+export = _gov_vlada;

@@ -1,10 +1,10 @@
 import express, { Express, Request, Response } from 'express';
-import { websites } from './config/websites';
+import { websites } from './scraper/websites';
 import dotenv from 'dotenv';
 import cheerio from 'cheerio';
 import axios from 'axios';
 import mongoose from 'mongoose';
-import { INews } from './config/model/News';
+import { INews } from './model/News';
 
 dotenv.config();
 

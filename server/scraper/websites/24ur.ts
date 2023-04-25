@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import axios from 'axios';
-import { INews } from '../model/News';
+import { INews } from '../../model/News';
 
 async function _24ur(n: number) {
   const news: INews[] = [];

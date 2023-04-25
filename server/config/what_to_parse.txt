@@ -1,6 +1,0 @@
-article:
-    title
-    description [if exists]
-    author [if exists]
-    categories
-
