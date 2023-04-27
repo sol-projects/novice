@@ -25,7 +25,6 @@ app.get('/', async (req: Request, res: Response) => {
     for (let value of valueResult) {
       news.push(value);
     }
-    console.log(news);
   }
 
   res.send(news);

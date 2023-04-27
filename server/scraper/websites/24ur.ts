@@ -19,7 +19,6 @@ async function _24ur(n: number) {
           const new_news: INews = {
             title: title.text().trim(),
             url: `http://www.24ur.com${href}`,
-            website: '24ur.com',
             date: new Date(),
             author: '',
             content: '',
@@ -42,7 +41,6 @@ async function _24ur(n: number) {
             const new_news: INews = {
               title: title2,
               url: `http://www.24ur.com${href}`,
-              website: '24ur.com',
               date: new Date(),
               author: '',
               content: '',
