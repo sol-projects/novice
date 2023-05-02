@@ -5,7 +5,7 @@ export interface INews {
   title: string;
   url: string;
   date: Date;
-  author: string;
+  authors: string[];
   content: string;
   image_info: string;
   categories: string[];
@@ -16,7 +16,7 @@ export const NewsSchema = new Schema<INews>({
   title: String,
   url: String,
   date: Date,
-  author: String,
+  authors: [String],
   content: String,
   image_info: String,
   categories: [String],

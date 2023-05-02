@@ -48,7 +48,7 @@ async function _gov(n: number) {
       title: title.trim(),
       url: url,
       date: date,
-      author: '',
+      authors: [],
       content: '',
       image_info: '',
       categories: [],
@@ -62,7 +62,7 @@ async function _gov(n: number) {
 
   const news_responses = await Promise.all(news_promises);
   news_responses.forEach((news_response, i) => {
-    news[i].author = news_response.author;
+    news[i].authors.push(news_response.author);
     news[i].content = news_response.content;
   });
 
