@@ -4,9 +4,8 @@ const { Schema, model, connect, Model } = mongoose;
 export interface INews {
   title: string;
   url: string;
-  website: string;
   date: Date;
-  author: string;
+  authors: string[];
   content: string;
   image_info: string;
   categories: string[];
@@ -16,9 +15,8 @@ export interface INews {
 export const NewsSchema = new Schema<INews>({
   title: String,
   url: String,
-  website: String,
   date: Date,
-  author: String,
+  authors: [String],
   content: String,
   image_info: String,
   categories: [String],

@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import axios from 'axios';
-import { INews } from '../model/News';
+import { INews } from '../../model/News';
 
 async function _gov_vlada(n: number) {
   const news: INews[] = [];
@@ -10,9 +10,17 @@ async function _gov_vlada(n: number) {
     );
     const $ = cheerio.load(response.data);
 
-    $('.title').each((i, element) => {
-      const title: string = $(element).text();
-      const url: string | undefined = $(element).find('a').attr('href');
+    $('.list-item').each((i, element) => {
+      const title: string | undefined = $(element).find('.title').text();
+      if (!title) {
+        console.log('Cannot get title');
+        return false;
+      }
+
+      const url: string | undefined = $(element)
+        .find('.title')
+        .find('a')
+        .attr('href');
       if (!url) {
         console.log('Cannot get url');
         return false;
@@ -21,7 +29,6 @@ async function _gov_vlada(n: number) {
       const new_news: INews = {
         title: title.trim(),
         url: `http://www.gov.si${url}`,
-        website: 'gov.si',
         date: new Date(),
         author: '',
         content: '',

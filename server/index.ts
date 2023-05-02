@@ -1,10 +1,10 @@
 import express, { Express, Request, Response } from 'express';
-import { websites } from './config/websites';
+import { websites } from './scraper/websites';
 import dotenv from 'dotenv';
 import cheerio from 'cheerio';
 import axios from 'axios';
 import mongoose from 'mongoose';
-import { INews } from './config/model/News';
+import { INews } from './model/News';
 
 dotenv.config();
 
@@ -25,7 +25,6 @@ app.get('/', async (req: Request, res: Response) => {
     for (let value of valueResult) {
       news.push(value);
     }
-    console.log(news);
   }
 
   res.send(news);
