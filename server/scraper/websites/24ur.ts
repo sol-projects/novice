@@ -39,14 +39,14 @@ async function _24ur(n: number) {
     await articlePage.waitForSelector('.article__body', { visible: true });
 
     const authors = await articlePage.$$eval('.article__author', (els) =>
-      els.map((e) => (e as HTMLElement).innerText.trim())
+      els.map((e) => (e as HTMLElement).innerText.split('/')[0].trim())
     );
     const locationDateUnparsed = await articlePage.$eval(
       '.leading-caption',
       (e) => (e as HTMLElement).innerText.trim()
     );
     const locationDate = locationDateUnparsed.split(', ');
-    const dateSplit = locationDate[1].split('. ');
+    const dateSplit = locationDate[1].split('.');
     const date = new Date(
       +dateSplit[2],
       +dateSplit[1] - 1,
@@ -55,8 +55,13 @@ async function _24ur(n: number) {
       0,
       0
     );
+
     const content = await articlePage.$eval('.article__body', (e) =>
       (e as HTMLElement).innerText.trim()
+    );
+    const categories = await articlePage.$$eval(
+      '.text-12.font-bold.px-6.py-2.mb-8.mr-4.border.border-primary.rounded-sm.default-transition.text-primary.hover\\:bg-primary.hover\\:text-white',
+      (els) => els.map((e) => (e as HTMLElement).innerText.trim())
     );
 
     news.push({
@@ -65,7 +70,7 @@ async function _24ur(n: number) {
       date,
       authors,
       content,
-      categories: [],
+      categories,
       location: locationDate[0],
     });
 
