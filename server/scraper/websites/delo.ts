@@ -23,9 +23,6 @@ async function _delo(n: number) {
           return false;
         }
       });
-
-      console.log('Titles:', titles);
-      console.log('URLs:', urls);
     })
     .catch((error) => {
       console.log(error);
