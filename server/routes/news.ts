@@ -1,16 +1,23 @@
-import express, { Express, Request, Response } from 'express'
+import express, { Express, Request, Response } from 'express';
+import * as Controller from '../controller/news';
+
 const router = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.send("get news");
-})
+router.get('/', Controller.all);
+router.get('/:id', Controller.id);
+router.get('/scrape/:website/:n', Controller.scrape);
 
-router.get("/:id", (req: Request, res: Response) => {
-  res.send("get news");
-})
+router.get('/categories/:categories', Controller.Filter.categories);
+router.get('/authors/:authors', Controller.Filter.authors);
+router.get('/location/:location', Controller.Filter.location);
+router.get('/website/:website', Controller.Filter.website);
+router.get('/date/before/:date', Controller.Filter.Date.before);
+router.get('/date/after/:date', Controller.Filter.Date.after);
+router.get('/date/after/:after/before/:before', Controller.Filter.Date.range);
+router.get('/title/:title', Controller.Filter.title);
+router.get('/content/:content', Controller.Filter.content);
 
-router.get("/category/:category", (req: Request, res: Response) => {
-  res.send("get news");
-})
+router.put('/:id', Controller.update);
+router.post('/', Controller.store);
 
-module.exports = router;
+export = router;
