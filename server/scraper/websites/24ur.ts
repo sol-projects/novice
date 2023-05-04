@@ -4,7 +4,7 @@ import { INews } from '../../model/News';
 async function _24ur(n: number) {
   const news: INews[] = [];
 
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
   await page.goto('https://www.24ur.com/novice');

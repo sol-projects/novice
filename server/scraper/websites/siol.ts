@@ -1,40 +1,84 @@
-import cheerio from 'cheerio';
-import axios from 'axios';
+import { INews } from '../../model/News';
+import puppeteer from 'puppeteer';
 
 async function _siol(n: number) {
+  const news: INews[] = [];
+
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
   const date = new Date();
-  axios
-    .get(
-      `https://siol.net/pregled-dneva/${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()}`
-    )
-    .then((response) => {
-      const $ = cheerio.load(response.data);
-      const titles: string[] = [];
-      const urls: string[] = [];
+  await page.goto(
+    `https://siol.net/pregled-dneva/${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()}`
+  );
 
-      $('.timemachine__article_item').each((i, element) => {
-        const title: string = $(element).find('.card__title').text();
-        const url: string | undefined = $(element).find('a').attr('href');
-        if (url) {
-          urls.push('https://siol.net' + url);
-        }
-        titles.push(title.trim());
+  const links = await page.$$('.card--timemachine > .card__link');
+  for (let i = 0; i < links.length && news.length < n; i++) {
+    const link = links[i];
 
-        if (i == n - 1) {
-          return false;
-        }
-      });
+    const url = `http://www.siol.net${await link.evaluate((e) =>
+      e.getAttribute('href')
+    )}`;
 
-      console.log('Titles:', titles);
-      console.log('URLs:', urls);
-    })
-    .catch((error) => {
-      console.log(error);
+    const articlePage = await browser.newPage();
+    await articlePage.goto(url);
+    await articlePage.waitForSelector('.article__title', { visible: true });
+
+    const title = await articlePage.$eval('.article__title', (element) =>
+      element?.textContent?.trim()
+    );
+
+    if (!title) continue;
+
+    const authors = await articlePage.$eval('.article__author', (e) =>
+      (e as HTMLElement).innerText.trim().split(': ')[1].split(', ')
+    );
+
+    const dateUnparsed = await articlePage.$eval(
+      '.article__publish_date--date',
+      (e) => (e as HTMLElement).innerText.split(';')[0].trim()
+    );
+
+    const time = await articlePage.$eval('.article__publish_date--time', (e) =>
+      (e as HTMLElement).innerText.trim().split('.')
+    );
+
+    const dateSplit = dateUnparsed.split('.');
+    const date = new Date(
+      +dateSplit[2],
+      +dateSplit[1] - 1,
+      +dateSplit[0] + 1,
+      +time[0],
+      +time[1],
+      0
+    );
+
+    const content = await articlePage.$eval(
+      '.article__main:not([entity="relatedArticle"])',
+      (e) => (e as HTMLElement).innerText.trim()
+    );
+    const categories = await articlePage.$$eval('.article__tags--tag', (els) =>
+      els.map((e) => (e as HTMLElement).innerText.trim())
+    );
+
+    news.push({
+      title,
+      url,
+      date,
+      authors,
+      content,
+      categories,
+      location: '',
     });
 
-  return '';
+    await articlePage.close();
+  }
+
+  await browser.close();
+
+  return news;
 }
 
 export = _siol;
