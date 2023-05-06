@@ -45,6 +45,8 @@ app.listen(process.env.PORT, () => {
         ${site}/news/title/:title
         ${site}/news/content/:content
         POST:
-        ${site}/news/`
+        ${site}/news/
+        DELETE:
+        ${site}/news/:id`
   );
 });

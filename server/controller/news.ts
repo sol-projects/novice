@@ -29,6 +29,23 @@ export async function id(req: Request, res: Response) {
   }
 }
 
+export async function remove(req: Request, res: Response) {
+  const id = req.params.id;
+
+  try {
+    const deletedNews = await News.findByIdAndDelete(id);
+
+    if (!deletedNews) {
+      return res.status(404).send('News not found');
+    }
+
+    res.send(`News with ID ${id} deleted`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(`Failed to delete news with ID ${id}`);
+  }
+}
+
 export async function update(req: Request, res: Response) {
   //get URL and find which website it is then call the correct function to fetch new news info
   res.send('/news/update');

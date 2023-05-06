@@ -18,6 +18,7 @@ router.get('/title/:title', Controller.Filter.title);
 router.get('/content/:content', Controller.Filter.content);
 
 router.put('/:id', Controller.update);
+router.delete('/:id', Controller.remove);
 router.post('/', Controller.store);
 
 export = router;
