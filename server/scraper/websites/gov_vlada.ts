@@ -30,9 +30,8 @@ async function _gov_vlada(n: number) {
         title: title.trim(),
         url: `http://www.gov.si${url}`,
         date: new Date(),
-        author: '',
+        authors: [],
         content: '',
-        image_info: '',
         categories: [],
         location: '',
       };
