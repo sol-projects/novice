@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import * as Controller from '../controller/news';
+import * as JWT from '../security/jwt';
 
 const router = express.Router();
 
@@ -17,8 +18,9 @@ router.get('/date/after/:after/before/:before', Controller.Filter.Date.range);
 router.get('/title/:title', Controller.Filter.title);
 router.get('/content/:content', Controller.Filter.content);
 
-router.put('/:id', Controller.update);
-router.delete('/:id', Controller.remove);
-router.post('/', Controller.store);
+router.put('/:id', JWT.authorization, Controller.update);
+router.delete('/:id', JWT.authorization, Controller.remove);
+router.post('/', JWT.authorization, Controller.store);
+router.post('/login', JWT.login);
 
 export = router;

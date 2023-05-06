@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { Schema, model, connect, Model } = mongoose;
+const { Schema, model, Model } = mongoose;
 
 export interface INews {
   title: string;
