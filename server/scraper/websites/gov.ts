@@ -50,7 +50,6 @@ async function _gov(n: number) {
       date: date,
       authors: [],
       content: '',
-      image_info: '',
       categories: [],
       location: '',
     });
