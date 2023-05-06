@@ -30,7 +30,9 @@ async function _siol(n: number) {
       element?.textContent?.trim()
     );
 
-    if (!title) continue;
+    if (!title) {
+      continue;
+    }
 
     const authors = await articlePage.$eval('.article__author', (e) =>
       (e as HTMLElement).innerText.trim().split(': ')[1].split(', ')

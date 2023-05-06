@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', Controller.all);
 router.get('/:id', Controller.id);
+router.get('/scrape/:n', Controller.scrapeAll);
 router.get('/scrape/:website/:n', Controller.scrape);
 
 router.get('/categories/:categories', Controller.Filter.categories);

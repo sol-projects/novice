@@ -34,6 +34,7 @@ app.listen(process.env.PORT, () => {
         GET:
         ${site}/news/
         ${site}/news/:id
+        ${site}/news/scrape/:n
         ${site}/news/scrape/:website/:n
         ${site}/news/categories/:categories
         ${site}/news/authors/:authors

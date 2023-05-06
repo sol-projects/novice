@@ -7,9 +7,10 @@ async function _24ur(n: number) {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
-  await page.goto('https://www.24ur.com/novice');
+  await page.goto('https://www.24ur.com/arhiv');
+  await page.waitForSelector('.leading-tight', { visible: true });
 
-  const links = await page.$$('a[href^="/novice/"]');
+  const links = await page.$$('div.flex-grow > a[href^="/"]');
   for (let i = 0; i < links.length && news.length < n; i++) {
     const link = links[i];
     const titleElement = await link.$(
@@ -47,6 +48,11 @@ async function _24ur(n: number) {
     );
     const locationDate = locationDateUnparsed.split(', ');
     const dateSplit = locationDate[1].split('.');
+
+    const currentDate = new Date();
+    if (+dateSplit[2] != currentDate.getFullYear()) {
+      continue;
+    }
     const date = new Date(
       +dateSplit[2],
       +dateSplit[1] - 1,

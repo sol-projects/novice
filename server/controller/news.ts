@@ -92,6 +92,19 @@ export async function scrape(req: Request, res: Response) {
   }
 }
 
+export async function scrapeAll(req: Request, res: Response) {
+  let news: INews[] = [];
+
+  for await (let [key, value] of websites) {
+    const valueResult = await value(+req.params.n);
+    for (let value of valueResult) {
+      news.push(value);
+    }
+  }
+
+  res.json(news);
+}
+
 export namespace Filter {
   export async function categories(req: Request, res: Response) {
     run_query(res, { categories: { $all: req.params.categories.split(',') } });
