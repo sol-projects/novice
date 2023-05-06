@@ -3,19 +3,16 @@ import websites from './scraper/websites';
 import dotenv from 'dotenv';
 import cheerio from 'cheerio';
 import axios from 'axios';
-import mongoose from 'mongoose';
 import { INews } from './model/News';
 import router from './routes/news';
+import * as Db from './db/db';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use('/news', router);
-
-mongoose.connect(
-  `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.bd0tfwp.mongodb.net/?retryWrites=true&w=majority`
-);
+Db.connect();
 
 app.get('/', async (req: Request, res: Response) => {
   let news: INews[] = [];
