@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import websites from '../scraper/websites';
 import { INews, News } from '../model/News';
+import * as Socket from '../socket/socket';
 
 async function run_query(res: Response, query: any) {
   try {
@@ -66,6 +67,7 @@ export async function store(req: Request, res: Response) {
 
   try {
     await News.create(news);
+    Socket.emit('news-added', news);
     res.status(201).json(news);
   } catch (error) {
     console.error(error);
