@@ -56,11 +56,11 @@ async function noviceSvet24(n: number) {
         date: new Date(dateText),
         authors: [authorText],
         content: joinedContent,
-        categories: []
-          location: {
-    type: "Point",
-    coordinates: [0, 0],
-  },
+        categories: [],
+        location: {
+          type: 'Point',
+          coordinates: [0, 0],
+        },
       });
 
       await articlePage.close();
