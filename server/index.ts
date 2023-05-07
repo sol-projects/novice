@@ -44,6 +44,6 @@ app.get('/', async (req: Request, res: Response) => {
   res.send(routes);
 });
 
-server.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, async () => {
   console.log(`routes: ${JSON.stringify(routes, null, '\t')}`);
 });
