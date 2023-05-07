@@ -1,0 +1,120 @@
+import org.example.model.INews
+import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+import java.text.SimpleDateFormat
+import java.util.Date
+
+fun extractCountryFromTitle(title: String): String {
+    val countryPrefixes = listOf("v ", "v ", "na ")
+
+    for (prefix in countryPrefixes) {
+        val startIndex = title.indexOf(prefix)
+        if (startIndex != -1) {
+            val endIndex = title.indexOf(" ", startIndex + prefix.length)
+            if (endIndex != -1) {
+                return title.substring(startIndex + prefix.length, endIndex)
+            }
+        }
+    }
+
+    return ""
+}
+
+fun getServisSta(numArticlesToOpen: Int): List<INews> {
+    // Set the path to the Chrome driver executable
+    System.setProperty("webdriver.chrome.driver", "/home/milan/Documents/novice/desktop-app/src/main/kotlin/scraper/chromedriver_linux64/chromedriver")
+
+    val options = ChromeOptions()
+    //options.addArguments("--headless")
+    val driver: WebDriver = ChromeDriver(options)
+
+    driver.get("https://servis.sta.si/")
+
+
+    // Create an empty list to store the news articles
+    val newsList = mutableListOf<INews>()
+
+    // Loop through the specified number of news articles and extract the data
+    for (i in 0 until numArticlesToOpen) {
+        val articles: List<WebElement> = driver.findElements(By.className("item"))
+
+        val article: WebElement = articles[i]
+
+        val url: String = article.findElement(By.cssSelector("a")).getAttribute("href")
+        driver.get(url)
+
+        val title = driver.findElement(By.cssSelector("article.articleui h1")).text
+
+        //had a problem here. This is a workaround if a page doesn't have lead or text
+        val articleElement = driver.findElement(By.tagName("article"))
+        val leadElement = try {
+            articleElement.findElement(By.className("lead"))
+        } catch (e: NoSuchElementException) {
+            null
+        }
+        val lead = leadElement?.text ?: ""
+
+        val textElements = articleElement.findElements(By.className("text"))
+        val preText = if (textElements.isNotEmpty()) {
+            val preTextElement = textElements[0]
+            val preElements = preTextElement.findElements(By.tagName("pre"))
+            if (preElements.isNotEmpty()) {
+                preElements[0].text
+            } else {
+                ""
+            }
+        } else {
+            ""
+        }
+
+        val content = if (lead.isNotEmpty() && preText.isNotEmpty()) {
+            "$lead $preText"
+        } else if (lead.isNotEmpty()) {
+            lead
+        } else if (preText.isNotEmpty()) {
+            preText
+        } else {
+            ""
+        }
+/*
+        val asideElement = article.findElement(By.cssSelector("aside.articlemeta"))
+        val dateElement = asideElement.findElement(By.cssSelector("div.items > div:nth-child(1) time"))
+        val dateString = dateElement.getAttribute("datetime")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+        val date: Date = dateFormat.parse(dateString)
+*/
+
+        val categoryElement = driver.findElement(By.cssSelector("aside.articlemeta div.items > div:nth-child(2)"))
+        val categories = listOf(categoryElement.text.replace("Kategorija:", "").trim())
+
+        val authorElement = driver.findElement(By.cssSelector("aside.articlemeta div.items > div:nth-child(4)"))
+        val authors = authorElement.text.replace("Avtor:", "").trim().split("/")
+
+
+        val location = extractCountryFromTitle(title)
+
+        val date: Date = SimpleDateFormat("yyyy-MM-dd").parse("2000-10-10")
+
+        //Create an instance of INews and add it to the newsList
+        val news = INews(title, url, date, authors, content, categories, location)
+        newsList.add(news)
+
+        println("Title: $title")
+        println("Author: $authors")
+        println("Date: $date")
+        println("Location: $location")
+        println("Content: $content")
+        println("Categories: $categories")
+        println("URL: $url")
+        println()
+
+        driver.navigate().back()
+    }
+
+    driver.quit()
+
+    return newsList
+}
