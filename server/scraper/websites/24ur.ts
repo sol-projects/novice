@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import { INews } from '../../model/News';
+import * as Db from '../../db/db';
 
 async function _24ur(n: number) {
   const news: INews[] = [];
@@ -70,6 +71,7 @@ async function _24ur(n: number) {
       (els) => els.map((e) => (e as HTMLElement).innerText.trim())
     );
 
+    const coords = await Db.Util.toCoords(locationDate[0]);
     news.push({
       title,
       url,
@@ -77,7 +79,10 @@ async function _24ur(n: number) {
       authors,
       content,
       categories,
-      location: locationDate[0],
+      location: {
+        type: 'Point',
+        coordinates: coords,
+      },
     });
 
     await articlePage.close();

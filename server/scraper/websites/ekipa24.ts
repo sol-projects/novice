@@ -69,7 +69,10 @@ async function ekipaSvet24(n: number = 5) {
         authors,
         content,
         categories,
-        location: 'Slovenija', // Set the location if required
+        location: {
+          type: 'Point',
+          coordinates: [0, 0],
+        },
       });
 
       await articlePage.close();

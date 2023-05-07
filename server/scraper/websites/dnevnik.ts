@@ -59,7 +59,10 @@ async function dnevnik(n: number) {
         authors,
         content,
         categories,
-        location: 'Slovenija',
+        location: {
+          type: 'Point',
+          coordinates: [0, 0],
+        },
       });
     }
   }

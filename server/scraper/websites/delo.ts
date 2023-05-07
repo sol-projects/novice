@@ -57,7 +57,10 @@ async function _delo(n: number) {
       authors: [],
       content: '',
       categories: [],
-      location: '',
+      location: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
     });
 
     if (i == n - 1) {

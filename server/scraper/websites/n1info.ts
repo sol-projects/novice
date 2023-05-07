@@ -59,7 +59,10 @@ async function n1infoSlovenija(n: number = 5) {
         date: new Date(),
         content: joinedContent,
         categories,
-        location: 'Slovenija',
+        location: {
+          type: 'Point',
+          coordinates: [0, 0],
+        },
       });
 
       await articlePage.close();
