@@ -16,13 +16,10 @@ async function _mbinfo(n: number = 5) {
     const titleText = await (titleElement
       ? titleElement.evaluate((e) => (e as HTMLElement).innerText)
       : '');
-    console.log('Title text:', titleText);
     //if (!title) continue;
-    console.log('URL:', link);
     const url = `https://mariborinfo.com${await link.evaluate((e) =>
       e.getAttribute('href')
     )}`;
-    console.log('URL:', url);
 
     const articlePage = await browser.newPage();
     await articlePage.goto(url);
@@ -30,7 +27,6 @@ async function _mbinfo(n: number = 5) {
     const authors = await articlePage.$$eval('.username__name', (els) =>
       els.map((e) => (e as HTMLElement).innerText.split('/')[0].trim())
     );
-    console.log('Authors:', authors);
 
     const title = titleText.trim();
 
@@ -41,7 +37,6 @@ async function _mbinfo(n: number = 5) {
         link.evaluate((e) => (e as HTMLElement).innerText.trim())
       )
     );
-    console.log('Categories:', categories);
 
     const contentElements = await articlePage.$$eval(
       'div.field.field--name-field-besedilo',
@@ -49,7 +44,6 @@ async function _mbinfo(n: number = 5) {
     );
 
     const content = contentElements.join('\n');
-    console.log('Content:', content);
 
     news.push({
       title,
@@ -58,7 +52,7 @@ async function _mbinfo(n: number = 5) {
       authors,
       content,
       categories,
-      location: 'Maribor', // Set the location if required
+      location: '',
     });
 
     await articlePage.close();
