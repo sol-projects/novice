@@ -72,7 +72,10 @@ async function _siol(n: number) {
       authors,
       content,
       categories,
-      location: '',
+      location: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
     });
 
     await articlePage.close();

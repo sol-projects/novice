@@ -56,8 +56,11 @@ async function noviceSvet24(n: number) {
         date: new Date(dateText),
         authors: [authorText],
         content: joinedContent,
-        categories: [], // Add categories if needed
-        location: 'Slovenija', // Set the location if required
+        categories: []
+          location: {
+    type: "Point",
+    coordinates: [0, 0],
+  },
       });
 
       await articlePage.close();

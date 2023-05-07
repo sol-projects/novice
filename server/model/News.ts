@@ -8,7 +8,10 @@ export interface INews {
   authors: string[];
   content: string;
   categories: string[];
-  location: string;
+  location: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
 }
 
 export const NewsSchema = new Schema<INews>({
@@ -18,7 +21,17 @@ export const NewsSchema = new Schema<INews>({
   authors: [String],
   content: String,
   categories: [String],
-  location: String,
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
 });
 
 export const News = model<INews>('News', NewsSchema);

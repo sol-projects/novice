@@ -38,4 +38,28 @@ export namespace Util {
       Number(slovenianCities[0].geometry.location.lat),
     ];
   }
+
+  async function toCity(lat: number, lgt: number): Promise<string> {
+    const url = `https://geokeo.com/geocode/v1/reverse.php?lat=${lat}&lng=${lgt}&api=${process.env.GEOKEO_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const addressComponents = data.address_components;
+    const cityComponent = addressComponents.find(
+      (component: any) => component.type === 'city'
+    );
+
+    if (cityComponent) {
+      return cityComponent.name;
+    }
+
+    const placeComponent = addressComponents.find(
+      (component: any) => component.type === 'place'
+    );
+    if (placeComponent) {
+      return placeComponent.name;
+    }
+
+    return '';
+  }
 }
