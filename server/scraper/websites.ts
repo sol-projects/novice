@@ -6,10 +6,10 @@ const websites = new Map<string, (n: number) => Promise<INews[]>>([
   ['gov-vlada', require('./websites/gov_vlada')],
   ['24ur', require('./websites/24ur')],
   ['delo', require('./websites/delo')],
-  ['mbinfo', require('./websites/mariborinfo')], //done
-  ['ekipa24', require('./websites/ekipa24')], ///iz nekega razloga sam en news screpa
-  ['dnevnik', require('./websites/dnevnik')], // mostly done
-  ['svet24', require('./websites/svet24')], // spet samo eno
+  ['mbinfo', require('./websites/mariborinfo')],
+  ['ekipa24', require('./websites/ekipa24')],
+  ['dnevnik', require('./websites/dnevnik')],
+  ['svet24', require('./websites/svet24')],
   ['n1info', require('./websites/n1info')],
 ]);
 
