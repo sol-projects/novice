@@ -16,10 +16,8 @@ async function n1infoSlovenija(n: number = 5) {
     const titleText = await link.evaluate((e) =>
       (e as HTMLElement).innerText.trim()
     );
-    console.log('Title:', titleText);
 
     const url = await link.evaluate((e) => e.getAttribute('href'));
-    console.log('URL:', url);
 
     if (url) {
       const articlePage = await browser.newPage();
@@ -31,7 +29,6 @@ async function n1infoSlovenija(n: number = 5) {
       const authorText = await (authorElement
         ? authorElement.evaluate((e) => (e as HTMLElement).innerText.trim())
         : '');
-      console.log('Author:', authorText);
 
       const contentElements = await articlePage.$$('p');
       const content = await Promise.all(
@@ -40,7 +37,6 @@ async function n1infoSlovenija(n: number = 5) {
         )
       );
       const joinedContent = content.join(' ');
-      console.log('Content:', joinedContent);
 
       const categoryLinks = await articlePage.$$(
         'a[href^="https://n1info.si/tag"]'
@@ -50,7 +46,6 @@ async function n1infoSlovenija(n: number = 5) {
           link.evaluate((e) => (e as HTMLElement).innerText.trim())
         )
       );
-      console.log('Categories:', categories);
 
       news.push({
         title: titleText,

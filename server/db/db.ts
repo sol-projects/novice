@@ -7,7 +7,7 @@ export function connect() {
     );
   } else {
     mongoose.connect(
-      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.bd0tfwp.mongodb.net/?retryWrites=true&w=majority`
+      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.bd0tfwp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
     );
   }
 }
@@ -39,7 +39,7 @@ export namespace Util {
     ];
   }
 
-  async function toCity(lat: number, lgt: number): Promise<string> {
+  export async function toPlace(lat: number, lgt: number): Promise<string> {
     const url = `https://geokeo.com/geocode/v1/reverse.php?lat=${lat}&lng=${lgt}&api=${process.env.GEOKEO_API_KEY}`;
     const response = await fetch(url);
     const data = await response.json();

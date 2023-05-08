@@ -19,12 +19,10 @@ async function ekipaSvet24(n: number = 5) {
     const titleText = await (titleElement
       ? titleElement.evaluate((e) => (e as HTMLElement).innerText.trim())
       : '');
-    console.log('Title:', titleText);
 
     const url = await link.$eval('a[href^="/clanek"]', (e) =>
       e.getAttribute('href')
     );
-    console.log('URL:', url);
 
     if (url) {
       const articlePage = await browser.newPage();
@@ -37,7 +35,6 @@ async function ekipaSvet24(n: number = 5) {
           return author;
         })
       );
-      console.log('Authors:', authors);
 
       const dateElement = await articlePage.$('.top-author');
       const dateText = await (dateElement
@@ -47,12 +44,10 @@ async function ekipaSvet24(n: number = 5) {
             return date;
           })
         : '');
-      console.log('Date:', dateText);
 
       const content = await articlePage.$eval('p', (e) =>
         (e as HTMLElement).innerText.trim()
       );
-      console.log('Content:', content);
 
       const categoryLinks = await articlePage.$$('a[href^="/iskanje"]');
       const categories = await Promise.all(
@@ -60,7 +55,6 @@ async function ekipaSvet24(n: number = 5) {
           link.evaluate((e) => (e as HTMLElement).innerText.trim())
         )
       );
-      console.log('Categories:', categories);
 
       news.push({
         title: titleText,

@@ -18,18 +18,15 @@ async function noviceSvet24(n: number) {
     const titleText = await (titleElement
       ? titleElement.evaluate((e) => (e as HTMLElement).innerText.trim())
       : '');
-    console.log('Title:', titleText);
 
     const authorElement = await link.$('.line-clamp-1');
     const authorText = await (authorElement
       ? authorElement.evaluate((e) => (e as HTMLElement).innerText.trim())
       : '');
-    console.log('Author:', authorText);
 
     const url = await link.$eval('a[href^="/clanek"]', (e) =>
       e.getAttribute('href')
     );
-    console.log('URL:', url);
 
     if (url) {
       const articlePage = await browser.newPage();
@@ -42,13 +39,11 @@ async function noviceSvet24(n: number) {
         )
       );
       const joinedContent = content.join(' ');
-      console.log('Content:', joinedContent);
 
       const dateElement = await link.$('.pr-4 flex items-center');
       const dateText = await (dateElement
         ? dateElement.evaluate((e) => (e as HTMLElement).innerText.trim())
         : '');
-      console.log('Date:', dateText);
 
       news.push({
         title: titleText,
