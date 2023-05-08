@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import { AddressInfo } from 'net';
-import { io as Client } from 'socket.io-client';
+import { io as Client, Socket } from 'socket.io-client';
 import app from '../index';
 import { init } from '../socket/socket';
 

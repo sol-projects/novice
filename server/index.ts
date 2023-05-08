@@ -11,7 +11,7 @@ import * as Socket from './socket/socket';
 
 dotenv.config();
 
-const app = express();
+const app: Express = express();
 app.use(express.json());
 app.use('/news', router);
 Db.connect();
@@ -47,3 +47,5 @@ app.get('/', async (req: Request, res: Response) => {
 server.listen(process.env.PORT, async () => {
   console.log(`routes: ${JSON.stringify(routes, null, '\t')}`);
 });
+
+export default app;
