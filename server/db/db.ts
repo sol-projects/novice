@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import settlements from './settlements';
 
 export function connect() {
   if (!process.env) {
@@ -39,27 +40,32 @@ export namespace Util {
     ];
   }
 
-  export async function toPlace(lat: number, lgt: number): Promise<string> {
-    const url = `https://geokeo.com/geocode/v1/reverse.php?lat=${lat}&lng=${lgt}&api=${process.env.GEOKEO_API_KEY}`;
+  export async function fromCoords(coords: [number, number]): Promise<string> {
+    const url = `https://geokeo.com/geocode/v1/reverse.php?lat=${coords[1]}&lng=${coords[0]}&api=${process.env.GEOKEO_API_KEY}`;
     const response = await fetch(url);
     const data = await response.json();
+    const results = data.results;
 
-    const addressComponents = data.address_components;
-    const cityComponent = addressComponents.find(
-      (component: any) => component.type === 'city'
-    );
-
-    if (cityComponent) {
-      return cityComponent.name;
-    }
-
-    const placeComponent = addressComponents.find(
-      (component: any) => component.type === 'place'
-    );
-    if (placeComponent) {
-      return placeComponent.name;
+    for (const result of results) {
+      if (result.type == 'city') {
+        return result.address_components.name;
+      }
     }
 
     return '';
+  }
+
+  export function getFirstSettlement(settlementsArray: string[]) {
+    for (const settlement of settlementsArray) {
+      if (isSettlement(settlement)) {
+        return settlement;
+      }
+    }
+
+    return '';
+  }
+
+  export function isSettlement(settlement: string) {
+    return settlement in settlements;
   }
 }
