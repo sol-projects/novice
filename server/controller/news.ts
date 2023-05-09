@@ -65,6 +65,7 @@ export async function store(req: Request, res: Response) {
     }
   }
 
+  news.sort((a, b) => a.date.getTime() - b.date.getTime());
   try {
     await News.create(news);
     Socket.emit('news-added', news);

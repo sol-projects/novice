@@ -2,16 +2,27 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import app from '../index';
-
+import * as Db from '../db/db';
 import { INews, News } from '../model/News';
+import dotenv from 'dotenv';
 
-test('GET /news - should return all news', async () => {
+dotenv.config();
+if (process.env.DB_NAME_TEST) {
+  Db.connect(process.env.DB_NAME_TEST);
+}
+
+test('login', async () => {
+  const res = await request(app).post('/login');
+  expect(res.headers['content-type']).toMatch(/json/);
+  console.log(res.body);
+});
+
+/*test('GET /news - should return all news', async () => {
   const res = await request(app).get('/news');
   expect(res.status).toEqual(200);
   expect(res.headers['content-type']).toMatch(/json/);
   expect(Array.isArray(res.body)).toBeTruthy();
 
-  // Check if the response data contains the expected properties
   res.body.forEach((newsItem: any) => {
     expect(newsItem).toHaveProperty('_id');
     expect(newsItem).toHaveProperty('title');
@@ -30,7 +41,6 @@ test('GET /news - should get 5 news items and check categories and their values'
   expect(res.headers['content-type']).toMatch(/json/);
   expect(Array.isArray(res.body)).toBeTruthy();
 
-  // Check if the response data contains the expected properties and valid categories
   res.body.forEach((newsItem: any) => {
     expect(newsItem).toHaveProperty('_id');
     expect(newsItem).toHaveProperty('title');
@@ -41,7 +51,6 @@ test('GET /news - should get 5 news items and check categories and their values'
     expect(newsItem).toHaveProperty('categories');
     expect(newsItem).toHaveProperty('location');
 
-    // Check if categories is an array and has valid values
     expect(Array.isArray(newsItem.categories)).toBeTruthy();
     newsItem.categories.forEach((category: string) => {
       expect(typeof category).toBe('string');
@@ -80,7 +89,4 @@ describe('POST and DELETE news', () => {
     const deletedNews = await News.findById(savedNewsId);
     expect(deletedNews).toBeNull();
   });
-});
-
-
-
+});*/

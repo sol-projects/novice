@@ -14,7 +14,11 @@ dotenv.config();
 const app: Express = express();
 app.use(express.json());
 app.use('/news', router);
-Db.connect();
+if (!process.env.DB_NAME) {
+  console.error(`DB with name ${!process.env.DB_NAME}`);
+} else {
+  Db.connect(process.env.DB_NAME);
+}
 
 const server = http.createServer(app);
 Socket.init(server);

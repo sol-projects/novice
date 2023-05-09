@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 import settlements from './settlements';
 
-export function connect() {
+export function connect(name: string) {
   if (!process.env) {
     console.error(
       'You must call dotenv.config() before calling this function.'
     );
   } else {
     mongoose.connect(
-      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.bd0tfwp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.bd0tfwp.mongodb.net/${name}?retryWrites=true&w=majority`
     );
   }
 }
