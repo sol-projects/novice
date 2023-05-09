@@ -1,7 +1,8 @@
 import { INews } from '../../model/News';
+import * as Db from '../../db/db';
 import puppeteer from 'puppeteer';
 import { parse } from 'date-fns';
-
+//TODO :: scrape sub title and quot(figure)
 async function rtvSlo(n: number) {
   const newsList: INews[] = [];
 
@@ -25,8 +26,6 @@ async function rtvSlo(n: number) {
 
       const title = await articlePage.$eval('header.article-header h1', (element) => element?.textContent?.trim() || '');
 
-      //const title = await articlePage.$eval('h1', (element) => element.textContent?.trim() || '');
-
       const dateString = await articlePage.$eval('meta[name="published_date"]', (el) =>
         el?.getAttribute('content') || ''
       );
@@ -42,17 +41,19 @@ async function rtvSlo(n: number) {
         return author ?? '';
       }));
 
-      const locationTmp = await articlePage.$eval('div.place-source', (el) =>
-        el?.textContent?.trim().split(' - ')[0] || ''
+      const locationTmp = await articlePage.$eval(
+        'div.place-source',
+        (el) => (el as HTMLElement).textContent?.trim() || ''
       );
-      const location = locationTmp.replace(/[\t\n]/g, '').trim();
 
+      const coords: [number, number] = (locationTmp !== "MMC RTV SLO" && locationTmp !== "")
+        ? await Db.Util.toCoords(locationTmp.split(', ')[0])
+        : [0, 0];
 
       const categoriesString = await articlePage.$eval('meta[name="keywords"]', (el) =>
         el?.getAttribute('content') || ''
       );
       const categories = categoriesString ? categoriesString.split(',') : [];
-
 
       const news: INews = {
         title,
@@ -61,7 +62,10 @@ async function rtvSlo(n: number) {
         authors,
         content,
         categories,
-        location,
+        location: {
+          type: 'Point',
+          coordinates: coords,
+        },
       };
       newsList.push(news);
 

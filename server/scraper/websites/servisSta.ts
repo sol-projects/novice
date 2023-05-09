@@ -36,10 +36,10 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
       continue; // Skip this iteration if url is undefined
     }
 
-    const articleResponse = await axios.get(url);
+    const articleResponse = await axios.get(`https://servis.sta.si${url}`);
     const article$ = cheerio.load(articleResponse.data);
 
-    const title = article$('article.articleui h1').text();
+    const title = article$('article.articleui h1').text().replace(/\n/g, '').trim();
 
     const leadElement = article$('article').find('.lead');
     const lead = leadElement.text() || '';
@@ -48,7 +48,8 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
     const preTextElement = textElements.eq(0).find('pre');
     const preText = preTextElement.length > 0 ? preTextElement.text() : '';
 
-    const content = lead || preText ? `${lead} ${preText}` : '';
+    const contentTmp = (lead || preText) ? `${lead} ${preText}` : '';
+    const content = contentTmp.replace(/\n/g, '').trim();
 
     const categoryElement = article$('aside.articlemeta').find('div.items > div:nth-child(2)');
     const categories = [categoryElement.text().replace('Kategorija:', '').trim()];
@@ -62,28 +63,23 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
 
     const news: INews = {
       title,
-      url,
+      url: `https://servis.sta.si${url}`,
       date,
       authors,
       content,
       categories,
-      location,
+      location: {
+        type: 'Point',
+        coordinates: [0, 0],
+      },
     };
 
     newsList.push(news);
-
-    console.log(`Title: ${title}`);
-    console.log(`Author: ${authors}`);
-    console.log(`Date: ${date}`);
-    console.log(`Location: ${location}`);
-    console.log(`Content: ${content}`);
-    console.log(`Categories: ${categories}`);
-    console.log(`URL: ${url}`);
-    console.log();
 
     // Wait or introduce delay if necessary before making the next request
   }
 
   return newsList;
 }
+
 export = servisSta;

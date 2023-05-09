@@ -8,7 +8,7 @@ async function _24ur(n: number) {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
-  await page.goto('https://www.24ur.com/arhiv');
+  await page.goto('https://www.24ur.com/novice');
   await page.waitForSelector('.leading-tight', { visible: true });
 
   const links = await page.$$('div.flex-grow > a[href^="/"]');
@@ -71,7 +71,10 @@ async function _24ur(n: number) {
       (els) => els.map((e) => (e as HTMLElement).innerText.trim())
     );
 
-    const coords = await Db.Util.toCoords(locationDate[0]);
+    const coords: [number, number] = (locationDate[0] !== "")
+      ? await Db.Util.toCoords(locationDate[0])
+      : [0, 0];
+
     news.push({
       title,
       url,
