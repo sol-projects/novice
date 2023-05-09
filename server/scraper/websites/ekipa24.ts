@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 import { INews } from '../../model/News';
 
-async function ekipaSvet24(n: number = 5) {
+async function ekipaSvet24(n: number) {
   const news: INews[] = [];
 
   const browser = await puppeteer.launch({ headless: 'new' });
@@ -9,12 +9,12 @@ async function ekipaSvet24(n: number = 5) {
 
   await page.goto('https://ekipa.svet24.si/');
 
-  const links = await page.$$('.fpNews.lg\\:w-1\\/3');
+  const links = await page.$$('.news-row');
   for (let i = 0; i < links.length && news.length < n; i++) {
     const link = links[i];
 
     const titleElement = await link.$(
-      '.fpNews.lg\\:w-1\\/3 a[href^="/clanek"]'
+      'a[href^="/clanek"]'
     );
     const titleText = await (titleElement
       ? titleElement.evaluate((e) => (e as HTMLElement).innerText.trim())

@@ -48,7 +48,7 @@ async function noviceSvet24(n: number) {
       news.push({
         title: titleText,
         url: `https://novice.svet24.si${url}`,
-        date: new Date(dateText),
+        date: new Date(),
         authors: [authorText],
         content: joinedContent,
         categories: [],

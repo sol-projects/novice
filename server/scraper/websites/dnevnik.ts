@@ -55,7 +55,7 @@ async function dnevnik(n: number) {
       news.push({
         title: title.trim(),
         url: `https://www.dnevnik.si${url}`,
-        date,
+        date : new Date(),
         authors,
         content,
         categories,

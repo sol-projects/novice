@@ -48,7 +48,7 @@ async function _mbinfo(n: number = 5) {
     news.push({
       title,
       url,
-      date,
+      date : new Date(),
       authors,
       content,
       categories,
