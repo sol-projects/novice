@@ -19,6 +19,11 @@ export namespace Util {
     const response = await fetch(url);
     const data = await response.json();
     const results = data.results;
+
+    if (!data.results) {
+      return [0, 0];
+    }
+
     const slovenianCities = results.filter((result: any) => {
       return (
         result.address_components.country === 'Slovenia' &&
@@ -45,6 +50,10 @@ export namespace Util {
     const response = await fetch(url);
     const data = await response.json();
     const results = data.results;
+
+    if (!data.results) {
+      return '';
+    }
 
     for (const result of results) {
       if (result.type == 'city') {
