@@ -1,0 +1,4 @@
+@requires FLOAT, INT
+
+POINT = ( XY , XY )
+PONT_COMPOUMENT = FLOAT | INT

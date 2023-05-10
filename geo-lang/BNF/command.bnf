@@ -1,0 +1,7 @@
+@requires POINT, INT, FOlAT, ANGLE
+
+COMMAND = LINE | BEND | BOX | CIRC
+LINE = line ( POINT , POINT )
+BEND = bend ( POINT , POINT , ANGLE )
+BOX = box ( POINT , POINT )
+CIRC = circ ( POINT , FLOAT | INT )

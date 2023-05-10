@@ -1,0 +1,3 @@
+@requires FLOAT, INT
+
+ANGLE = FLOAT | INT °
