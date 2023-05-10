@@ -1,1 +1,1 @@
-FLOAT = ^[+-]?\d+(\.\d+)?$
+FLOAT = INT . INT

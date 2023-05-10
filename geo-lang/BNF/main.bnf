@@ -1,0 +1,3 @@
+@requires SCOPE
+
+fn main SCOPE

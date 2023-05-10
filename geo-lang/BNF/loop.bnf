@@ -1,4 +1,4 @@
 @requires SCOPE
 
-LOOP ::= loop SCOPE
+LOOP ::= loop SCOPE | loop INT .. INT SCOPE
 

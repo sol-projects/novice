@@ -1,7 +1,7 @@
 import glob
 
 def combine_bnf_files():
-    output_file = "combined_bnf.bnf"
+    output_file = "language.bnf"
     file_list = glob.glob("*.bnf")
 
     with open(output_file, 'w') as outfile:
