@@ -1,6 +1,6 @@
 @requires IDENTIFIER
 
-TYPE ::= bool
+TYPE       ::= bool
          | u8 | u16 | u32 | u64 | u128
          | i8 | i16 | i32 | i64 | i128
          | f32 | f64
@@ -8,5 +8,4 @@ TYPE ::= bool
          | string
          | ARRAY_TYPE
          | IDENTIFIER
-
-ARRAY_TYPE = TYPE[]
+ARRAY_TYPE ::= TYPE []

@@ -1,1 +1,3 @@
-FLOAT = INT . INT
+@requires INT
+
+FLOAT ::= INT . INT

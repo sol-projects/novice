@@ -1,4 +1,3 @@
-@requires SCOPE
+@requires SCOPE, RANGE
 
-LOOP ::= loop SCOPE | loop INT .. INT SCOPE
-
+LOOP ::= loop SCOPE | loop RANGE SCOPE

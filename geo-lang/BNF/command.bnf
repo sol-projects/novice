@@ -1,7 +1,7 @@
-@requires POINT, INT, FOlAT, ANGLE
+@requires POINT, INT, FLOAT, ANGLE
 
-COMMAND = LINE | BEND | BOX | CIRC
-LINE = line ( POINT , POINT )
-BEND = bend ( POINT , POINT , ANGLE )
-BOX = box ( POINT , POINT )
-CIRC = circ ( POINT , FLOAT | INT )
+COMMAND ::= LINE | BEND | BOX | CIRC
+LINE    ::= line ( POINT , POINT )
+BEND    ::= bend ( POINT , POINT , ANGLE )
+BOX     ::= box ( POINT , POINT )
+CIRC    ::= circ ( POINT , FLOAT | INT )

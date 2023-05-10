@@ -1,4 +1,4 @@
 @requires CHAR
 
 STRING ::= " CHARS "
-CHARS ::= CHARS CHAR | CHAR | ε
+CHARS  ::= CHARS CHAR | CHAR | ε
