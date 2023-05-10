@@ -1,0 +1,3 @@
+@requires STATEMENTS
+
+SCOPE ::= { STATEMENTS }
