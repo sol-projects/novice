@@ -8,11 +8,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 fun getRtvSlo(numArticlesToOpen: Int): List<INews> {
-    // Set the path to the Chrome driver executable
-    System.setProperty("webdriver.chrome.driver", "/home/milan/Documents/novice/desktop-app/src/main/kotlin/scraper/chromedriver_linux64/chromedriver")
 
     val options = ChromeOptions()
-    //options.addArguments("--headless")
+    options.addArguments("--headless=new");
     val driver: WebDriver = ChromeDriver(options)
 
     driver.get("https://www.rtvslo.si/novice")
