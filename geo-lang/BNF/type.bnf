@@ -3,5 +3,8 @@ TYPE ::= bool
          | i8 | i16 | i32 | i64 | i128
          | f32 | f64
          | char
-         | str
+         | string
+         | ARRAY_TYPE
          | IDENTIFIER
+
+ARRAY_TYPE = TYPE[]
