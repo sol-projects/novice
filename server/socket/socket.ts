@@ -1,9 +1,15 @@
 import socketIO, { Server, Socket } from 'socket.io';
+const cors = require('cors');
 
 let io: Server;
 
 export function init(server: any) {
-  io = new Server(server);
+  io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST'],
+    },
+  });
 
   io.on('connection', (socket) => {
     console.log(`socket ${socket.id} connected`);
