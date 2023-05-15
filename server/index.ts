@@ -16,8 +16,9 @@ const app: Express = express();
 app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use('/news', router);
+
 if (!process.env.DB_NAME) {
-  console.error(`DB with name ${!process.env.DB_NAME}`);
+  console.error(`DB with name ${!process.env.DB_NAME} not found`);
 } else {
   Db.connect(process.env.DB_NAME);
 }
