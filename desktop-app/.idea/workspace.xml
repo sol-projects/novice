@@ -4,26 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b8c3268-2b86-4126-bfcd-a1619b6050fb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/index.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/model/News.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/24ur.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/gov.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/gov_shared.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/gov_vlada.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/rtvSlo.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/servisSta.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/scraper/zurnal24.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/org/example/HelloTest.kt" beforeDir="false" />
-    </list>
+    <list default="true" id="7b8c3268-2b86-4126-bfcd-a1619b6050fb" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
