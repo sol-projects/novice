@@ -1,4 +1,4 @@
-name: Running Tests
+ Running Tests
 
 on:
   push:
@@ -11,18 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: 1 del
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ../novice
-
-      - name: Running tests
-        run: npm run test
-        working-directory: ../novice
+      - name: running tests
+        run: cs server && npm run test
