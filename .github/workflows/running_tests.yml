@@ -5,7 +5,10 @@ on:
     branches: [ "development" ]
   pull_request:
     branches: [ "development" ]
-
+env:
+      DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
+      DB_USERNAME : ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 jobs:
   build:
     runs-on: ubuntu-latest
