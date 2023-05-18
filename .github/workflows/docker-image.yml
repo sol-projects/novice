@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push slika1:$(date +%s)
+        run: docker push test:$(date +%s)
 
       - name: Set up Git
         uses: actions/checkout@v2
