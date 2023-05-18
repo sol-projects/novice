@@ -1,4 +1,5 @@
- Running Tests
+
+name: Running Tests
 
 on:
   push:
