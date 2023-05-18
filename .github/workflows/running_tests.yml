@@ -1,4 +1,3 @@
-
 name: Running Tests
 
 on:
@@ -12,8 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1 del
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: running tests
-        run: cd server && npm run test
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # You can adjust this version as needed
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd server
+          npm run test
