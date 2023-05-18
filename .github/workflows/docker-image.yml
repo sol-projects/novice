@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build the Docker image
-        run: cd server && docker build . --file Dockerfile_tests --tag '${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP'
+        run: cd server && docker build . --file Dockerfile_tests --tag ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push '${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP'
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
 
       - name: Set up Git
         uses: actions/checkout@v2
