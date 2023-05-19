@@ -1,10 +1,11 @@
 import React from "react";
-import { VStack, Center } from "@chakra-ui/react";
+import { VStack, Center, HStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import NewsArticle from "./NewsArticle";
 import INews from "../news/model";
 import { getAll } from "../news/api";
+import Filter from "./Filter";
 
 export default function News() {
   const [news, set] = useState<INews[]>([]);
@@ -28,10 +29,13 @@ export default function News() {
   }, []);
 
   return (
-    <Center>
-      <VStack width="80%">
-        {news && news.map((article) => <NewsArticle article={article} />)}
-      </VStack>
-    </Center>
+    <>
+      <Center>
+        <VStack width="80%">
+          <Filter />
+          {news && news.map((article) => <NewsArticle article={article} />)}
+        </VStack>
+      </Center>
+    </>
   );
 }
