@@ -1,29 +1,20 @@
 import React from "react";
-import { VStack, Center } from "@chakra-ui/react";
+import { VStack, Center, HStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import NewsArticle from "./NewsArticle";
+import INews from "../news/model";
+import { getAll } from "../news/api";
+import Filter from "./Filter";
 
 export default function News() {
-  const [news, set] = useState<any[]>([]);
+  const [news, set] = useState<INews[]>([]);
 
   useEffect(() => {
     const get = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/news");
-        if (!response.ok) {
-          console.log("Failed to fetch orders");
-        }
-
-        const data = await response.json();
-        data.sort(function (a: any, b: any) {
-          const c = new Date(a.date);
-          const d = new Date(b.date);
-          return d.getTime() - c.getTime();
-        });
+      const data = await getAll();
+      if (data) {
         set(data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
       }
     };
 
@@ -32,29 +23,19 @@ export default function News() {
 
   useEffect(() => {
     const socket = io("ws://localhost:8000/news");
-
-    socket.on("connnection", () => {
-      console.log("connected to server");
-    });
-
     socket.on("news-added", (newNews) => {
       set(newNews);
-    });
-
-    socket.on("message", (message) => {
-      console.log(message);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Socket disconnecting");
     });
   }, []);
 
   return (
-    <Center>
-      <VStack width="80%">
-        {news && news.map((article) => <NewsArticle article={article} />)}
-      </VStack>
-    </Center>
+    <>
+      <Center>
+        <VStack width="80%">
+          <Filter />
+          {news && news.map((article) => <NewsArticle article={article} />)}
+        </VStack>
+      </Center>
+    </>
   );
 }

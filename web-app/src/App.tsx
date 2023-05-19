@@ -15,6 +15,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import News from "./components/News";
+import Chart from "./components/Chart";
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -24,7 +25,7 @@ export const App = () => (
         <Routes>
           <Route path="/" element={<News />} />
           <Route path="/map" element={<News />} />
-          <Route path="/graph" element={<News />} />
+          <Route path="/chart" element={<Chart />} />
           <Route path="/about" element={<News />} />
         </Routes>
         <Footer />
