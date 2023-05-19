@@ -8,12 +8,12 @@ async function noviceSvet24(n: number) {
 
   await page.goto('https://novice.svet24.si/danes-objavljeno');
 
-  const links = await page.$$('.bg-main-blue');
+  const links = await page.$$('.divide-y a');
   for (let i = 0; i < links.length && news.length < n; i++) {
     const link = links[i];
 
     const titleElement = await link.$(
-      '.font-black.text-xl.line-clamp-2.hover\\:underline'
+      'h3'
     );
     const titleText = await (titleElement
       ? titleElement.evaluate((e) => (e as HTMLElement).innerText.trim())
@@ -24,9 +24,8 @@ async function noviceSvet24(n: number) {
       ? authorElement.evaluate((e) => (e as HTMLElement).innerText.trim())
       : '');
 
-    const url = await link.$eval('a[href^="/clanek"]', (e) =>
-      e.getAttribute('href')
-    );
+      const url = await link.evaluate((e) => e.getAttribute('href'));
+
 
     if (url) {
       const articlePage = await browser.newPage();

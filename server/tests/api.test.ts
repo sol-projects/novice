@@ -2,13 +2,13 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import app from '../index';
-import * as Db from '../db/db';
 import { INews, News } from '../model/News';
 import dotenv from 'dotenv';
+import * as Db from '../db/db'
 
-dotenv.config();
-if (process.env.DB_NAME_TEST) {
-  Db.connect(process.env.DB_NAME_TEST);
+Db.disconnect();
+if(process.env.DB_NAME_TEST ) {
+    Db.connect(process.env.DB_NAME_TEST);
 }
 
 test('login', async () => {

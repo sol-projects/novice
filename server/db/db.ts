@@ -13,6 +13,10 @@ export function connect(name: string) {
   }
 }
 
+export function disconnect() {
+  mongoose.connection.close();
+}
+
 export namespace Util {
   export async function toCoords(place: string): Promise<[number, number]> {
     const url = `https://geokeo.com/geocode/v1/search.php?q=${place}&api=${process.env.GEOKEO_API_KEY}`;
