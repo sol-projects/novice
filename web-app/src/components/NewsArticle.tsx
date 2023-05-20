@@ -25,6 +25,9 @@ export default function NewsArticle(props: any) {
         variant="outline"
       >
         <Stack width="30%">
+          <Text>
+            Stran: {new URL(article.url).hostname.replace("www.", "")}
+          </Text>
           <Text>Avtorji: {article.authors.toString()}</Text>
           <Text>Datum: {date.toLocaleString("sl-SI")}</Text>
           <Text>Kategorije: {article.categories.toString()}</Text>
