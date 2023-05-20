@@ -23,7 +23,7 @@ export default function Header() {
               <Link as={RouterLink} to="/map">
                 Zemljevid
               </Link>
-              <Link as={RouterLink} to="/graph">
+              <Link as={RouterLink} to="/chart">
                 Grafi
               </Link>
               <Link as={RouterLink} to="/about">
