@@ -6,6 +6,9 @@ import {
   Radio,
   Stack,
   Heading,
+  InputLeftAddon,
+  Input,
+  InputGroup,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
@@ -31,23 +34,30 @@ let chartInfo: ChartInfo = {
 
 function dataToDisplay(option: string, news: INews[], n: number) {
   switch (option) {
-    case "aggrCategory":
+    case "aggrCategories":
       chartInfo.bottom = "categories";
       chartInfo.left = "number of articles";
-      return Aggregate.topCategories(news, n);
-    case "aggrDate":
+      return Aggregate.byTopCategories(news, n);
+    case "aggrDates":
       chartInfo.bottom = "dates";
       chartInfo.left = "number of articles";
       return Aggregate.byDate(news, n);
+    case "aggrAuthors":
+      chartInfo.bottom = "authors";
+      chartInfo.left = "number of articles";
+      return Aggregate.byTopAuthors(news, n);
     default:
-      return Aggregate.topCategories(news, n);
+      chartInfo.bottom = "authors";
+      chartInfo.left = "number of articles";
+      return Aggregate.byTopCategories(news, n);
   }
 }
 
 export default function Chart() {
   const [news, set] = useState<INews[]>([]);
   const [filteredNews, setFilteredNews] = useState<INews[]>([]);
-  const [value, setValue] = useState("category");
+  const [value, setValue] = useState("aggrCategories");
+  const [nResults, setNResults] = useState(10);
 
   useEffect(() => {
     const get = async () => {
@@ -94,12 +104,22 @@ export default function Chart() {
             <Heading as="h4" size="md">
               agregacija:
             </Heading>
-            <Radio value="aggrCategory">kategorije</Radio>
-            <Radio value="aggrDate">datum</Radio>
+            <Radio value="aggrCategories">kategorije</Radio>
+            <Radio value="aggrDates">datum</Radio>
+            <Radio value="aggrAuthors">avtorji</Radio>
+            <InputGroup width="35%">
+              <InputLeftAddon children="number of data:" />
+              <Input
+                type="number"
+                placeholder="number"
+                value={nResults}
+                onChange={(event) => setNResults(Number(event.target.value))}
+              />
+            </InputGroup>
           </Stack>
         </RadioGroup>
         <ResponsiveBar
-          data={dataToDisplay(value, filteredNews, chartInfo.dataAmount)}
+          data={dataToDisplay(value, filteredNews, nResults)}
           keys={["value"]}
           indexBy="key"
           margin={{ top: 50, right: 200, bottom: 100, left: 100 }}

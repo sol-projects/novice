@@ -5,12 +5,24 @@ export type Aggregation = {
   value: number;
 };
 
-export function topCategories(news: INews[], n: number): Aggregation[] {
+export function byTopCategories(news: INews[], n: number): Aggregation[] {
   const frequencies: Record<string, number> = {};
 
   for (const newsItem of news) {
     for (const category of newsItem.categories) {
       frequencies[category] = (frequencies[category] || 0) + 1;
+    }
+  }
+
+  return sort(Object.entries(frequencies)).slice(0, n);
+}
+
+export function byTopAuthors(news: INews[], n: number): Aggregation[] {
+  const frequencies: Record<string, number> = {};
+
+  for (const article of news) {
+    for (const author of article.authors) {
+      frequencies[author] = (frequencies[author] || 0) + 1;
     }
   }
 
