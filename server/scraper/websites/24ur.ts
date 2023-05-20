@@ -68,12 +68,11 @@ async function _24ur(n: number) {
     );
     const categories = await articlePage.$$eval(
       '.text-12.font-bold.px-6.py-2.mb-8.mr-4.border.border-primary.rounded-sm.default-transition.text-primary.hover\\:bg-primary.hover\\:text-white',
-      (els) => els.map((e) => (e as HTMLElement).innerText.trim())
+      (els) => els.map((e) => (e as HTMLElement).innerText.trim().toLowerCase())
     );
 
-    const coords: [number, number] = (locationDate[0] !== "")
-      ? await Db.Util.toCoords(locationDate[0])
-      : [0, 0];
+    const coords: [number, number] =
+      locationDate[0] !== '' ? await Db.Util.toCoords(locationDate[0]) : [0, 0];
 
     news.push({
       title,

@@ -41,7 +41,9 @@ async function dnevnik(n: number) {
       const categoryLinks = await articlePage.$$('a[href*="/tag/"]');
       const categories = await Promise.all(
         categoryLinks.map((link) =>
-          link.evaluate((e) => (e as HTMLElement).innerText.trim())
+          link.evaluate((e) =>
+            (e as HTMLElement).innerText.trim().toLowerCase()
+          )
         )
       );
 
