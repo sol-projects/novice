@@ -18,6 +18,7 @@ router.get('/date/after/:date', Controller.Filter.Date.after);
 router.get('/date/after/:after/before/:before', Controller.Filter.Date.range);
 router.get('/title/:title', Controller.Filter.title);
 router.get('/content/:content', Controller.Filter.content);
+//dodaj za fromCoords in toCoords
 
 router.put('/:id', JWT.authorization, Controller.update);
 router.delete('/:id', JWT.authorization, Controller.remove);

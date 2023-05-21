@@ -1,0 +1,11 @@
+dnevnik - crasha server
+ekipa24 - datumi so narobe, zelo velik del contenta manjka, avtorji niso v arrayu ampak so v 1 stringu (npr. https://ekipa.svet24.si/clanek/kosarka/reprezentancna-kosarka/645de122eefc9/ep)
+svet24 - content ima na koncu extra nepotreben del, avtorji niso v arrayu ampak so v 1 stringu, čas je narobe ( + vzemi čas od "Posodobljeno" če nisi, nism gledu)
+n1info - ni naslova, url je narobe, content je narobe, ni avtorjev, ni kategorij
+mbinfo - "Uredništvo" ni avtor (lahko bi bil avtor Uredništvo Mariborinfo), podnaslov bi verjetno rabu bit del contenta
+sta - narobe datum, odstrani duplikate v avtorjih
+rtvslo - mislim da je ura narobe
+gov -  avtorji niso v arrayu ampak so v 1 stringu
+delo - manjka čas
+siol - content ima na koncu extra nepotreben del, ne dela
+24ur - včasih vrne prazno

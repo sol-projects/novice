@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import settlements from './settlements';
+const fetch = require('node-fetch');
 
 export function connect(name: string) {
   if (!process.env) {
@@ -11,6 +12,10 @@ export function connect(name: string) {
       `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.bd0tfwp.mongodb.net/${name}?retryWrites=true&w=majority`
     );
   }
+}
+
+export function disconnect() {
+  mongoose.connection.close();
 }
 
 export namespace Util {

@@ -9,25 +9,22 @@ async function ekipaSvet24(n: number) {
 
   await page.goto('https://ekipa.svet24.si/');
 
-  const links = await page.$$('.news-row');
+  const links = await page.$$('a[href^="/clanek"]');
   for (let i = 0; i < links.length && news.length < n; i++) {
     const link = links[i];
 
-    const titleElement = await link.$(
-      'a[href^="/clanek"]'
-    );
-    const titleText = await (titleElement
-      ? titleElement.evaluate((e) => (e as HTMLElement).innerText.trim())
-      : '');
-
-    const url = await link.$eval('a[href^="/clanek"]', (e) =>
-      e.getAttribute('href')
-    );
+    const url = await link.evaluate((e) => e.getAttribute('href'));
 
     if (url) {
       const articlePage = await browser.newPage();
       await articlePage.goto(`https://ekipa.svet24.si${url}`);
-
+      const titleElement = link;
+      let titleText = '';
+      if (titleElement) {
+        titleText = await titleElement.evaluate((e) =>
+          (e as HTMLElement).innerText.trim()
+        );
+      }
       const authors = await articlePage.$$eval('.top-author', (els) =>
         els.map((e) => {
           const text = (e as HTMLElement).innerText.trim();
@@ -52,7 +49,9 @@ async function ekipaSvet24(n: number) {
       const categoryLinks = await articlePage.$$('a[href^="/iskanje"]');
       const categories = await Promise.all(
         categoryLinks.map((link) =>
-          link.evaluate((e) => (e as HTMLElement).innerText.trim())
+          link.evaluate((e) =>
+            (e as HTMLElement).innerText.trim().toLowerCase()
+          )
         )
       );
 
