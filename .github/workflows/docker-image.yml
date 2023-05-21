@@ -1,5 +1,3 @@
-name: Docker Image CI
-
 on:
   push:
     branches: [ "production" ]
@@ -19,8 +17,7 @@ jobs:
       - name: Build the Docker image
         run: |
           cd server
-          docker build . --file Dockerfile_tests --tag ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
-          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
@@ -29,11 +26,19 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image to Docker Hub
-
         run: docker push ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
         
       - name: Run webhook
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: development
+          CONTAINER_NAME: ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
         run: |
-          TIMESTAMP=$TIMESTAMP
-          curl -X POST -d "DB_USERNAME=ognjen" -d "DB_PASSWORD=ognjen" -d "DB_NAME=development" -d "CONTAINER_NAME=${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP" http://108.143.49.11:5000/webhook
+          curl -X POST \
+            -d "DB_USERNAME=${{secrets.DB_USERNAME}}" \
+            -d "DB_PASSWORD=${{secrets.DB_PASSWORD}}" \
+            -d "DB_NAME=${{secrets.DB_NAME}}" \
+           -d "CONTAINER_NAME=${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP" http://108.143.49.11:5000/webhook
+
 
