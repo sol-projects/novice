@@ -34,4 +34,4 @@ jobs:
       - name: Run tests
         run: |
           cd server
-          npm run test --forceExit
+          npm run test
