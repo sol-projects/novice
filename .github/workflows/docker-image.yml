@@ -27,6 +27,3 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
-
-      - name: Send TIMESTAMP to URL
-        run: curl -X POST -d "TIMESTAMP=${{ env.TIMESTAMP }}" http://127.0.0.1:5000
