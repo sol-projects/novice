@@ -53,5 +53,8 @@ app.get('/', async (req: Request, res: Response) => {
 server.listen(process.env.PORT, async () => {
   console.log(`routes: ${JSON.stringify(routes, null, '\t')}`);
 });
+export function closeServer() {
+  server.close();
+}
 
 export default app;

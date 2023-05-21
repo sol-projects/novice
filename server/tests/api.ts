@@ -13,7 +13,7 @@ if(process.env.DB_NAME_TEST ) {
 
 test('login', async () => {
   const res = await request(app).post('/login');
-  expect(res.headers['content-type']).toMatch(/json/);
+  expect(res.headers['content-type']).toMatch('/json/');
   console.log(res.body);
 });
 

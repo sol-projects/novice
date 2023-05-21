@@ -5,9 +5,7 @@ n1info - ni naslova, url je narobe, content je narobe, ni avtorjev, ni kategorij
 mbinfo - "Uredništvo" ni avtor (lahko bi bil avtor Uredništvo Mariborinfo), podnaslov bi verjetno rabu bit del contenta
 sta - narobe datum, odstrani duplikate v avtorjih
 rtvslo - mislim da je ura narobe
-
-(moje)
 gov -  avtorji niso v arrayu ampak so v 1 stringu
 delo - manjka čas
-siol - content ima na koncu extra nepotreben del
+siol - content ima na koncu extra nepotreben del, ne dela
 24ur - včasih vrne prazno
