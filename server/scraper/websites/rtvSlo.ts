@@ -24,34 +24,45 @@ async function rtvSlo(n: number) {
       const articlePage = await browser.newPage();
       await articlePage.goto(url);
 
-      const title = await articlePage.$eval('header.article-header h1', (element) => element?.textContent?.trim() || '');
+      const title = await articlePage.$eval(
+        'header.article-header h1',
+        (element) => element?.textContent?.trim() || ''
+      );
 
-      const dateString = await articlePage.$eval('meta[name="published_date"]', (el) =>
-        el?.getAttribute('content') || ''
+      const dateString = await articlePage.$eval(
+        'meta[name="published_date"]',
+        (el) => el?.getAttribute('content') || ''
       );
       const date = parse(dateString, "yyyy-MM-dd'T'HH:mm:ss'Z'", new Date());
 
-      const contentTmp = await articlePage.$eval('article.article', (element) => element.textContent?.trim() || '');
+      const contentTmp = await articlePage.$eval(
+        'article.article',
+        (element) => element.textContent?.trim() || ''
+      );
       const content = contentTmp.replace(/[\t\n]/g, '').trim();
 
       const metaElements = await articlePage.$$('meta.elastic[name="author"]');
-      const authors = await Promise.all(metaElements.map(async (el) => {
-        const content = await el.getProperty('content');
-        const author = await content.jsonValue();
-        return author ?? '';
-      }));
+      const authors = await Promise.all(
+        metaElements.map(async (el) => {
+          const content = await el.getProperty('content');
+          const author = await content.jsonValue();
+          return author ?? '';
+        })
+      );
 
       const locationTmp = await articlePage.$eval(
         'div.place-source',
         (el) => (el as HTMLElement).textContent?.trim() || ''
       );
 
-      const coords: [number, number] = (locationTmp !== "MMC RTV SLO" && locationTmp !== "")
-        ? await Db.Util.toCoords(locationTmp.split(', ')[0])
-        : [0, 0];
+      const coords: [number, number] =
+        locationTmp !== 'MMC RTV SLO' && locationTmp !== ''
+          ? await Db.Util.toCoords(locationTmp.split(', ')[0])
+          : [0, 0];
 
-      const categoriesString = await articlePage.$eval('meta[name="keywords"]', (el) =>
-        el?.getAttribute('content') || ''
+      const categoriesString = await articlePage.$eval(
+        'meta[name="keywords"]',
+        (el) => el?.getAttribute('content')?.toLowerCase() || ''
       );
       const categories = categoriesString ? categoriesString.split(',') : [];
 

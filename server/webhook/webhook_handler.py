@@ -1,11 +1,11 @@
-from flask import Flask, request
 import subprocess
 
 app = Flask(__name__)
 
-def stop_and_restart_container(container_name, db_username, db_password, db_name):
-    stop_command = ['sudo', 'docker', 'stop']
-    subprocess.run(stop_command + subprocess.check_output(['sudo', 'docker', 'ps', '-a', '-q']).decode().splitlines())
+
+def stop_and_restart_container(container_name):
+    stop_command = ['docker', 'stop', container_name]
+    subprocess.run(stop_command)
 
     delete_command = ['sudo', 'docker', 'rm', '-f']
     subprocess.run(delete_command + subprocess.check_output(['sudo', 'docker', 'ps', '-a', '-q']).decode().splitlines())
@@ -40,5 +40,3 @@ def handle_webhook():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-
-

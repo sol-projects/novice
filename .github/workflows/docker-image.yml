@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "production" ]
   pull_request:
-    branches: [ "development" ]
+    branches: [ "production" ]
 
 jobs:
   build:
@@ -26,7 +26,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP
         run: curl -X POST -d "DB_USERNAME=ognjen" -d "DB_PASSWORD=ognjen" -d "DB_NAME=development" -d "CONTAINER_NAME=${{ secrets.DOCKER_USERNAME }}/novice:$TIMESTAMP" http://108.143.49.11:5000/webhook
-
-

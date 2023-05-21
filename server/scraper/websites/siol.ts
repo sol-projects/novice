@@ -62,7 +62,7 @@ async function _siol(n: number) {
       (e) => (e as HTMLElement).innerText.trim()
     );
     const categories = await articlePage.$$eval('.article__tags--tag', (els) =>
-      els.map((e) => (e as HTMLElement).innerText.trim())
+      els.map((e) => (e as HTMLElement).innerText.trim().toLowerCase())
     );
 
     news.push({

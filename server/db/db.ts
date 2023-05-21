@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import settlements from './settlements';
+const fetch = require('node-fetch');
 
 export function connect(name: string) {
   if (!process.env) {

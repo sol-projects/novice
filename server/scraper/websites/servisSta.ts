@@ -39,7 +39,10 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
     const articleResponse = await axios.get(`https://servis.sta.si${url}`);
     const article$ = cheerio.load(articleResponse.data);
 
-    const title = article$('article.articleui h1').text().replace(/\n/g, '').trim();
+    const title = article$('article.articleui h1')
+      .text()
+      .replace(/\n/g, '')
+      .trim();
 
     const leadElement = article$('article').find('.lead');
     const lead = leadElement.text() || '';
@@ -48,14 +51,24 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
     const preTextElement = textElements.eq(0).find('pre');
     const preText = preTextElement.length > 0 ? preTextElement.text() : '';
 
-    const contentTmp = (lead || preText) ? `${lead} ${preText}` : '';
+    const contentTmp = lead || preText ? `${lead} ${preText}` : '';
     const content = contentTmp.replace(/\n/g, '').trim();
 
-    const categoryElement = article$('aside.articlemeta').find('div.items > div:nth-child(2)');
-    const categories = [categoryElement.text().replace('Kategorija:', '').trim()];
+    const categoryElement = article$('aside.articlemeta').find(
+      'div.items > div:nth-child(2)'
+    );
+    const categories = [
+      categoryElement.text().replace('Kategorija:', '').trim().toLowerCase(),
+    ];
 
-    const authorElement = article$('aside.articlemeta').find('div.items > div:nth-child(4)');
-    const authors = authorElement.text().replace('Avtor:', '').trim().split('/');
+    const authorElement = article$('aside.articlemeta').find(
+      'div.items > div:nth-child(4)'
+    );
+    const authors = authorElement
+      .text()
+      .replace('Avtor:', '')
+      .trim()
+      .split('/');
 
     const location = extractCountryFromTitle(title);
 

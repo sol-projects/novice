@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 import { IUser, User } from '../model/User';
 
 export enum Role {
-  ReadOnly,
+  //ReadOnly,
   Admin,
 }
 

@@ -43,7 +43,9 @@ async function n1infoSlovenija(n: number = 5) {
       );
       const categories = await Promise.all(
         categoryLinks.map((link) =>
-          link.evaluate((e) => (e as HTMLElement).innerText.trim())
+          link.evaluate((e) =>
+            (e as HTMLElement).innerText.trim().toLowerCase()
+          )
         )
       );
 

@@ -1,9 +1,14 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Flex, Input, Button } from "@chakra-ui/react";
 
-export default function DynamicInput() {
+interface DynamicInputProps {
+  onChange: (values: string[]) => void;
+}
+
+export default function DynamicInput({ onChange }: DynamicInputProps) {
   const [inputs, setInputs] = useState<string[]>([]);
+
   const add = () => {
     setInputs([...inputs, ""]);
   };
@@ -12,13 +17,19 @@ export default function DynamicInput() {
     const updated = [...inputs];
     updated.splice(index, 1);
     setInputs(updated);
+    onChange(updated);
   };
 
   const change = (value: string, index: number) => {
     const updated = [...inputs];
     updated[index] = value;
     setInputs(updated);
+    onChange(updated);
   };
+
+  useEffect(() => {
+    onChange(inputs);
+  }, [inputs, onChange]);
 
   return (
     <Flex direction="column">
