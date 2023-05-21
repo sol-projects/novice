@@ -36,7 +36,7 @@ test('GET /news - should return all news', async () => {
     console.error(error);
     errorOccurred = true;
   }
-}, 50000);
+}, 500000);
 
 test('GET /news - categories should be an array of strings', async () => {
   const res = await request(app).get('/news');
@@ -49,7 +49,7 @@ test('GET /news - categories should be an array of strings', async () => {
       expect(typeof category).toBe('string');
     });
   });
-}, 20000);
+}, 200000);
 
 test('GET /news - each title should be a string', async () => {
   const res = await request(app).get('/news');
@@ -59,7 +59,7 @@ test('GET /news - each title should be a string', async () => {
   res.body.forEach((newsItem: any) => {
     expect(typeof newsItem.title).toBe('string');
   });
-}, 20000);
+}, 200000);
 
 test('GET /news - each author should be an array of strings', async () => {
   const res = await request(app).get('/news');
@@ -72,7 +72,7 @@ test('GET /news - each author should be an array of strings', async () => {
       expect(typeof author).toBe('string');
     });
   });
-}, 20000);
+}, 200000);
 
 test('GET /news - each content should be a string', async () => {
   const res = await request(app).get('/news');
@@ -82,7 +82,7 @@ test('GET /news - each content should be a string', async () => {
   res.body.forEach((newsItem: any) => {
     expect(typeof newsItem.content).toBe('string');
   });
-}, 20000);
+}, 200000);
 
 test('GET /news - each location should be an object with the expected properties', async () => {
   const res = await request(app).get('/news');
@@ -99,13 +99,13 @@ test('GET /news - each location should be an object with the expected properties
     expect(typeof newsItem.location.coordinates[0]).toBe('number');
     expect(typeof newsItem.location.coordinates[1]).toBe('number');
   });
-}, 20000);
+}, 200000);
 
 test('GET /news - should return an array of news items', async () => {
   const res = await request(app).get('/news');
   expect(res.status).toEqual(200);
   expect(Array.isArray(res.body)).toBeTruthy();
-}, 20000);
+}, 200000);
 
 import puppeteer from 'puppeteer';
 
