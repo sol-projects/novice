@@ -2,11 +2,9 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import app from '../index';
-const nock = require('nock');
 import { closeServer } from '../index';
 
 import { INews, News } from '../model/News';
-
 
 let errorOccurred = false;
 
@@ -38,7 +36,7 @@ test('GET /news - should return all news', async () => {
     console.error(error);
     errorOccurred = true;
   }
-},50000);
+}, 50000);
 
 test('GET /news - categories should be an array of strings', async () => {
   const res = await request(app).get('/news');
@@ -134,7 +132,7 @@ test('Maribor info 5 novic', async () => {
 
   // Assertions
   expect(newsItems).toHaveLength(1);
-},200000);
+}, 200000);
 
 test('Siol 1 novic', async () => {
   const browser = await puppeteer.launch({ headless: 'new' });
@@ -159,10 +157,10 @@ test('Siol 1 novic', async () => {
 
   // Assertions
   expect(newsItems).toHaveLength(1);
-},2000000);
+}, 2000000);
 
 test('Sta 1 novic', async () => {
-  const browser =  await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
   // Navigate to the scraping route
@@ -186,9 +184,7 @@ test('Sta 1 novic', async () => {
   expect(newsItems).toHaveLength(1);
   await mongoose.disconnect();
   closeServer(); // Close the HTTP server
-
-
-},200000);
+}, 200000);
 
 afterAll(async () => {
   try {
@@ -197,5 +193,3 @@ afterAll(async () => {
     console.error(error);
   }
 });
-
-

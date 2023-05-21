@@ -17,7 +17,7 @@ app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use('/news', router);
 if (!process.env.DB_NAME) {
-  console.error(`DB with name ${!process.env.DB_NAME}`);
+  console.error(`DB with name ${process.env.DB_NAME}`);
 } else {
   Db.connect(process.env.DB_NAME);
 }
@@ -53,6 +53,7 @@ app.get('/', async (req: Request, res: Response) => {
 server.listen(process.env.PORT, async () => {
   console.log(`routes: ${JSON.stringify(routes, null, '\t')}`);
 });
+
 export function closeServer() {
   server.close();
 }
