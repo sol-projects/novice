@@ -7,6 +7,7 @@ on:
     branches: [ "development" , "production"]
 env:
       DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
+      DB_NAME: ${{ secrets.DB_NAME}}
       DB_USERNAME : ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       GEOKEO_API_KEY: ${{ secrets.GEOKEO_API_KEY }}
