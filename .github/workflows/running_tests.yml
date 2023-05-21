@@ -9,6 +9,10 @@ env:
       DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
       DB_USERNAME : ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      PORT: ${{ secrets.PORT }}
+      GEOKEO_API_KEY: ${{ secrets.GEOKEO_API_KEY }}
+      LOGIN_UUID: ${{ secrets.LOGIN_UUID }}
+      LOGIN_PRIVATE_KEY : ${{ secrets.LOGIN_PRIVATE_KEY }}
 jobs:
   build:
     runs-on: ubuntu-latest
