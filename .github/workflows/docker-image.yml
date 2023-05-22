@@ -11,7 +11,7 @@ jobs:
       TIMESTAMP: ${{ format('test{0}', (github.event.pull_request.head.repo.pushed_at || github.event.repository.pushed_at)) }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout cod
         uses: actions/checkout@v3
 
       - name: Build the Docker image
