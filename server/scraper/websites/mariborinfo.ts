@@ -34,7 +34,7 @@ async function _mbinfo(n: number = 5) {
     const categoryLinks = await articlePage.$$('a[href*="/tags/"]');
     const categories = await Promise.all(
       categoryLinks.map((link) =>
-        link.evaluate((e) => (e as HTMLElement).innerText.trim())
+        link.evaluate((e) => (e as HTMLElement).innerText.trim().toLowerCase())
       )
     );
 
@@ -48,7 +48,7 @@ async function _mbinfo(n: number = 5) {
     news.push({
       title,
       url,
-      date : new Date(),
+      date: new Date(),
       authors,
       content,
       categories,

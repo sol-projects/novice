@@ -21,7 +21,9 @@ async function ekipaSvet24(n: number) {
       const titleElement = link;
       let titleText = '';
       if (titleElement) {
-        titleText = await titleElement.evaluate((e) => (e as HTMLElement).innerText.trim());
+        titleText = await titleElement.evaluate((e) =>
+          (e as HTMLElement).innerText.trim()
+        );
       }
       const authors = await articlePage.$$eval('.top-author', (els) =>
         els.map((e) => {
@@ -47,7 +49,9 @@ async function ekipaSvet24(n: number) {
       const categoryLinks = await articlePage.$$('a[href^="/iskanje"]');
       const categories = await Promise.all(
         categoryLinks.map((link) =>
-          link.evaluate((e) => (e as HTMLElement).innerText.trim())
+          link.evaluate((e) =>
+            (e as HTMLElement).innerText.trim().toLowerCase()
+          )
         )
       );
 

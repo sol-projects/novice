@@ -6,15 +6,17 @@ import { INews, News } from '../model/News';
 import dotenv from 'dotenv';
 import * as Db from '../db/db'
 
-Db.disconnect();
 if(process.env.DB_NAME_TEST ) {
     Db.connect(process.env.DB_NAME_TEST);
 }
 
+let token = undefined;
+
 test('login', async () => {
-  const res = await request(app).post('/login');
-  expect(res.headers['content-type']).toMatch(/json/);
-  console.log(res.body);
+  const res = await request(app).post('/news/login');
+  expect(res.status).toBe(200);
+  expect(res.body).toHaveProperty('token');
+  token = res.body.token;
 });
 
 /*test('GET /news - should return all news', async () => {

@@ -47,11 +47,14 @@ enum class TokenType {
     ELSE_IF,
     IDENTIFIER,
     LETTER,
-    CHARACTERS
+    CHARACTERS,
+    MAP_ELEMENT,
+    IN,
+    SEMICOLON,
+    COMMA
 }
 
 data class Token(val type: TokenType, val value: String)
-
 class Scanner(private val input: String) {
     private var currentPosition = 0
 
@@ -134,6 +137,10 @@ class Scanner(private val input: String) {
             "main" -> Token(TokenType.MAIN, "main")
             "true", "false", "bool", "u8", "u16", "u32", "u64", "u128", "i8", "i16",
             "i32", "i64", "i128", "f32", "f64", "char", "string" -> Token(TokenType.TYPE, identifier.toString())
+            "line" -> Token(TokenType.LINE, "line")
+            "bend" -> Token(TokenType.BEND, "bend")
+            "box" -> Token(TokenType.BOX, "box")
+            "circ" -> Token(TokenType.CIRC, "circ")
             else -> Token(TokenType.IDENTIFIER, identifier.toString())
         }
     }

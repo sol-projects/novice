@@ -103,7 +103,7 @@ async function get_newspage(
     }
 
     const categories = news$('.tags__btn[href^="/tag/"]')
-      .map((i, el) => news$(el).text().trim())
+      .map((i, el) => news$(el).text().trim().toLowerCase())
       .get();
 
     return { authors: authors.split(', '), content, categories };
