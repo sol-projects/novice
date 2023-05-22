@@ -16,8 +16,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import News from "./components/News";
 import Chart from "./components/Chart";
-import Map from "./components/Map";
-
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -26,7 +24,7 @@ export const App = () => (
         <Header />
         <Routes>
           <Route path="/" element={<News />} />
-          <Route path="/map" element={<Map />} />
+          <Route path="/map" element={<News />} />
           <Route path="/chart" element={<Chart />} />
           <Route path="/about" element={<News />} />
         </Routes>
