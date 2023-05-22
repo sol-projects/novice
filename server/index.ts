@@ -17,10 +17,12 @@ app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use('/news', router);
 
-if (!process.env.DB_NAME) {
-  console.error(`DB with name ${process.env.DB_NAME}`);
-} else {
-  Db.connect(process.env.DB_NAME);
+if(process.env.TESTS_FLAG !== 'true') {
+    if (!process.env.DB_NAME) {
+      console.error(`DB with name ${!process.env.DB_NAME}`);
+    } else {
+      Db.connect(process.env.DB_NAME);
+    }
 }
 
 const server = http.createServer(app);
