@@ -21,15 +21,6 @@ if (!process.env.DB_NAME) {
   console.error(`DB with name ${process.env.DB_NAME}`);
 } else {
   Db.connect(process.env.DB_NAME);
-=======
-
-if(process.env.TESTS_FLAG !== 'true') {
-    if (!process.env.DB_NAME) {
-      console.error(`DB with name ${!process.env.DB_NAME}`);
-    } else {
-      Db.connect(process.env.DB_NAME);
-    }
->>>>>>> Stashed changes
 }
 
 const server = http.createServer(app);
