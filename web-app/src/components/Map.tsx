@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Map, TileLayer } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import INews from "../news/model";
 import { getAll } from "../news/api";
 import Filter, { FilterData } from "./Filter";
@@ -12,18 +11,17 @@ import markIcon from "../assets/marker.png"; //You can change market image here
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-
+import { VStack, Center } from "@chakra-ui/react";
 
 const sloveniaBounds = [
   [45.4252, 13.3757],
   [46.8739, 16.6106],
 ];
 
-const customIcon = L.icon({ 
+const customIcon = L.icon({
   iconUrl: markIcon,
   iconSize: [42, 80],
   iconAnchor: [21, 80], //If you want to have marker centered you have to half values from iconSize
-
 });
 
 export default function MapComponent() {
@@ -71,19 +69,23 @@ export default function MapComponent() {
   };
   //it ends here <3 <3 <3
 
-  useEffect(() => { //This part of the code handles displaing map and mark on locations of each article
+  useEffect(() => {
+    //This part of the code handles displaing map and mark on locations of each article
     const mapContainer = document.getElementById("map");
 
     if (mapContainer && !("_leaflet_id" in mapContainer)) {
       const map = new L.Map("map", {
         center: [46.1512, 14.9955],
-        zoom: 8
+        zoom: 8,
       });
 
-      const tileLayer = new L.TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "Map data © OpenStreetMap contributors",
-        maxZoom: 19,
-      });
+      const tileLayer = new L.TileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "Map data © OpenStreetMap contributors",
+          maxZoom: 19,
+        }
+      );
       tileLayer.addTo(map);
 
       const markerClusterGroup = L.markerClusterGroup();
@@ -91,15 +93,24 @@ export default function MapComponent() {
       filteredNews.forEach((article) => {
         const { location, title, url } = article;
         const { type, coordinates } = location;
-      
-        if (coordinates.length < 2 || coordinates[0] === 0 || coordinates[1] === 0) {
+
+        if (
+          coordinates.length < 2 ||
+          coordinates[0] === 0 ||
+          coordinates[1] === 0
+        ) {
           return;
         }
-      
-        const switchedCoordinates: L.LatLngTuple = [coordinates[1], coordinates[0]];
+
+        const switchedCoordinates: L.LatLngTuple = [
+          coordinates[1],
+          coordinates[0],
+        ];
         const marker = L.marker(switchedCoordinates, { icon: customIcon });
-        marker.bindPopup(`<b>${title}</b><br><a href="${url}" target="_blank">${url}</a>`);
-      
+        marker.bindPopup(
+          `<b>${title}</b><br><a href="${url}" target="_blank">${url}</a>`
+        );
+
         markerClusterGroup.addLayer(marker);
       });
 
@@ -111,5 +122,9 @@ export default function MapComponent() {
     }
   }, [filteredNews]);
 
-  return <div id="map" style={{ height: "400px" }} />; //Here you can change the viwe of the map
+  return (
+    <Center>
+      <div id="map" style={{ height: "600px", width: "1000px" }} />
+    </Center>
+  ); //Here you can change the viwe of the map
 }
