@@ -1,5 +1,6 @@
 import { INews } from '../../model/News';
 import puppeteer from 'puppeteer';
+import * as Db from '../../db/db';
 
 async function _siol(n: number) {
   const news: INews[] = [];
@@ -65,6 +66,9 @@ async function _siol(n: number) {
       els.map((e) => (e as HTMLElement).innerText.trim().toLowerCase())
     );
 
+    const location = Db.Util.getFirstSettlement(categories);
+    const coords = await Db.Util.toCoords(location);
+
     news.push({
       title,
       url,
@@ -74,7 +78,7 @@ async function _siol(n: number) {
       categories,
       location: {
         type: 'Point',
-        coordinates: [0, 0],
+        coordinates: coords,
       },
     });
 

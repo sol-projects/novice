@@ -100,11 +100,19 @@ async function get_newspage(
       console.log(`Cannot fetch author from page: ${url}`);
     }
 
-    const content: string = news$(
+
+    let content: string = news$(
+      '.article__teaser > p, .article__teaser > div'
+    )
+      .text()
+      .trim();
+
+    content += news$(
       '.article__content > p, .article__content > div'
     )
       .text()
       .trim();
+
     if (!content) {
       console.log(`Cannot fetch content from page: ${url}`);
     }

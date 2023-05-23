@@ -5,18 +5,26 @@ import app from '../index';
 import { INews, News } from '../model/News';
 import dotenv from 'dotenv';
 import * as Db from '../db/db'
+import { closeServer } from '../index';
 
 if(process.env.DB_NAME_TEST ) {
     Db.connect(process.env.DB_NAME_TEST);
 }
 
-let token = undefined;
-
 test('login', async () => {
   const res = await request(app).post('/news/login');
   expect(res.status).toBe(200);
   expect(res.body).toHaveProperty('token');
-  token = res.body.token;
+  let token = res.body.token;
+});
+
+afterAll(async () => {
+  try {
+    closeServer(); // Close the HTTP server
+    await mongoose.disconnect(); // Close the database connection
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 /*test('GET /news - should return all news', async () => {

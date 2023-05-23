@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import settlements from './settlements';
 const fetch = require('node-fetch');
+
 const settlementsLower = settlements.map((settlement) =>
   settlement.toLowerCase()
 );
@@ -75,6 +76,7 @@ export namespace Util {
   export function getFirstSettlement(settlementsArray: string[]) {
     for (const settlement of settlementsArray) {
       if (isSettlement(settlement)) {
+          console.log(settlement);
         return settlement;
       }
     }
@@ -83,6 +85,6 @@ export namespace Util {
   }
 
   export function isSettlement(settlement: string) {
-    return settlement in settlementsLower;
+    return settlementsLower.includes(settlement);
   }
 }
