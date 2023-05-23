@@ -1,6 +1,7 @@
 import cheerio from 'cheerio';
 import axios from 'axios';
 import { INews } from '../../model/News';
+import * as Db from '../../db/db';
 
 async function _delo(n: number) {
   const news: INews[] = [];
@@ -69,7 +70,13 @@ async function _delo(n: number) {
   });
 
   const news_responses = await Promise.all(news_promises);
-  news_responses.forEach((news_response, i) => {
+
+  news_responses.forEach(async (news_response, i) => {
+    const location = Db.Util.getFirstSettlement(news_response.categories);
+    const coords = await Db.Util.toCoords(location);
+    if (location !== '') {
+      news[i].location = { type: 'Point', coordinates: coords };
+    }
     news[i].authors = news_response.authors;
     news[i].content = news_response.content;
     news[i].categories = news_response.categories;
