@@ -76,7 +76,6 @@ export namespace Util {
   export function getFirstSettlement(settlementsArray: string[]) {
     for (const settlement of settlementsArray) {
       if (isSettlement(settlement)) {
-          console.log(settlement);
         return settlement;
       }
     }

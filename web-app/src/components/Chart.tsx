@@ -42,6 +42,10 @@ function dataToDisplay(option: string, news: INews[], n: number) {
       chartInfo.bottom = "dates";
       chartInfo.left = "number of articles";
       return Aggregate.byDate(news, n);
+    case "aggrMonths":
+      chartInfo.bottom = "months";
+      chartInfo.left = "number of articles";
+      return Aggregate.byMonths(news, n);
     case "aggrAuthors":
       chartInfo.bottom = "authors";
       chartInfo.left = "number of articles";
@@ -107,6 +111,7 @@ export default function Chart() {
             <Radio value="aggrCategories">kategorije</Radio>
             <Radio value="aggrDates">datum</Radio>
             <Radio value="aggrAuthors">avtorji</Radio>
+            <Radio value="aggrMonths">meseci</Radio>
             <InputGroup width="35%">
               <InputLeftAddon children="number of data:" />
               <Input
