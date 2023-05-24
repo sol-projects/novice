@@ -71,16 +71,18 @@ async function _delo(n: number) {
 
   const news_responses = await Promise.all(news_promises);
 
-  news_responses.forEach(async (news_response, i) => {
-    const location = Db.Util.getFirstSettlement(news_response.categories);
-    const coords = await Db.Util.toCoords(location);
-    if (location !== '') {
-      news[i].location = { type: 'Point', coordinates: coords };
-    }
-    news[i].authors = news_response.authors;
-    news[i].content = news_response.content;
-    news[i].categories = news_response.categories;
-  });
+  await Promise.all(
+    news_responses.map(async (news_response, i) => {
+      const location = Db.Util.getFirstSettlement(news_response.categories);
+      const coords = await Db.Util.toCoords(location);
+      if (location !== '') {
+        news[i].location = { type: 'Point', coordinates: coords };
+      }
+      news[i].authors = news_response.authors;
+      news[i].content = news_response.content;
+      news[i].categories = news_response.categories;
+    })
+  );
 
   return news;
 }
@@ -100,16 +102,9 @@ async function get_newspage(
       console.log(`Cannot fetch author from page: ${url}`);
     }
 
-
-    let content: string = news$(
-      '.article__teaser > p, .article__teaser > div'
-    )
-      .text()
-      .trim();
-
-    content += news$(
-      '.article__content > p, .article__content > div'
-    )
+    const content: string = news$('.article__content')
+      .find('p, div')
+      .not('.store__links')
       .text()
       .trim();
 

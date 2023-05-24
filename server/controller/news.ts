@@ -60,9 +60,22 @@ export async function store(req: Request, res: Response) {
   let news: INews[] = [];
   for await (let [key, value] of websites) {
     const result = await value(req.body.n);
+    console.log(`Evaluating website ${key} before pushing to database...`);
     for (let value of result) {
-      news.push(value);
+      const existingNews = await News.findOne({
+        title: value.title,
+        content: value.content,
+      });
+
+      if (!existingNews) {
+        news.push(value);
+      } else {
+        console.log(
+          `Article "${value.title}" on website ${key} already exists. Not pushing to database...`
+        );
+      }
     }
+    console.log(`Website ${key} evaluated successfully...`);
   }
 
   news.sort((a, b) => a.date.getTime() - b.date.getTime());

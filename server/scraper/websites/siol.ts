@@ -35,9 +35,14 @@ async function _siol(n: number) {
       continue;
     }
 
-    const authors = await articlePage.$eval('.article__author', (e) =>
-      (e as HTMLElement).innerText.trim().split(': ')[1].split(', ')
-    );
+    let authors: any;
+    try {
+      authors = await articlePage.$eval('.article__author', (e) =>
+        (e as HTMLElement).innerText.trim().split(': ')[1].split(', ')
+      );
+    } catch (err) {
+      continue;
+    }
 
     const dateUnparsed = await articlePage.$eval(
       '.article__publish_date--date',
@@ -51,7 +56,7 @@ async function _siol(n: number) {
     const dateSplit = dateUnparsed.split('.');
     const date = new Date(
       +dateSplit[2],
-      +dateSplit[1] - 1,
+      +dateSplit[1] - 2,
       +dateSplit[0] + 1,
       +time[0],
       +time[1],
