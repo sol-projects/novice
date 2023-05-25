@@ -25,7 +25,6 @@ const customIcon = L.icon({
 });
 
 export default function MapComponent() {
-  //This part of code is used to get all new fom db. It will get even new news when they are added. This is for loop  {filteredNews.map((article) => ( <ToDo> ))}
   const [news, setNews] = useState<INews[]>([]);
   const [filteredNews, setFilteredNews] = useState<INews[]>([]);
 
@@ -67,10 +66,8 @@ export default function MapComponent() {
 
     setFilteredNews(filtered);
   };
-  //it ends here <3 <3 <3
 
   useEffect(() => {
-    //This part of the code handles displaing map and mark on locations of each article
     const mapContainer = document.getElementById("map");
 
     if (mapContainer && !("_leaflet_id" in mapContainer)) {
@@ -122,9 +119,5 @@ export default function MapComponent() {
     }
   }, [filteredNews]);
 
-  return (
-    <Center>
-      <div id="map" style={{ height: "600px", width: "1000px" }} />
-    </Center>
-  ); //Here you can change the viwe of the map
+  return <div id="map" style={{ height: "600px", width: "1000px" }} />;
 }
