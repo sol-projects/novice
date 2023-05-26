@@ -15,3 +15,17 @@ export function categories(news: INews[], categories: string[]): INews[] {
     categories.some((category) => item.categories.includes(category))
   );
 }
+
+export function title(news: INews[], title: string): INews[] {
+  return news.filter((item) => item.title.includes(title));
+}
+
+export function content(news: INews[], content: string): INews[] {
+  return news.filter((item) => item.title.includes(content));
+}
+
+export function websites(news: INews[], websites: string[]): INews[] {
+  return news.filter((item) =>
+    websites.some((website) => item.url.includes(website))
+  );
+}

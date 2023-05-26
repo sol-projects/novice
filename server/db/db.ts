@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 import settlements from './settlements';
 const fetch = require('node-fetch');
 
+const settlementsLower = settlements.map((settlement) =>
+  settlement.toLowerCase()
+);
+
 export function connect(name: string) {
   if (!process.env) {
     console.error(
@@ -80,6 +84,6 @@ export namespace Util {
   }
 
   export function isSettlement(settlement: string) {
-    return settlement in settlements;
+    return settlementsLower.includes(settlement);
   }
 }

@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import { INews } from '../../model/News';
+import * as Db from '../../db/db';
 
 async function ekipaSvet24(n: number) {
   const news: INews[] = [];
@@ -55,6 +56,9 @@ async function ekipaSvet24(n: number) {
         )
       );
 
+    const location = Db.Util.getFirstSettlement(categories);
+    const coords = await Db.Util.toCoords(location);
+
       news.push({
         title: titleText,
         url: `https://ekipa.svet24.si${url}`,
@@ -63,8 +67,8 @@ async function ekipaSvet24(n: number) {
         content,
         categories,
         location: {
-          type: 'Point',
-          coordinates: [0, 0],
+            type: 'Point',
+            coordinates: coords
         },
       });
 

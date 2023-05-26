@@ -3,7 +3,6 @@ import request from 'supertest';
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import app from '../index';
 import { closeServer } from '../index';
-
 import { INews, News } from '../model/News';
 
 let errorOccurred = false;
@@ -107,6 +106,285 @@ test('GET /news - should return an array of news items', async () => {
   expect(Array.isArray(res.body)).toBeTruthy();
 }, 200000);
 
+test('GET /news - should return all news', async () => {
+  try {
+    const res = await request(app).get('/news');
+    expect(res.status).toEqual(200);
+    expect(res.headers['content-type']).toMatch(/json/);
+    expect(Array.isArray(res.body)).toBeTruthy();
+
+    res.body.forEach((newsItem: any) => {
+      expect(newsItem).toHaveProperty('_id');
+      expect(newsItem).toHaveProperty('title');
+      expect(newsItem).toHaveProperty('url');
+      expect(newsItem).toHaveProperty('date');
+      expect(newsItem).toHaveProperty('authors');
+      expect(newsItem).toHaveProperty('content');
+      expect(newsItem).toHaveProperty('categories');
+      expect(newsItem).toHaveProperty('location');
+    });
+  } catch (error) {
+    console.error(error);
+    errorOccurred = true;
+  }
+}, 500000);
+
+test('GET /news - categories should be an array of strings', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(Array.isArray(newsItem.categories)).toBeTruthy();
+    newsItem.categories.forEach((category: string) => {
+      expect(typeof category).toBe('string');
+    });
+  });
+}, 200000);
+
+test('GET /news - each title should be a string', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.title).toBe('string');
+  });
+}, 200000);
+
+test('GET /news - each author should be an array of strings', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(Array.isArray(newsItem.authors)).toBeTruthy();
+    newsItem.authors.forEach((author: string) => {
+      expect(typeof author).toBe('string');
+    });
+  });
+}, 200000);
+
+test('GET /news - each content should be a string', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.content).toBe('string');
+  });
+}, 200000);
+
+test('GET /news - each location should be an object with the expected properties', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.location).toBe('object');
+    expect(newsItem.location).toHaveProperty('type');
+    expect(newsItem.location).toHaveProperty('coordinates');
+    expect(newsItem.location.type).toBe('Point');
+    expect(Array.isArray(newsItem.location.coordinates)).toBeTruthy();
+    expect(newsItem.location.coordinates.length).toBe(2);
+    expect(typeof newsItem.location.coordinates[0]).toBe('number');
+    expect(typeof newsItem.location.coordinates[1]).toBe('number');
+  });
+}, 200000);
+
+test('GET /news - should return an array of news items', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+}, 200000);
+
+test('GET /news - each category should be a string', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(Array.isArray(newsItem.categories)).toBeTruthy();
+    newsItem.categories.forEach((category: string) => {
+      expect(typeof category).toBe('string');
+    });
+  });
+}, 200000);
+
+test('GET /news - each news item should have a unique _id', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  const ids = res.body.map((newsItem: any) => newsItem._id);
+  const uniqueIds = new Set(ids);
+
+  expect(uniqueIds.size).toBe(ids.length);
+}, 200000);
+
+test('GET /news - each news item should have a valid URL', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(newsItem.url).toMatch(/^http(s)?:\/\/[^\s/$.?#].[^\s]*$/);
+  });
+}, 200000);
+
+test('GET /news - each news item should have a valid date format', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(new Date(newsItem.date)).not.toEqual('Invalid Date');
+  });
+}, 200000);
+
+test('GET /news - each content should be a non-empty string', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.content).toBe('string');
+    expect(newsItem.content.length).toBeGreaterThan(0);
+  });
+}, 200000);
+
+test('GET /news - each location should have valid coordinates', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.location).toBe('object');
+    expect(newsItem.location).toHaveProperty('type');
+    expect(newsItem.location).toHaveProperty('coordinates');
+    expect(newsItem.location.type).toBe('Point');
+    expect(Array.isArray(newsItem.location.coordinates)).toBeTruthy();
+    expect(newsItem.location.coordinates.length).toBe(2);
+    expect(typeof newsItem.location.coordinates[0]).toBe('number');
+    expect(typeof newsItem.location.coordinates[1]).toBe('number');
+    expect(newsItem.location.coordinates[0]).toBeGreaterThanOrEqual(-90);
+    expect(newsItem.location.coordinates[0]).toBeLessThanOrEqual(90);
+    expect(newsItem.location.coordinates[1]).toBeGreaterThanOrEqual(-180);
+    expect(newsItem.location.coordinates[1]).toBeLessThanOrEqual(180);
+  });
+}, 200000);
+
+test('GET /news - should return at least one news item', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+  expect(res.body.length).toBeGreaterThan(0);
+}, 200000);
+
+
+
+test('GET /news - each news item should have a valid location', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.location).toBe('object');
+    expect(newsItem.location).toHaveProperty('type');
+    expect(newsItem.location).toHaveProperty('coordinates');
+    expect(newsItem.location.type).toBe('Point');
+    expect(Array.isArray(newsItem.location.coordinates)).toBeTruthy();
+    expect(newsItem.location.coordinates.length).toBe(2);
+    expect(typeof newsItem.location.coordinates[0]).toBe('number');
+    expect(typeof newsItem.location.coordinates[1]).toBe('number');
+  });
+}, 200000);
+
+test('GET /news - each news item should have a non-empty content', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.content).toBe('string');
+    expect(newsItem.content.length).toBeGreaterThan(0);
+  });
+}, 200000);
+
+test('GET /news - each news item should have a valid title length', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.title).toBe('string');
+    expect(newsItem.title.length).toBeGreaterThan(0);
+    expect(newsItem.title.length).toBeLessThanOrEqual(220);
+  });
+}, 200000);
+
+test('GET /news - each news item should have a valid location type', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.location).toBe('object');
+    expect(newsItem.location.type).toBe('Point');
+  });
+}, 200000);
+
+test('GET /news - each news item should have a valid location coordinates range', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(Array.isArray(newsItem.location.coordinates)).toBeTruthy();
+    expect(newsItem.location.coordinates.length).toBe(2);
+    expect(typeof newsItem.location.coordinates[0]).toBe('number');
+    expect(typeof newsItem.location.coordinates[1]).toBe('number');
+    expect(newsItem.location.coordinates[0]).toBeGreaterThanOrEqual(-90);
+    expect(newsItem.location.coordinates[0]).toBeLessThanOrEqual(90);
+    expect(newsItem.location.coordinates[1]).toBeGreaterThanOrEqual(-180);
+    expect(newsItem.location.coordinates[1]).toBeLessThanOrEqual(180);
+  });
+}, 200000);
+
+
+
+test('GET /news - each news item should have a valid ID format', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    const idRegex = /^[a-fA-F0-9]{24}$/;
+    expect(idRegex.test(newsItem._id)).toBeTruthy();
+  });
+}, 200000);
+
+test('GET /news - each news item should have a valid location type and coordinates format', async () => {
+  const res = await request(app).get('/news');
+  expect(res.status).toEqual(200);
+  expect(Array.isArray(res.body)).toBeTruthy();
+
+  res.body.forEach((newsItem: any) => {
+    expect(typeof newsItem.location).toBe('object');
+    expect(newsItem.location).toHaveProperty('type');
+    expect(newsItem.location).toHaveProperty('coordinates');
+    expect(newsItem.location.type).toBe('Point');
+    expect(Array.isArray(newsItem.location.coordinates)).toBeTruthy();
+    expect(newsItem.location.coordinates.length).toBe(2);
+    expect(typeof newsItem.location.coordinates[0]).toBe('number');
+    expect(typeof newsItem.location.coordinates[1]).toBe('number');
+    expect(newsItem.location.coordinates[0]).toBeGreaterThanOrEqual(-90);
+    expect(newsItem.location.coordinates[0]).toBeLessThanOrEqual(90);
+    expect(newsItem.location.coordinates[1]).toBeGreaterThanOrEqual(-180);
+    expect(newsItem.location.coordinates[1]).toBeLessThanOrEqual(180);
+  });
+}, 200000);
+
 import puppeteer from 'puppeteer';
 
 test('Maribor info 5 novic', async () => {
@@ -115,6 +393,181 @@ test('Maribor info 5 novic', async () => {
 
   // Navigate to the scraping route
   await page.goto(`http://localhost:${process.env.PORT}/news/scrape/mbinfo/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('Dnevnik 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/dnevnik/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('Delo 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/delo/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('Gov-vlada 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/gov-vlada/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('svet24 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/svet24/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('n1info 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/n1info/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('ekipa24 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/ekipa24/1`);
+
+  // Wait for the page to load and get the JSON response
+  const jsonResponse = await page.evaluate(() => {
+    const preElement = document.querySelector('pre');
+    return JSON.parse(preElement!.textContent!);
+  });
+
+  await browser.close();
+
+  // Extract the news items from the JSON response
+  const newsItems = jsonResponse.map((item: any) => ({
+    title: item.title,
+    url: item.url,
+  }));
+
+  // Assertions
+  expect(newsItems).toHaveLength(1);
+}, 200000);
+
+test('rtvslo 1 novic', async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  // Navigate to the scraping route
+  await page.goto(`http://localhost:${process.env.PORT}/news/scrape/rtvslo/1`);
 
   // Wait for the page to load and get the JSON response
   const jsonResponse = await page.evaluate(() => {
@@ -182,12 +635,13 @@ test('Sta 1 novic', async () => {
 
   // Assertions
   expect(newsItems).toHaveLength(1);
-  await mongoose.disconnect();
   closeServer(); // Close the HTTP server
+  await mongoose.disconnect();
 }, 200000);
 
 afterAll(async () => {
   try {
+    closeServer(); // Close the HTTP server
     await mongoose.disconnect(); // Close the database connection
   } catch (error) {
     console.error(error);
