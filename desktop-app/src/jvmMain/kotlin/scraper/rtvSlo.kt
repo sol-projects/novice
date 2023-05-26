@@ -1,4 +1,5 @@
 import org.example.model.INews
+import org.example.model.Location
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -48,7 +49,11 @@ fun getRtvSlo(numArticlesToOpen: Int): List<INews> {
         val categories = categoriesString.split(",")
 
         // Create an INews object and add it to the newsList
-        val news = INews(title, url, date, authors, content, categories, location)
+        val news = INews(title, url, date, authors, content, categories, Location(
+            type = "Point",
+            coordinates = Pair(0.0,0.0),
+        )
+        )
         newsList.add(news)
 
         println("Title: $title")

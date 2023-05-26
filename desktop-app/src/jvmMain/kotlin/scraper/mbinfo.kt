@@ -1,4 +1,5 @@
 import org.example.model.INews
+import org.example.model.Location
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -75,7 +76,10 @@ fun _mbinfo(n: Int): List<INews> {
                 authors = authors,
                 content = content,
                 categories = categories,
-                location = "Maribor"
+                location = Location(
+                    type = "Point",
+                    coordinates = Pair(0.0,0.0),
+                )
             )
         )
 

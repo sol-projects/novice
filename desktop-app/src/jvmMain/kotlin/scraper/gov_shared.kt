@@ -1,10 +1,12 @@
 import io.netty.util.concurrent.Promise
 import org.example.model.INews
+import org.example.model.Location
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
+import java.awt.Point
 import java.util.Date
 
 fun gov_shared(n: Int, website: String): List<INews> {
@@ -77,10 +79,16 @@ fun getNewspage(driver: WebDriver, url: String): INews {
             listOf(author),
             content,
             emptyList(),
-            ""
+            Location(
+                type = "Point",
+                coordinates = Pair(0.0,0.0),
+            )
         )
     } catch (error: Exception) {
         println("Cannot fetch page: $url")
-        return INews("", url, Date(), emptyList(), "", emptyList(), "")
+        return INews("", url, Date(), emptyList(), "", emptyList(), Location(
+            type = "Point",
+            coordinates = Pair(0.0,0.0),
+        ))
     }
 }

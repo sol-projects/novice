@@ -25,6 +25,12 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation("org.seleniumhq.selenium:selenium-java:4.+")
                 implementation("io.github.bonigarcia:webdrivermanager:5.+")
+                implementation ("com.fasterxml.jackson.core:jackson-databind:2.13.0")
+                implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+                implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+                implementation ("com.google.code.gson:gson:2.8.9")
+
+
             }
         }
         val jvmTest by getting

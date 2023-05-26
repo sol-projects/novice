@@ -1,4 +1,5 @@
 import org.example.model.INews
+import org.example.model.Location
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -32,7 +33,7 @@ fun _ekipa24(n: Int): List<INews> {
 
         val content = browser.findElement(By.cssSelector("p"))
             .getAttribute("innerText").trim()
-
+        val coords: Pair<Double, Double> = Pair(0.0, 0.0)
         val categoryLinks = browser.findElements(By.cssSelector("a[href^=\"/iskanje\"]"))
         val categories = categoryLinks.map { it.getAttribute("innerText").trim() }
         val titleText: String = "test"
@@ -44,7 +45,10 @@ fun _ekipa24(n: Int): List<INews> {
                 authors = authors,
                 content = content,
                 categories = categories,
-                location = "Point" // assuming "Point" as a placeholder for location
+                location = Location(
+                    type = "Point",
+                    coordinates = coords,
+                )
             )
         )
     }
