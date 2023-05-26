@@ -167,21 +167,32 @@ private class Tokenizer(
 
     private fun checkIdentifier(lexeme: String): TokenType {
         return when (lexeme) {
+            "break" -> TokenType.Break
+            "continue" -> TokenType.Continue
             "if" -> TokenType.If
+            "elseif" -> TokenType.ElseIf
             "else" -> TokenType.Else
             "fn" -> TokenType.Function
             "let" -> TokenType.VarDeclaration
             "const" -> TokenType.ConstDeclaration
             "for" -> TokenType.For
+            "in" -> TokenType.In
             "loop" -> TokenType.Loop
             "return" -> TokenType.Return
             "char" -> TokenType.CharType
             "string" -> TokenType.StringType
             "i32" -> TokenType.I32
             "f32" -> TokenType.F32
-            "true" -> TokenType.Bool
-            "false" -> TokenType.Bool
+            "true" -> TokenType.True
+            "false" -> TokenType.False
+            "road" -> TokenType.Road
+            "building" -> TokenType.Building
             "bool" -> TokenType.BoolType
+            "news" -> TokenType.NewsType
+            "bend" -> TokenType.Bend
+            "line" -> TokenType.Line
+            "box" -> TokenType.Box
+            "circle" -> TokenType.Circle
             else -> TokenType.Identifier
         }
     }

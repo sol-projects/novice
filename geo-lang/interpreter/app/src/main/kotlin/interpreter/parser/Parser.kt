@@ -84,16 +84,24 @@ private fun unary(parserInfo: ParserInfo): Boolean {
 }
 
 private fun primary(parserInfo: ParserInfo): Boolean {
-    if (parserInfo.matchToken(TokenType.Int) || parserInfo.matchToken(TokenType.Hex)) {
+    if (parserInfo.matchToken(TokenType.Int) || parserInfo.matchToken(TokenType.Hex) || parserInfo.matchToken(TokenType.Float)) {
         // Do something
     } else if (parserInfo.matchToken(TokenType.Function)){
         return function(parserInfo)
     } else if (parserInfo.matchToken(TokenType.Identifier)) {
         if (parserInfo.matchToken(TokenType.Equals)) {
             return bitwise(parserInfo)
-        } else {
-            // Do something
+        } else if(parserInfo.matchToken(TokenType.LeftParenthesis)) {
+            return functionCall(parserInfo)
         }
+    } else if (parserInfo.matchToken(TokenType.Loop)) {
+        return scope(parserInfo)
+    } else if (parserInfo.matchToken(TokenType.Return)) {
+        return bitwise(parserInfo)
+    } else if (parserInfo.matchToken((TokenType.ConstDeclaration)) || parserInfo.matchToken(TokenType.VarDeclaration)) {
+        return variable(parserInfo)
+    } else if(parserInfo.matchToken(TokenType.If)) {
+        return if_(parserInfo)
     } else if (parserInfo.matchToken(TokenType.LeftParenthesis)) {
         if(!bitwise(parserInfo)) {
             return false
@@ -103,27 +111,7 @@ private fun primary(parserInfo: ParserInfo): Boolean {
             return false
         }
     } else if (parserInfo.matchToken(TokenType.For)) {
-        if (parserInfo.matchToken(TokenType.LeftParenthesis)) {
-            if(!assignment(parserInfo)) {
-                return false
-            }
-            if (!parserInfo.matchToken(TokenType.Range)) {
-                parserPrintError(ParserError.InvalidFor(parserInfo.currentTokenInfo))
-                return false
-            }
-
-            bitwise(parserInfo)
-
-            if (!parserInfo.matchToken(TokenType.RightParenthesis)) {
-                parserPrintError(ParserError.MissingClosingParentheses(parserInfo.currentTokenInfo))
-                return false
-            }
-
-            return scope(parserInfo)
-        } else {
-            parserPrintError(ParserError.ExpectedStartingParentheses(parserInfo.currentTokenInfo))
-            return false
-        }
+        return for_(parserInfo)
     } else if (parserInfo.matchToken(TokenType.Loop)) {
         if (!parserInfo.matchToken(TokenType.LeftBraces)) {
             parserPrintError(ParserError.ExpectedStartingBraces(parserInfo.currentTokenInfo))
@@ -151,6 +139,65 @@ private fun primary(parserInfo: ParserInfo): Boolean {
     } else {
         parserPrintError(ParserError.Generic(parserInfo.currentTokenInfo, parserInfo.lastNTokensLexemes(3)))
         return false
+    }
+
+    return true
+}
+
+private fun variable(parserInfo: ParserInfo): Boolean {
+    if(!parserInfo.matchToken(TokenType.Identifier)) {
+        parserPrintError(ParserError.InvalidAssignment(parserInfo.currentTokenInfo, parserInfo.lastNTokensLexemes(3)))
+        return false
+    }
+
+    if(parserInfo.matchToken(TokenType.Colon)) {
+        if(!type(parserInfo)) {
+            return false
+        }
+
+        if(!parserInfo.matchToken(TokenType.Equals)) {
+            parserPrintError(ParserError.InvalidAssignment(parserInfo.currentTokenInfo, parserInfo.lastNTokensLexemes(3)))
+            return false
+        }
+
+        if(!bitwise(parserInfo)) {
+            return false
+        }
+    } else if(parserInfo.matchToken(TokenType.Equals)) {
+        if(!bitwise(parserInfo)) {
+            return false
+        }
+    } else {
+        parserPrintError(ParserError.InvalidAssignment(parserInfo.currentTokenInfo, parserInfo.lastNTokensLexemes(3)))
+        return false
+    }
+
+    return true
+}
+
+private fun if_(parserInfo: ParserInfo): Boolean {
+    if(!bitwise(parserInfo)) {
+        return false
+    }
+
+    if(!scope(parserInfo)) {
+        return false
+    }
+
+    while(parserInfo.matchToken(TokenType.ElseIf)) {
+        if(!bitwise(parserInfo)) {
+            return false
+        }
+
+        if(!scope(parserInfo)) {
+            return false
+        }
+    }
+
+    if(parserInfo.matchToken(TokenType.Else)) {
+        if(!scope(parserInfo)) {
+            return false
+        }
     }
 
     return true
@@ -201,13 +248,55 @@ private fun type(parserInfo: ParserInfo): Boolean {
         || parserInfo.matchToken(TokenType.F32)
         || parserInfo.matchToken(TokenType.BoolType)
         || parserInfo.matchToken(TokenType.CharType)
-        || parserInfo.matchToken(TokenType.StringType)) {
+        || parserInfo.matchToken(TokenType.StringType)
+        || parserInfo.matchToken((TokenType.NewsType))) {
         return true
     }
 
     parserPrintError(ParserError.NotAType(parserInfo.currentTokenInfo))
     return false
 }
+
+private fun for_(parserInfo: ParserInfo): Boolean {
+    if(!range(parserInfo)) {
+        parserPrintError(ParserError.InvalidFor(parserInfo.currentTokenInfo))
+    }
+
+    return true
+}
+
+private fun range(parserInfo: ParserInfo): Boolean {
+    if(parserInfo.matchToken(TokenType.Identifier)) {
+        if(parserInfo.matchToken(TokenType.In)) {
+            return if(parserInfo.matchToken(TokenType.Identifier)) {
+                scope(parserInfo)
+            } else {
+                false
+            }
+        } else if(parserInfo.matchToken(TokenType.Range)) {
+            if(!(parserInfo.matchToken(TokenType.Identifier) || parserInfo.matchToken(TokenType.Int))) {
+                return false
+            }
+
+            return true
+        }
+    }
+
+    if(!parserInfo.matchToken(TokenType.Int)) {
+        return false
+    }
+
+    if(!parserInfo.matchToken(TokenType.Range)) {
+        return false
+    }
+
+    if(!(parserInfo.matchToken(TokenType.Identifier) || parserInfo.matchToken(TokenType.Int))) {
+        return false
+    }
+
+    return true
+}
+
 private fun function(parserInfo: ParserInfo): Boolean {
     if(!parserInfo.matchToken(TokenType.Identifier)) {
         parserPrintError(ParserError.ExpectedFunctionName(parserInfo.currentTokenInfo))
@@ -229,8 +318,30 @@ private fun function(parserInfo: ParserInfo): Boolean {
                 parserPrintError(ParserError.ExpectedComma(parserInfo.currentTokenInfo))
                 return false
             }
+        } else {
+            break
         }
     }
 
     return scope(parserInfo)
+}
+
+private fun functionCall(parserInfo: ParserInfo): Boolean {
+
+    while(!parserInfo.matchToken(TokenType.RightParenthesis)) {
+        if(!bitwise(parserInfo)) {
+            return false
+        }
+
+        if(!parserInfo.matchToken(TokenType.RightParenthesis)) {
+            if(!parserInfo.matchToken(TokenType.Comma)) {
+                parserPrintError(ParserError.ExpectedComma(parserInfo.currentTokenInfo))
+                return false
+            }
+        } else {
+            break
+        }
+    }
+
+    return true
 }

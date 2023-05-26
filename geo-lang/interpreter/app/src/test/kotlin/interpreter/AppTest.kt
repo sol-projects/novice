@@ -109,15 +109,132 @@ class AppTest {
             
             }
         """.trimIndent())?.let { assert(parse(it)) }
+
         tokenize("""
             fn main() {
             
             
         """.trimIndent())?.let { assert(!parse(it)) }
+
         tokenize("""
             fn func(str: string) {
             
             }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            let i = 10;
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            let i: i32 = 10;
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            let i: ii32 = 10;
         """.trimIndent())?.let { assert(!parse(it)) }
+
+        tokenize("""
+            let i: string = 10;
+            let i: f32 = (1 + i);
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            if(1 + 2) {
+                let i = 1 + 2;            
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            if 1 + 2 {
+                let i = 1 + 2;            
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            if 1 * 3 + (2 - 1) {
+
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            for a in arr {
+                a = 10
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            for a .. arr {
+                a = 1032
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            for a .. 10 {
+                a = 10
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            for 1 in 2 {
+                a = 10
+            }
+        """.trimIndent())?.let { assert(!parse(it)) }
+
+        tokenize("""
+            if 1 * 3 + (2 - 1)
+        """.trimIndent())?.let { assert(!parse(it)) }
+
+        tokenize("""
+            if 1 * 3 + (2 - 1) {
+                i = i + 1
+            } else {
+                let i = 1 - 12
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            if 1 * 3 + (2 - 1) {
+                i = i + 1
+            } elseif 1 - 2 {
+                let i = 1 - 12
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            if 1 * 3 + (2 - 1) {
+                i = i + 1
+            } elseif 1 - 2 {
+                let i = 1 - 12
+            } elseif 1 - 2 {
+                let i = 1 - 12
+            } else {
+                let a = 1 > 2
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            loop {
+
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
+
+        tokenize("""
+            loop
+        """.trimIndent())?.let { assert(!parse(it)) }
+
+        tokenize("""
+            fn calculate(n1: i32, n2: f32) {
+                for el in arr {
+                    if el < 5 {
+                        return 0
+                    }
+                }
+            }
+            
+            fn main() {
+                calculate(1, 2.0)
+            }
+        """.trimIndent())?.let { assert(parse(it)) }
     }
 }

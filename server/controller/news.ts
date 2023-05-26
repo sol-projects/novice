@@ -48,8 +48,13 @@ export async function remove(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  //get URL and find which website it is then call the correct function to fetch new news info
+  //implementiraj
   res.send('/news/update');
+}
+
+export async function post(req: Request, res: Response) {
+  //implementiraj
+  res.send('/news/post');
 }
 
 export async function all(req: Request, res: Response) {
