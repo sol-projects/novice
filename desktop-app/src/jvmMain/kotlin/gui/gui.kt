@@ -2,11 +2,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
@@ -16,21 +16,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import java.sql.SQLException
+import java.text.SimpleDateFormat
 import java.util.*
+import org.example.model.INews
+
 
 enum class Section {
     Invoices,
     About
 }
-
 @Composable
 fun Header(onSelectionChanged: (Section) -> Unit) {
-    var selected by remember { mutableStateOf(Section.Invoices) }
-
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
+            .height(26.dp)
             .background(MaterialTheme.colors.primary)
     ) {
         Row(
@@ -42,10 +42,7 @@ fun Header(onSelectionChanged: (Section) -> Unit) {
             Row(
                 modifier = Modifier
                     .clickable {
-                        if (selected != Section.Invoices) {
-                            selected = Section.Invoices
-                            onSelectionChanged(selected)
-                        }
+                        onSelectionChanged(Section.Invoices)
                     }
                     .weight(0.5f),
                 horizontalArrangement = Arrangement.Center
@@ -68,10 +65,7 @@ fun Header(onSelectionChanged: (Section) -> Unit) {
             Row(
                 modifier = Modifier
                     .clickable {
-                        if (selected != Section.About) {
-                            selected = Section.About
-                            onSelectionChanged(selected)
-                        }
+                        onSelectionChanged(Section.About)
                     }
                     .weight(0.5f),
                 horizontalArrangement = Arrangement.Center
@@ -96,7 +90,6 @@ fun Header(onSelectionChanged: (Section) -> Unit) {
     }
 }
 
-
 @Composable
 fun Footer(selected: Section) {
     BottomAppBar(
@@ -113,68 +106,101 @@ fun Footer(selected: Section) {
 }
 
 @Composable
-fun InvoiceRow(invoice: Item) {
+fun NewsRow(news: INews, onDeleteClicked: () -> Unit, onEditClicked: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp)
+            .padding(bottom = 8.dp),
+        elevation = 4.dp
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = invoice.name,
+                    text = news.title,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Price: $${invoice.price}",
-                    style = MaterialTheme.typography.body1
-                )
-                Text(
-                    text = "Quantity: ${invoice.quantity}",
-                    style = MaterialTheme.typography.body1
-                )
-                Text(
-                    text = "Barcode: ${invoice.barcode}",
-                    style = MaterialTheme.typography.body1
-                )
+                Row {
+                    IconButton(
+                        onClick = onDeleteClicked
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = Color.Red
+                        )
+                    }
+                    IconButton(
+                        onClick = onEditClicked
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = Color.Blue
+                        )
+                    }
+                }
             }
-            IconButton(
-                onClick = { deleteItemFromDatabase(invoice) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = Color.Red
-                )
-            }
+            Text(
+                text = "URL: ${news.url}",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "Date: ${SimpleDateFormat("yyyy-MM-dd").format(news.date)}",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "Authors: ${news.authors.joinToString(", ")}",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "Content: ${limitContentTo500Characters(news.content)}",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "Categories: ${news.categories.joinToString(", ")}",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "Location: ${news.location}",
+                style = MaterialTheme.typography.body1
+            )
         }
     }
 }
 
+
 @Composable
-fun Main(selected: Section, items: List<Item>) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
+fun limitContentTo500Characters(content: String): String {
+    return if (content.length <= 500) {
+        content
+    } else {
+        content.substring(0, 500) + "..."
+    }
+}
+
+@Composable
+fun Main(selected: Section, news: ArrayList<INews>) {
+    Surface(color = MaterialTheme.colors.background) {
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
+                .fillMaxSize()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = when (selected) {
-                    Section.About -> "\n${selected.name.uppercase(Locale.getDefault())} CONTENT\n\n Subject: Principles of programming languages\nAuthor: Ognjen Vučković"
-                    Section.Invoices -> "\n${selected.name.uppercase(Locale.getDefault())} CONTENT\n\n"
+                    Section.About -> "${selected.name.uppercase(Locale.getDefault())} CONTENT\n\n Subject: Principles of programming languages\nAuthor: Ognjen Vučković"
+                    Section.Invoices -> "${selected.name.uppercase(Locale.getDefault())}"
                 },
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 16.dp),
@@ -182,92 +208,39 @@ fun Main(selected: Section, items: List<Item>) {
             )
 
             if (selected == Section.Invoices) {
+                val newsList = remember { mutableStateListOf(*news.toTypedArray()) }
+
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    items(items = items) { item ->
-                        InvoiceRow(invoice = item)
+                    items(newsList) { item ->
+                        NewsRow(news = item,
+                            onDeleteClicked = {
+                                newsList.removeAll { it.url == item.url }
+                            },
+                            onEditClicked = {
+                                // Handle the edit functionality here
+                                // You can open a dialog, navigate to an edit screen, etc.
+                                // Modify the item based on your requirements
+                            }
+                        )
                     }
                 }
             }
         }
     }
 }
-
 @Composable
-fun App() {
-    var selected by remember { mutableStateOf(Section.Invoices) }
-
-    val items = retrieveItemsFromDatabase()
+fun App(onSelectionChanged: (Section) -> Unit, news: ArrayList<INews>) {
+    var selectedSection by remember { mutableStateOf(Section.Invoices) }
 
     MaterialTheme {
         Scaffold(
-            content = { Main(selected, items) },
-            topBar = { Header(onSelectionChanged = { selected = it }) },
-            bottomBar = { Footer(selected) }
+            content = { Main(selectedSection, news) },
+            topBar = { Header { section -> selectedSection = section } },
+            bottomBar = { Footer(selectedSection) }
         )
     }
 }
 
-fun retrieveItemsFromDatabase(): List<Item> {
-    val connection = DatabaseUtil.getConnection()
-    val items = mutableListOf<Item>()
-
-    try {
-        val statement = connection.createStatement()
-        val selectQuery = "SELECT * FROM item"
-
-        try {
-            val resultSet = statement.executeQuery(selectQuery)
-
-            while (resultSet.next()) {
-                val name = resultSet.getString("name")
-                val price = resultSet.getInt("price")
-                val quantity = resultSet.getInt("quantity")
-                val tax = resultSet.getDouble("tax")
-                val barcode = resultSet.getString("barcode")
-
-                val item = Item(name, price, quantity, tax, barcode)
-
-                items.add(item)
-            }
-        } catch (e: SQLException) {
-            println("Error executing SQL query: ${e.message}")
-        } finally {
-            statement.close()
-        }
-    } catch (e: SQLException) {
-        println("Error establishing database connection: ${e.message}")
-    } finally {
-        connection.close()
-    }
-
-    return items
-}
-
-fun deleteItemFromDatabase(item: Item) {
-    val connection = DatabaseUtil.getConnection()
-    println(item.id)
-    try {
-        val statement = connection.createStatement()
-        val deleteQuery = "DELETE FROM item WHERE id = '${item.id}'"
-
-        try {
-            val rowsAffected = statement.executeUpdate(deleteQuery)
-            if (rowsAffected > 0) {
-                println("Item deleted successfully")
-            } else {
-                println("Item not found in the database")
-            }
-        } catch (e: SQLException) {
-            println("Error executing SQL query: ${e.message}")
-        } finally {
-            statement.close()
-        }
-    } catch (e: SQLException) {
-        println("Error establishing database connection: ${e.message}")
-    } finally {
-        connection.close()
-    }
-}

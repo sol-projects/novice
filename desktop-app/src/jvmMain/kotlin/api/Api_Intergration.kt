@@ -28,7 +28,7 @@ fun sendGet() {
 
 
 // Print the final INews object
-    println(INews)
+    //println(INews)
     }
 
 fun readJsonFromUrl(url: String): String {

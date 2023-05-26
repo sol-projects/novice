@@ -9,15 +9,19 @@ import androidx.compose.ui.window.application
 import getRtvSlo
 import getZurnal24Slo
 import getServisSta
+import org.example.model.INews
 import org.example.scraper.gov
 import org.example.scraper.gov_vlada
 
 fun main() = application {
+    val news: ArrayList<INews> = ArrayList()
+    news.addAll(gov(2))
+
     Window(onCloseRequest = ::exitApplication) {
-        App()
+        App({ /* No-op */ }, news)
     }
 
-    _24ur(2)
+    //_24ur(2)
     //println(gov(2))
     //println(gov_vlada(2))
     //_mbinfo(2)
