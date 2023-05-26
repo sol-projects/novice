@@ -1,6 +1,5 @@
 import org.example.model.INews
 import org.example.model.Location
-import org.jetbrains.skia.FontMgr.Companion.default
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement

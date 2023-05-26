@@ -1,41 +1,56 @@
-import com.google.gson.Gson
 import org.example.model.INews
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import org.example.model.Location
+import org.json.JSONArray
 import java.net.URL
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
-fun sendGet() {
-    val url = "http://localhost:8000/news" // Replace with your actual URL
-    val client = OkHttpClient()
+fun sendGet(): ArrayList<INews> {
+    val url = URL("http://108.143.49.11:8000/news")
+    val rawData = url.readText()
+    val jsonArray = JSONArray(rawData)
 
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+    val newsList = mutableListOf<INews>()
 
-// Create a request object
-    val request = Request.Builder()
-        .url(url)
-        .build()
+    for (i in 0 until jsonArray.length()) {
+        val jsonObject = jsonArray.getJSONObject(i)
 
-// Execute the request
-    val response = client.newCall(request).execute()
+        val locationObj = jsonObject.getJSONObject("location")
+        val location = Location(
+            locationObj.getString("type"),
+            Pair(locationObj.getJSONArray("coordinates").getDouble(0),
+                locationObj.getJSONArray("coordinates").getDouble(1))
+        )
 
-// Get the JSON response body as a string
-    val jsonString = response.body?.string()
+        val authorsArray = jsonObject.getJSONArray("authors")
+        val authorsList = mutableListOf<String>()
+        for (j in 0 until authorsArray.length()) {
+            authorsList.add(authorsArray.getString(j))
+        }
 
-// Use Gson to parse the JSON string into a temporary object
-    val gson = Gson()
-    val temporaryINews = gson.fromJson(jsonString, Array<INews>::class.java)[0]
+        val categoriesArray = jsonObject.getJSONArray("categories")
+        val categoriesList = mutableListOf<String>()
+        for (j in 0 until categoriesArray.length()) {
+            categoriesList.add(categoriesArray.getString(j))
+        }
 
+        val news = INews(
+            title = jsonObject.getString("title"),
+            url = jsonObject.getString("url"),
+            date = dateFormat.parse(jsonObject.getString("date")),
+            authors = authorsList,
+            content = jsonObject.getString("content"),
+            categories = categoriesList,
+            location = location,
+            _id = jsonObject.getString("_id"),
+            __v = jsonObject.getInt("__v")
+        )
 
-// Print the final INews object
-    //println(INews)
+        newsList.add(news)
     }
 
-fun readJsonFromUrl(url: String): String {
-    val connection = URL(url).openConnection()
-    connection.connect()
-    val reader = BufferedReader(InputStreamReader(connection.getInputStream()))
-    val jsonString = reader.use { it.readText() }
-    reader.close()
-    return jsonString
+    return newsList as ArrayList<INews>
 }

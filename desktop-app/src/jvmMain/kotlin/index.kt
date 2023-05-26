@@ -12,15 +12,19 @@ import getServisSta
 import org.example.model.INews
 import org.example.scraper.gov
 import org.example.scraper.gov_vlada
+import sendGet
 
 fun main() = application {
-    val news: ArrayList<INews> = ArrayList()
+    val news: ArrayList<INews> = sendGet()
     news.addAll(gov(2))
 
     Window(onCloseRequest = ::exitApplication) {
         App({ /* No-op */ }, news)
     }
-
+    val n = sendGet()
+    for (i in n) {
+        println(i.title)
+    }
     //_24ur(2)
     //println(gov(2))
     //println(gov_vlada(2))

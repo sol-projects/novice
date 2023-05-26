@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
+    kotlin("plugin.serialization")
 }
 
 group = "com.example"
@@ -29,8 +30,9 @@ kotlin {
                 implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
                 implementation ("com.squareup.okhttp3:okhttp:4.9.1")
                 implementation ("com.google.code.gson:gson:2.8.9")
-
-
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+                implementation("org.json:json:20210307")
             }
         }
         val jvmTest by getting

@@ -1,0 +1,5 @@
+
+*.bin
+desktop-app/.gradle/7.5.1/checksums/sha1-checksums.bin
+*.bin
+*.lock
