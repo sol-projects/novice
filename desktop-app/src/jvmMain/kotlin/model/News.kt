@@ -9,7 +9,9 @@ data class INews(
     val authors: List<String>,
     val content: String,
     val categories: List<String>,
-    val location: String,
+    val location: Location,
+    val _id: String = "0",
+    val __v: Int = 0
 ) {
     override fun toString(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -24,7 +26,11 @@ data class INews(
             Authors: $formattedAuthors
             Content: $content
             Categories: $formattedCategories
-            Location: $location
         """.trimIndent().plus("\n")
     }
 }
+
+data class Location(
+    val type: String,
+    val coordinates: Pair<Double, Double>
+)
