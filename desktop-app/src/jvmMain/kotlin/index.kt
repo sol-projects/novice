@@ -17,10 +17,10 @@ fun main() = application {
         App()
     }
 
-    //_24ur(2)
+    _24ur(2)
     //println(gov(2))
     //println(gov_vlada(2))
     //_mbinfo(2)
     //_dnevnik(2)
-    _ekipa24(2)
+    //_ekipa24(2)
 }
