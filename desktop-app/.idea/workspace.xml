@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b8c3268-2b86-4126-bfcd-a1619b6050fb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/api/Api_Intergration.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/api/Api_Intergration.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/gui/gui.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/gui/gui.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/index.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/index.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/model/News.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/model/News.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/24ur.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/24ur.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/gov_shared.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/gov_shared.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

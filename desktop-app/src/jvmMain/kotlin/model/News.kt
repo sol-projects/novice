@@ -3,11 +3,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class INews(
-    val title: String,
-    val url: String,
-    val date: Date,
+    var title: String,
+    var url: String,
+    var date: Date,
     val authors: List<String>,
-    val content: String,
+    var content: String,
     val categories: List<String>,
     val location: Location,
     val _id: String = "0",

@@ -80,8 +80,8 @@ fun _24ur(n: Int): List<INews> {
                 content = content,
                 categories = categories,
                 location = Location(
-                        type = "Point",
-                        coordinates = coords,
+                    type = "Point",
+                    coordinates = coords,
                 ),
             )
         )

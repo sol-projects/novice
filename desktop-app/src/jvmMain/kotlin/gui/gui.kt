@@ -209,24 +209,88 @@ fun Main(selected: Section, news: ArrayList<INews>) {
 
             if (selected == Section.Invoices) {
                 val newsList = remember { mutableStateListOf(*news.toTypedArray()) }
-
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
                     items(newsList) { item ->
-                        NewsRow(news = item,
-                            onDeleteClicked = {
-                                newsList.removeAll { it.url == item.url }
-                            },
-                            onEditClicked = {
-                                // Handle the edit functionality here
-                                // You can open a dialog, navigate to an edit screen, etc.
-                                // Modify the item based on your requirements
+                        var isEditing by remember { mutableStateOf(false) }
+                        var editedNews by remember { mutableStateOf(item) }
+
+                        if (isEditing) {
+                            // Show edit fields
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                TextField(
+                                    value = editedNews.title,
+                                    onValueChange = { editedNews = editedNews.copy(title = it) },
+                                    label = { Text("Title") }
+                                )
+                                TextField(
+                                    value = editedNews.url,
+                                    onValueChange = { editedNews = editedNews.copy(url = it) },
+                                    label = { Text("URL") }
+                                )
+                                TextField(
+                                    value = SimpleDateFormat("yyyy-MM-dd").format(editedNews.date),
+                                    onValueChange = { newValue ->
+                                        // Parse the date string and update the editedNews.date accordingly
+                                        val parsedDate = SimpleDateFormat("yyyy-MM-dd").parse(newValue)
+                                        parsedDate?.let { editedNews = editedNews.copy(date = it) }
+                                    },
+                                    label = { Text("Date") }
+                                )
+                                TextField(
+                                    value = editedNews.content,
+                                    onValueChange = { editedNews = editedNews.copy(content = it) },
+                                    label = { Text("Content") }
+                                )
+
+                                // Save and cancel buttons
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            // Perform the necessary validations and updates
+                                            item.title = editedNews.title
+                                            item.url = editedNews.url
+                                            item.date = editedNews.date
+                                            item.content = editedNews.content
+
+                                            // Exit edit mode
+                                            isEditing = false
+                                        },
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    ) {
+                                        Text("Save")
+                                    }
+                                    Button(
+                                        onClick = { isEditing = false }
+                                    ) {
+                                        Text("Cancel")
+                                    }
+                                }
                             }
-                        )
+                        } else {
+                            // Show news item
+                            NewsRow(
+                                news = item,
+                                onDeleteClicked = {
+                                    newsList.removeAll { it.url == item.url }
+                                },
+                                onEditClicked = {
+                                    // Enter edit mode
+                                    isEditing = true
+                                }
+                            )
+                        }
                     }
                 }
+
+
             }
         }
     }
