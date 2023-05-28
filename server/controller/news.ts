@@ -78,7 +78,7 @@ export async function update(req: Request, res: Response) {
 export async function all(req: Request, res: Response) {
   run_query(res, {});
 }
-/*
+
 export async function store(req: Request, res: Response) {
   let news: INews[] = [];
   for await (let [key, value] of websites) {
@@ -110,8 +110,8 @@ export async function store(req: Request, res: Response) {
     console.error(error);
     res.status(500).send('Failed to save news to MongoDB');
   }
-} */
-export async function store(req: Request, res: Response) {
+} 
+export async function add(req: Request, res: Response) {
   let news: INews[] = [];
   
   let payload = req.body; // assuming req.body is a single news item

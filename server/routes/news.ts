@@ -24,6 +24,7 @@ router.put('/:id', Controller.update);
 
 
 router.delete('/:id', Controller.remove);
+router.post('/add', Controller.add);
 router.post('/', Controller.store);
 router.post('/login', JWT.login);
 
