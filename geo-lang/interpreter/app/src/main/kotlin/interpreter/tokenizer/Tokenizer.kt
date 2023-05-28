@@ -48,7 +48,7 @@ private class Tokenizer(
             ';' -> TokenInfo(TokenType.Semicolon, ";", position.copy())
             ':' -> TokenInfo(TokenType.Colon, ":", position.copy())
             '#' -> hex()
-            '.' -> range()
+            '.' -> rangeOrDot()
             '\'' -> char()
             '=' -> equals()
             '"' -> string()
@@ -131,12 +131,11 @@ private class Tokenizer(
         }
     }
 
-    private fun range(): TokenInfo? {
+    private fun rangeOrDot(): TokenInfo? {
         return if(current < input.length - 1) {
             if(input[++current] != '.') {
                 --current
-                println("Tokenizer error: expected another '.' to form a range on line: ${position.row}")
-                return null
+                TokenInfo(TokenType.Dot, ".", position.copy())
             } else {
                 TokenInfo(TokenType.Range, "..", position.copy())
             }
@@ -170,7 +169,7 @@ private class Tokenizer(
             "break" -> TokenType.Break
             "continue" -> TokenType.Continue
             "if" -> TokenType.If
-            "elseif" -> TokenType.ElseIf
+            "elif" -> TokenType.ElseIf
             "else" -> TokenType.Else
             "fn" -> TokenType.Function
             "let" -> TokenType.VarDeclaration
@@ -187,12 +186,18 @@ private class Tokenizer(
             "false" -> TokenType.False
             "road" -> TokenType.Road
             "building" -> TokenType.Building
+            "point" -> TokenType.Point
+            "group" -> TokenType.Group
             "bool" -> TokenType.BoolType
             "news" -> TokenType.NewsType
             "bend" -> TokenType.Bend
             "line" -> TokenType.Line
             "box" -> TokenType.Box
             "circle" -> TokenType.Circle
+            "println" -> TokenType.Println
+            "push" -> TokenType.Push
+            "remove" -> TokenType.Remove
+            "pop" -> TokenType.Pop
             else -> TokenType.Identifier
         }
     }

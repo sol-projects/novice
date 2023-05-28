@@ -57,7 +57,13 @@ enum class TokenType {
     Circle,
     Road,
     Building,
+    Point,
+    Println,
     NoOp,
+    Push,
+    Remove,
+    Pop,
     Any,
+    Group,
     EOF
 }

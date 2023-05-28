@@ -1,1 +1,6 @@
-1 + 2
+const x = 1
+
+group {
+    building "bld" [1, 2] [2, 3]
+    point "pt" [x, 2]
+}

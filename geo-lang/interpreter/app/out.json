@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [1.0, 2.0],
+            [2.0, 2.0],
+            [2.0, 3.0],
+            [1.0, 3.0],
+            [1.0, 2.0]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "bld"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1.0, 2.0]
+      },
+      "properties": {
+        "name": "pt"
+      }
+    }
+  ]
+}

@@ -5,7 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b8c3268-2b86-4126-bfcd-a1619b6050fb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/Evaluator.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/EvaluatorError.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/EvaluatorInfo.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/Variable.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/parser/Parser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/parser/Parser.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/TokenType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/TokenType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/Tokenizer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/Tokenizer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/test/kotlin/interpreter/AppTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/test/kotlin/interpreter/AppTest.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
