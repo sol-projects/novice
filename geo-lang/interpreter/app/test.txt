@@ -1,5 +1,11 @@
 const x = 1
 
+fn func(p1: i32, p2: string): i32 {
+    println("${p1} string: ${p2}")
+}
+
+func(1, "str")
+
 group {
     building "bld" [1, 2] [2, 3]
     point "pt" [x, 2]

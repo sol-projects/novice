@@ -1,13 +1,15 @@
 package interpreter.evaluator
 
+import com.google.gson.GsonBuilder
 import interpreter.tokenizer.Position
 import interpreter.tokenizer.TokenInfo
 import interpreter.tokenizer.TokenType
-import com.google.gson.GsonBuilder
+
 sealed class Value {
     data class StringType(val value: String) : Value()
     data class NumberType(val value: Number) : Value()
     data class ArrayType(val value: ArrayList<*>) : Value()
+    data class FunctionType(val value: Function) : Value()
 }
 
 fun error(): Value {
@@ -168,13 +170,14 @@ private fun primary(evaluatorInfo: EvaluatorInfo): Value {
         evaluatorInfo.matchToken(TokenType.False) -> Value.NumberType(0)
         evaluatorInfo.matchToken(TokenType.Int) -> Value.NumberType(evaluatorInfo.currentTokenInfo.lexeme.toInt())
         evaluatorInfo.matchToken(TokenType.Float) -> Value.NumberType(evaluatorInfo.currentTokenInfo.lexeme.toDouble())
-        evaluatorInfo.matchToken(TokenType.Identifier) -> evaluateIdentifier(evaluatorInfo).value
+        evaluatorInfo.matchToken(TokenType.Identifier) -> evaluateIdentifier(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.String) -> Value.StringType(evaluatorInfo.currentTokenInfo.lexeme)
         evaluatorInfo.matchToken(TokenType.LeftBracket) -> evaluateArray(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.VarDeclaration) -> createVar(evaluatorInfo, false)
         evaluatorInfo.matchToken(TokenType.ConstDeclaration) -> createVar(evaluatorInfo, true)
         evaluatorInfo.matchToken(TokenType.Println) -> evaluatePrintln(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.If) -> evaluateIf(evaluatorInfo)
+        evaluatorInfo.matchToken(TokenType.Function) -> storeFunction(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.For) -> evaluateFor(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.ElseIf) -> evaluateIf(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.Group) -> evaluateGroup(evaluatorInfo)
@@ -185,6 +188,75 @@ private fun primary(evaluatorInfo: EvaluatorInfo): Value {
         }
         else -> Value.NumberType(0.0)
     }
+}
+
+fun storeFunction(evaluatorInfo: EvaluatorInfo): Value {
+    evaluatorInfo.matchToken(TokenType.Identifier)
+    val name = evaluatorInfo.currentTokenInfo.lexeme
+    evaluatorInfo.matchToken(TokenType.LeftParenthesis)
+    val parameters = LinkedHashMap<String, Variable>()
+    while(!evaluatorInfo.matchToken(TokenType.RightParenthesis)) {
+        evaluatorInfo.matchToken(TokenType.Identifier)
+        val parameterName = evaluatorInfo.currentTokenInfo.lexeme
+        evaluatorInfo.matchToken(TokenType.Colon)
+        type(evaluatorInfo)
+        val parameterType = evaluatorInfo.currentTokenInfo.type
+        parameters[parameterName] = Variable(true, parameterType, when(parameterType){
+            TokenType.I32 -> Value.NumberType(0)
+            TokenType.F32 -> Value.NumberType(0.0)
+            TokenType.StringType -> Value.StringType("")
+            TokenType.Function -> Value.FunctionType(Function("", LinkedHashMap(), TokenType.NoOp, 0))
+            TokenType.ArrayType -> Value.ArrayType(ArrayList<Any?>())
+            else -> {
+                evaluatorPrintError(EvaluatorError.AssignmentTypeError(evaluatorInfo.currentTokenInfo, evaluatorInfo.lastNTokensLexemes(3)))
+                Value.NumberType(0)
+            }
+        })
+        evaluatorInfo.matchToken(TokenType.Comma)
+    }
+
+    evaluatorInfo.matchToken(TokenType.Colon)
+    type(evaluatorInfo)
+    val returnType = evaluatorInfo.currentTokenInfo.type
+    evaluatorInfo.matchToken(TokenType.LeftBraces)
+    val start = evaluatorInfo.i
+    evaluatorInfo.skipCurrentScope()
+    evaluatorInfo.matchToken(TokenType.RightBraces)
+
+    evaluatorInfo.variables[name] =
+        Variable(true, TokenType.FunctionType, Value.FunctionType(Function(name, parameters, returnType, start)))
+    return Value.FunctionType(Function(name, parameters, returnType, start))
+}
+fun runFunction(evaluatorInfo: EvaluatorInfo, name: String): Value {
+    val fn = evaluatorInfo.variables[name]
+    if (fn != null) {
+        val function = fn.value as? Value.FunctionType
+        if (function != null) {
+            for ((key, value) in function.value.parameters) {
+                evaluatorInfo.variables[key] = value
+                evaluatorInfo.variables[key]?.value = bitwise(evaluatorInfo)
+                evaluatorInfo.matchToken(TokenType.Comma)
+                if(evaluatorInfo.matchToken(TokenType.RightParenthesis)) {
+                    break;
+                }
+            }
+
+            val i = evaluatorInfo.i
+            evaluatorInfo.i = function.value.start
+            val res = scope(evaluatorInfo)
+            for ((key, _) in function.value.parameters) {
+                evaluatorInfo.variables.remove(key)
+            }
+            evaluatorInfo.i = i
+            return res
+        } else {
+
+        }
+    } else {
+        evaluatorPrintError(EvaluatorError.FunctionNotFound(evaluatorInfo.currentTokenInfo, evaluatorInfo.lastNTokensLexemes(3)))
+    }
+
+    return Value.NumberType(0)
 }
 
 fun toNumericArray(value: Value): List<Number> {
@@ -240,6 +312,7 @@ fun evaluateArray(evaluatorInfo: EvaluatorInfo): Value {
                 }
             }
             is Value.ArrayType -> getArrayType<ArrayList<*>>()
+            is Value.FunctionType -> getArrayType<Function>()
         })
 
         (list.value as ArrayList<Any?>).add(first)
@@ -273,6 +346,7 @@ private fun evaluateIf(evaluatorInfo: EvaluatorInfo): Value {
                 true
             } else { cond.value is Int && cond.value != 0 }
         is Value.ArrayType -> cond.value.isNotEmpty()
+        else -> false
     }
 
     if(conditional) {
@@ -314,7 +388,7 @@ private fun evaluateFor(evaluatorInfo: EvaluatorInfo): Value {
     if(evaluatorInfo.matchToken(TokenType.In)) {
         var array: Value = Value.NumberType(0)
         if(evaluatorInfo.matchToken(TokenType.Identifier)) {
-            array = evaluateIdentifier(evaluatorInfo).value
+            array = evaluateIdentifier(evaluatorInfo)
         } else if(evaluatorInfo.matchToken(TokenType.LeftBracket)) {
             array = evaluateArray(evaluatorInfo)
         }
@@ -333,7 +407,10 @@ private fun evaluateFor(evaluatorInfo: EvaluatorInfo): Value {
                     }
                 }
                 is Value.ArrayType -> {
-                    TokenType.NoOp
+                    TokenType.ArrayType
+                }
+                is Value.FunctionType -> {
+                    TokenType.FunctionType
                 }
             }
 
@@ -391,7 +468,6 @@ private fun evaluatePrintln(evaluatorInfo: EvaluatorInfo): Value {
             val arg = bitwise(evaluatorInfo)
             args.add(arg.toString())
             formatString.append("%s")
-            println(evaluatorInfo.currentTokenInfo.type)
         }
     }
 
@@ -402,7 +478,8 @@ private fun evaluatePrintln(evaluatorInfo: EvaluatorInfo): Value {
     return Value.NumberType(0.0)
 }
 
-private fun evaluateIdentifier(evaluatorInfo: EvaluatorInfo): Variable {
+private fun evaluateIdentifier(evaluatorInfo: EvaluatorInfo): Value {
+    var name = evaluatorInfo.currentTokenInfo.lexeme
     var variable = evaluatorInfo.variables[evaluatorInfo.currentTokenInfo.lexeme]
 
     if (variable != null) {
@@ -460,10 +537,15 @@ private fun evaluateIdentifier(evaluatorInfo: EvaluatorInfo): Variable {
                 evaluatorPrintError(EvaluatorError.AssignmentTypeError(evaluatorInfo.currentTokenInfo, evaluatorInfo.lastNTokensLexemes(3) + " Types are: $eval::class and $variable.value::class"))
             }
         }
-        return variable
+
+        if(evaluatorInfo.matchToken(TokenType.LeftParenthesis)) {
+            return runFunction(evaluatorInfo, name)
+        }
+
+        return variable.value
     } else {
         evaluatorPrintError(EvaluatorError.UndefinedVariable(evaluatorInfo.currentTokenInfo))
-        return Variable(true, TokenType.NoOp, error())
+        return error()
     }
 }
 
@@ -487,6 +569,7 @@ private fun createVar(evaluatorInfo: EvaluatorInfo, isConst: Boolean): Value {
                     TokenType.F32
                 } else { TokenType.I32 }
             is Value.ArrayType -> TokenType.ArrayType
+            is Value.FunctionType -> TokenType.FunctionType
         }
 
         evaluatorInfo.variables[name] = Variable(isConst, type_, value)

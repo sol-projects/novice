@@ -8,6 +8,7 @@ enum class TokenType {
     BoolType,
     ArrayType,
     NewsType,
+    FunctionType,
     True,
     False,
     Int,

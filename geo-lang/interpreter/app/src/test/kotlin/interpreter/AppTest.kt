@@ -437,5 +437,53 @@ class AppTest {
             assert(parse(it))
             testEvaluator(it, "")
         }
+
+        tokenize("""
+            fn func(str: string, i: i32) {
+                println("${'$'}{str} ${'$'}{i}")
+            }
+            
+            func("string", 1)
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "string 1")
+        }
+
+        tokenize("""
+            fn func(n: i32, n2: i32): i32 {
+                n + n2
+            }
+            
+            let sum = func(1, 3)
+            println("${'$'}{sum}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "4")
+        }
+
+        tokenize("""
+            let sum = fn func(n: i32, n2: i32) {
+                n + n2
+            }
+            
+            let res = sum(1, 2)
+            println("${'$'}{res}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "3")
+        }
+
+        tokenize("""
+            fn func(n: i32, n2: i32) {
+                n + n2
+            }
+            
+            let sum = func
+            let res = sum(1, 2)
+            println("${'$'}{res}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "3")
+        }
     }
 }

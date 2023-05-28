@@ -57,15 +57,6 @@ private fun comparisonOperators(parserInfo: ParserInfo): Boolean {
     return res
 }
 
-private fun assignment(parserInfo: ParserInfo): Boolean {
-    return if (parserInfo.matchToken(TokenType.Identifier) && parserInfo.matchToken(TokenType.Equals)) {
-        bitwise(parserInfo)
-    } else {
-        parserPrintError(ParserError.InvalidAssignment(parserInfo.currentTokenInfo, parserInfo.lastNTokensLexemes(3)))
-        false
-    }
-}
-
 private fun endOfStatement(parserInfo: ParserInfo): Boolean {
     if (!parserInfo.matchToken(TokenType.Semicolon)) {
         parserPrintError(ParserError.MissingSemicolon(parserInfo.currentTokenInfo))
@@ -399,6 +390,11 @@ private fun function(parserInfo: ParserInfo): Boolean {
         }
     }
 
+    if(parserInfo.matchToken(TokenType.Colon)) {
+        if(!type(parserInfo)) {
+            return false
+        }
+    }
     return scope(parserInfo)
 }
 
