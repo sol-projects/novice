@@ -1,13 +1,26 @@
+import com.google.gson.Gson
 import org.example.model.INews
 import org.example.model.Location
 import org.json.JSONArray
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import com.mongodb.*
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoDatabase
+import com.google.gson.JsonObject
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 
 fun sendGet(): ArrayList<INews> {
-    val url = URL("http://108.143.49.11:8000/news")
+    val url = URL("http://localhost:8000/news")
     val rawData = url.readText()
     val jsonArray = JSONArray(rawData)
 
@@ -54,3 +67,55 @@ fun sendGet(): ArrayList<INews> {
 
     return newsList as ArrayList<INews>
 }
+
+
+
+fun sendPost(data: String) {
+    val url = URL("http://localhost:8000/news")
+    val connection = url.openConnection() as HttpURLConnection
+
+    connection.requestMethod = "POST"
+    connection.setRequestProperty("Content-Type", "application/json")
+    connection.doOutput = true
+
+    val outputStream = OutputStreamWriter(connection.outputStream)
+    outputStream.write(data)
+    outputStream.flush()
+
+    val responseCode = connection.responseCode
+    println("Response Code: $responseCode")
+
+    connection.disconnect()
+}
+
+fun updateNews(id: String, updatedNewsJson: String) {
+    val client = OkHttpClient()
+
+    val requestBody = updatedNewsJson.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+    val request = Request.Builder()
+        .url("http://localhost:8000/news/$id")
+        .put(requestBody)
+        .build()
+
+    client.newCall(request).execute().use { response ->
+        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+        println(response.body?.string())
+    }
+}
+
+
+fun deleteNews(id: String) {
+    val client = OkHttpClient()
+
+    val request = Request.Builder()
+        .url("http://localhost:8000/news/$id")
+        .delete()
+        .build()
+
+    client.newCall(request).execute().use { response ->
+        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+        println(response.body?.string())
+    }
+}
+

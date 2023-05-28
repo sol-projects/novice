@@ -33,6 +33,9 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                 implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
                 implementation("org.json:json:20210307")
+                implementation ("org.mongodb:mongodb-driver-sync:4.3.1")
+
+
             }
         }
         val jvmTest by getting

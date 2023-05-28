@@ -46,16 +46,39 @@ export async function remove(req: Request, res: Response) {
     res.status(500).send(`Failed to delete news with ID ${id}`);
   }
 }
-
 export async function update(req: Request, res: Response) {
-  //get URL and find which website it is then call the correct function to fetch new news info
-  res.send('/news/update');
+  const id = req.params.id; // get the id from the route parameter
+  const updatedNewsData = req.body; // get the updated news data directly from the request body
+
+  if (!id) {
+    return res.status(400).send('ID is required for updating news.');
+  }
+
+  try {
+    // Update the news in the database
+    const updatedNews = await News.findByIdAndUpdate(
+      id,
+      updatedNewsData,
+      { new: true, useFindAndModify: false } // This option returns the updated document
+    );
+
+    if (!updatedNews) {
+      return res.status(404).json({ message: `News with ID ${id} not found` });
+    }
+
+    res.json(updatedNews);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error while updating news');
+  }
 }
+
 
 export async function all(req: Request, res: Response) {
   run_query(res, {});
 }
-
+/*
 export async function store(req: Request, res: Response) {
   let news: INews[] = [];
   for await (let [key, value] of websites) {
@@ -87,7 +110,45 @@ export async function store(req: Request, res: Response) {
     console.error(error);
     res.status(500).send('Failed to save news to MongoDB');
   }
+} */
+export async function store(req: Request, res: Response) {
+  let news: INews[] = [];
+  
+  let payload = req.body; // assuming req.body is a single news item
+
+  if (Array.isArray(payload)) {
+    payload = payload[0]; // If an array is received, we take the first object
+  }
+
+  console.log(`Processing input before pushing to database...`);
+
+  const value = payload;
+  const existingNews = await News.findOne({
+    title: value.title,
+    content: value.content,
+  });
+
+  if (!existingNews) {
+    news.push(value);
+  } else {
+    console.log(
+      `Article "${value.title}" already exists. Not pushing to database...`
+    );
+  }
+  
+  console.log(`Input processed successfully...`);
+  
+  try {
+    await News.create(news);
+    Socket.emit('news-added', news);
+    res.status(201).json(news);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to save news to MongoDB');
+  }
 }
+
+
 
 export async function scrape(req: Request, res: Response) {
   let news: INews[] = [];

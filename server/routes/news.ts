@@ -20,9 +20,11 @@ router.get('/title/:title', Controller.Filter.title);
 router.get('/content/:content', Controller.Filter.content);
 //dodaj za fromCoords in toCoords
 
-router.put('/:id', JWT.authorization, Controller.update);
-router.delete('/:id', JWT.authorization, Controller.remove);
-router.post('/', JWT.authorization, Controller.store);
+router.put('/:id', Controller.update);
+
+
+router.delete('/:id', Controller.remove);
+router.post('/', Controller.store);
 router.post('/login', JWT.login);
 
 export = router;

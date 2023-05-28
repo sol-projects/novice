@@ -9,10 +9,10 @@ const websites = new Map<string, (n: number) => Promise<INews[]>>([
   ['mbinfo', require('./websites/mariborinfo')],
   ['rtvslo', require('./websites/rtvSlo')],
   ['sta', require('./websites/servisSta')],
-  //['ekipa24', require('./websites/ekipa24')], NI V REDU - lahko crasha mongodb
-  //['dnevnik', require('./websites/dnevnik')], NI V REDU - lahko crasha server
-  //['svet24', require('./websites/svet24')], NI V REDU - lahko crasha server
-  //['n1info', require('./websites/n1info')], NI V REDU - nepravilen info
+  ['ekipa24', require('./websites/ekipa24')],
+  ['dnevnik', require('./websites/dnevnik')], 
+  ['svet24', require('./websites/svet24')], 
+  //['n1info', require('./websites/n1info')], 
 ]);
 
 export = websites;
