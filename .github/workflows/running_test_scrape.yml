@@ -35,4 +35,4 @@ jobs:
       - name: Run tests
         run: |
           cd server
-          npm run test
+          npm run test scrape.test.ts
