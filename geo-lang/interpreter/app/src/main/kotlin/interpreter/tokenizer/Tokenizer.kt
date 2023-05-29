@@ -150,7 +150,7 @@ private class Tokenizer(
         while (current < input.length - 1) {
             val c = input[++current]
             position.col += 1
-            if (c in '0'..'9' || c in 'A'..'z') {
+            if (c in '0'..'9' || c in 'A'..'Z' || c in 'a' .. 'z') {
                 token.lexeme += c
             } else {
                 --current
@@ -188,6 +188,7 @@ private class Tokenizer(
             "building" -> TokenType.Building
             "point" -> TokenType.Point
             "group" -> TokenType.Group
+            "curve" -> TokenType.Curve
             "bool" -> TokenType.BoolType
             "news" -> TokenType.NewsType
             "bend" -> TokenType.Bend

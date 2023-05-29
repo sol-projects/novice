@@ -13,6 +13,7 @@ enum class TokenType {
     False,
     Int,
     Float,
+    Curve,
     Hex,
     String,
     Char,

@@ -199,8 +199,7 @@ fun storeFunction(evaluatorInfo: EvaluatorInfo): Value {
         evaluatorInfo.matchToken(TokenType.Identifier)
         val parameterName = evaluatorInfo.currentTokenInfo.lexeme
         evaluatorInfo.matchToken(TokenType.Colon)
-        type(evaluatorInfo)
-        val parameterType = evaluatorInfo.currentTokenInfo.type
+        val parameterType = type(evaluatorInfo)
         parameters[parameterName] = Variable(true, parameterType, when(parameterType){
             TokenType.I32 -> Value.NumberType(0)
             TokenType.F32 -> Value.NumberType(0.0)
@@ -283,11 +282,23 @@ fun evaluateGroup(evaluatorInfo: EvaluatorInfo): Value {
             val name = evaluatorInfo.currentTokenInfo.lexeme
             Box(toNumericArray(bitwise(evaluatorInfo)), toNumericArray(bitwise(evaluatorInfo)), evaluatorInfo, name)
         }
+
         if (evaluatorInfo.matchToken(TokenType.Point)) {
             evaluatorInfo.matchToken(TokenType.String)
             val name = evaluatorInfo.currentTokenInfo.lexeme
             Point(toNumericArray(bitwise(evaluatorInfo)), name, evaluatorInfo)
+        }
 
+        if (evaluatorInfo.matchToken(TokenType.Line)) {
+            evaluatorInfo.matchToken(TokenType.String)
+            val name = evaluatorInfo.currentTokenInfo.lexeme
+            Line(toNumericArray(bitwise(evaluatorInfo)), toNumericArray(bitwise(evaluatorInfo)), name, evaluatorInfo)
+        }
+
+        if (evaluatorInfo.matchToken(TokenType.Curve)) {
+            evaluatorInfo.matchToken(TokenType.String)
+            val name = evaluatorInfo.currentTokenInfo.lexeme
+            Curve(toNumericArray(bitwise(evaluatorInfo)), toNumericArray(bitwise(evaluatorInfo)), (bitwise(evaluatorInfo) as Value.NumberType).value.toDouble(), name, evaluatorInfo)
         }
     }
 
@@ -591,6 +602,13 @@ private fun type(evaluatorInfo: EvaluatorInfo): TokenType {
         || evaluatorInfo.matchToken(TokenType.StringType)
         || evaluatorInfo.matchToken((TokenType.NewsType))
         || evaluatorInfo.matchToken(TokenType.ArrayType)) {
+        return evaluatorInfo.currentTokenInfo.type
+    }
+
+    if(evaluatorInfo.matchToken(TokenType.LeftBracket)) {
+        type(evaluatorInfo)
+        evaluatorInfo.matchToken(TokenType.RightBracket)
+        return TokenType.ArrayType
     }
 
     return evaluatorInfo.currentTokenInfo.type

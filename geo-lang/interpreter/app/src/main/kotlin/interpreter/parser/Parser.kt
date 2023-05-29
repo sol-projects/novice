@@ -57,15 +57,6 @@ private fun comparisonOperators(parserInfo: ParserInfo): Boolean {
     return res
 }
 
-private fun endOfStatement(parserInfo: ParserInfo): Boolean {
-    if (!parserInfo.matchToken(TokenType.Semicolon)) {
-        parserPrintError(ParserError.MissingSemicolon(parserInfo.currentTokenInfo))
-        return false
-    }
-
-    return true
-}
-
 private fun unary(parserInfo: ParserInfo): Boolean {
     return if (parserInfo.matchToken(TokenType.Addition) || parserInfo.matchToken(TokenType.Subtraction)) {
         primary(parserInfo)
@@ -79,7 +70,7 @@ private fun primary(parserInfo: ParserInfo): Boolean {
         || parserInfo.matchToken(TokenType.Hex)
         || parserInfo.matchToken(TokenType.Float)
         || parserInfo.matchToken(TokenType.String)) {
-        // Do something
+        return true
     } else if (parserInfo.matchToken(TokenType.Function)){
         return function(parserInfo)
     } else if (parserInfo.matchToken(TokenType.Identifier)) {
@@ -170,34 +161,50 @@ fun group(parserInfo: ParserInfo): Boolean {
         return false
     }
 
-    if(parserInfo.matchToken(TokenType.Building)) {
-        if(!parserInfo.matchToken(TokenType.String)) {
-            parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
-            return false
+    while(!parserInfo.matchToken(TokenType.RightBraces)) {
+        if(parserInfo.matchToken(TokenType.Building) || parserInfo.matchToken(TokenType.Line)) {
+            if(!parserInfo.matchToken(TokenType.String)) {
+                parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
         }
 
-        if(!bitwise(parserInfo)) {
-            return false
+        if(parserInfo.matchToken(TokenType.Curve)) {
+            if(!parserInfo.matchToken(TokenType.String)) {
+                parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
         }
 
-        if(!bitwise(parserInfo)) {
-            return false
-        }
-    }
+        if(parserInfo.matchToken(TokenType.Point)) {
+            if(!parserInfo.matchToken(TokenType.String)) {
+                parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
+                return false
+            }
 
-    if(parserInfo.matchToken(TokenType.Point)) {
-        if(!parserInfo.matchToken(TokenType.String)) {
-            parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
-            return false
-        }
-
-        if(!bitwise(parserInfo)) {
-            return false
-        }
-
-        if(!parserInfo.matchToken(TokenType.RightBraces)) {
-            parserPrintError(ParserError.MissingClosingBraces(parserInfo.currentTokenInfo))
-            return false
+            if(!bitwise(parserInfo)) {
+                return false
+            }
         }
     }
 
@@ -328,6 +335,13 @@ private fun type(parserInfo: ParserInfo): Boolean {
         return true
     }
 
+    if(parserInfo.matchToken(TokenType.LeftBracket)) {
+        if(type(parserInfo)) {
+            if(parserInfo.matchToken(TokenType.RightBracket)) {
+                return true
+            }
+        }
+    }
     parserPrintError(ParserError.NotAType(parserInfo.currentTokenInfo))
     return false
 }

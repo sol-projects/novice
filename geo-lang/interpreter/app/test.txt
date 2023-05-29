@@ -1,12 +1,6 @@
-const x = 1
-
-fn func(p1: i32, p2: string): i32 {
-    println("${p1} string: ${p2}")
-}
-
-func(1, "str")
-
 group {
-    building "bld" [1, 2] [2, 3]
-    point "pt" [x, 2]
+   building "ime_zgradbe" [1, 2] [3, 4]
+   line "ime_linije" [1, 2] [3, 4]
+   point "ime_tocke" [5, 5]
+   curve "ime_tocke" [1, 2] [3, 4] 180
 }

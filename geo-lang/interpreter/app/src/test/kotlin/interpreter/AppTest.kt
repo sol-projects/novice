@@ -305,9 +305,9 @@ class AppTest {
         tokenize("""
             let float = 1.0
             let int = 1
-            let calc_float = 21*2 + 15.4 - 11/2 + 0.2
-            let calc_int = 21*2 + 15
-            println("${'$'}{int} ${'$'}{float} ${'$'}{calc_float} ${'$'}{calc_int}")
+            let calcfloat = 21*2 + 15.4 - 11/2 + 0.2
+            let calcint = 21*2 + 15
+            println("${'$'}{int} ${'$'}{float} ${'$'}{calcfloat} ${'$'}{calcint}")
         """.trimIndent())?.let {
             assert(parse(it))
             testEvaluator(it, "1 1.0 52.1 57")
@@ -484,6 +484,39 @@ class AppTest {
         """.trimIndent())?.let {
             assert(parse(it))
             testEvaluator(it, "3")
+        }
+
+        tokenize("""
+            fn func(n: i32, n2: i32) {
+                n + n2
+            }
+            
+            let sum = func
+            let res = sum(1, 2)
+            res = sum(2, 4)
+            println("${'$'}{res}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "6")
+        }
+
+        tokenize("""
+            let int: i32 = 0
+            let float: f32 = 0.0
+            let str: string = ""
+            let arr = [1, 234]
+            println("${'$'}{int} ${'$'}{float} ${'$'}{str} ${'$'}{arr}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "0 0.0  1, 234")
+        }
+
+        tokenize("""
+            let int: i32 = let a = let b = 20
+            println("${'$'}{int} ${'$'}{a} ${'$'}{b}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "20 20 20")
         }
     }
 }
