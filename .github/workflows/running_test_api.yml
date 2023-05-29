@@ -1,0 +1,38 @@
+name: Running Tests
+
+on:
+  push:
+    branches: [ "development", "production" ]
+  pull_request:
+    branches: [ "development" , "production"]
+env:
+      DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
+      DB_NAME: ${{ secrets.DB_NAME}}
+      DB_USERNAME : ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      GEOKEO_API_KEY: ${{ secrets.GEOKEO_API_KEY }}
+      PORT: ${{ secrets.PORT }}
+      LOGIN_UUID: ${{ secrets.LOGIN_UUID }}
+      LOGIN_PRIVATE_KEY: ${{ secrets.LOGIN_PRIVATE_KEY }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # You can adjust this version as needed
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd server
+          npm run test

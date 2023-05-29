@@ -71,7 +71,7 @@ fun sendGet(): ArrayList<INews> {
 
 
 fun sendPost(data: String) {
-    val url = URL("http://localhost:8000/news")
+    val url = URL("http://localhost:8000/news/add")
     val connection = url.openConnection() as HttpURLConnection
 
     connection.requestMethod = "POST"

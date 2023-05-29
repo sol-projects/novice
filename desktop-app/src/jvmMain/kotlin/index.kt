@@ -54,9 +54,9 @@ fun main() = application {
     }
 """.trimIndent()
 
-    //sendPost(jsonData)
+    sendPost(jsonData)
     //updateNews("6473095561a30cae2617f668",newjsonData)
-    deleteNews("6473095561a30cae2617f668")
+    //deleteNews("6473095561a30cae2617f668")
     //_24ur(2)
     //println(gov(2))
     //println(gov_vlada(2))

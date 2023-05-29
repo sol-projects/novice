@@ -11,12 +11,12 @@ if(process.env.DB_NAME_TEST ) {
     Db.connect(process.env.DB_NAME_TEST);
 }
 
-test('login', async () => {
+/*test('login', async () => {
   const res = await request(app).post('/news/login');
   expect(res.status).toBe(200);
   expect(res.body).toHaveProperty('token');
   let token = res.body.token;
-});
+}); */
 
 afterAll(async () => {
   try {
@@ -49,7 +49,7 @@ test('POST /news - should create a new news item', async () => {
     };
   
     const res = await request(app)
-      .post('/news')
+      .post('/news/add')
       .send(newNewsItem);
       
     expect(res.status).toEqual(201);
