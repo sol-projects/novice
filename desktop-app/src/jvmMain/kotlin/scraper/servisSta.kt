@@ -105,15 +105,6 @@ fun getServisSta(numArticlesToOpen: Int): List<INews> {
         )
         newsList.add(news)
 
-        println("Title: $title")
-        println("Author: $authors")
-        println("Date: $date")
-        println("Location: $location")
-        println("Content: $content")
-        println("Categories: $categories")
-        println("URL: $url")
-        println()
-
         driver.navigate().back()
     }
 

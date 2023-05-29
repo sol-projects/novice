@@ -9,6 +9,8 @@ import kotlinx.serialization.encoding.Encoder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 data class INews(
     var title: String,
     var url: String,
@@ -21,19 +23,25 @@ data class INews(
     val __v: Int = 0
 ) {
     override fun toString(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val formattedDate = dateFormat.format(date)
-        val formattedAuthors = authors.joinToString(", ")
-        val formattedCategories = categories.joinToString(", ")
+        val formattedAuthors = authors.joinToString("\", \"", "[\"", "\"]")
+        val formattedCategories = categories.joinToString("\", \"", "[\"", "\"]")
+        val coordinates = "[${location.coordinates.first}, ${location.coordinates.second}]"
+        val jsonContent = Json.encodeToString(content)
 
-        return """
-            Title: $title
-            URL: $url
-            Date: $formattedDate
-            Authors: $formattedAuthors
-            Content: $content
-            Categories: $formattedCategories
-        """.trimIndent().plus("\n")
+        return "{\n" +
+                "    \"title\": \"$title\",\n" +
+                "    \"url\": \"$url\",\n" +
+                "    \"date\": \"$formattedDate\",\n" +
+                "    \"authors\": $formattedAuthors,\n" +
+                "    \"content\": $jsonContent,\n" +
+                "    \"categories\": $formattedCategories,\n" +
+                "    \"location\": {\n" +
+                "        \"type\": \"${location.type}\",\n" +
+                "        \"coordinates\": $coordinates\n" +
+                "    }\n" +
+                "}"
     }
 }
 data class Location(
