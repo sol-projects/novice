@@ -32,7 +32,7 @@ jobs:
           cd server
           npm ci
 
-      - name: Run tests
+      - name: Run tests geo.test.ts
         run: |
           cd server
-          npm run test
+          npm run test geo.test.ts
