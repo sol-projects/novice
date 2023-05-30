@@ -46,6 +46,7 @@ export async function remove(req: Request, res: Response) {
     res.status(500).send(`Failed to delete news with ID ${id}`);
   }
 }
+
 export async function update(req: Request, res: Response) {
   const id = req.params.id; // get the id from the route parameter
   const updatedNewsData = req.body; // get the updated news data directly from the request body
@@ -73,7 +74,6 @@ export async function update(req: Request, res: Response) {
     res.status(500).send('Server error while updating news');
   }
 }
-
 
 export async function all(req: Request, res: Response) {
   run_query(res, {});
@@ -110,17 +110,16 @@ export async function store(req: Request, res: Response) {
     console.error(error);
     res.status(500).send('Failed to save news to MongoDB');
   }
-} 
+}
+
 export async function add(req: Request, res: Response) {
   let news: INews[] = [];
   
-  let payload = req.body; // assuming req.body is a single news item
+  let payload = req.body;
 
   if (Array.isArray(payload)) {
-    payload = payload[0]; // If an array is received, we take the first object
+    payload = payload[0];
   }
-
-  console.log(`Processing input before pushing to database...`);
 
   const value = payload;
   const existingNews = await News.findOne({
@@ -136,7 +135,7 @@ export async function add(req: Request, res: Response) {
     );
   }
   
-  console.log(`Input processed successfully...`);
+  console.log(`News article evaluated successfully...`);
   
   try {
     await News.create(news);

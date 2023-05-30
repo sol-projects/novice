@@ -29,7 +29,10 @@ dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.18")
-
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("io.jawg.geojson:geojson-jackson:1.2.2")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("org.json:json:20210307")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

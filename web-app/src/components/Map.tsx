@@ -119,5 +119,13 @@ export default function MapComponent() {
     }
   }, [filteredNews]);
 
+  //v teoriji bi blo najboljše da je to <Center>zemljevid...</Center>
+  //    to mi je delal neki cajta, ampak potem je random začelo crashat z JS napakami
+  //    definitivno rabi bit dodan nek padding v CSS za umik od roba ekrana če chakra-ui komponente ne delajo s tem zemljevidom
+  //height in width ne moreta bit v % (ne dela), ampak px ni v redu zared manjših ekranov
+  //    to bi lahko v teoriji rešu tak da bi menjavu px glede na trenutno velikost zaslona, ne vem če bi to delal. mislim da ma chakra-ui neke stvari za to vgrajene tud? https://chakra-ui.com/docs/styled-system/responsive-styles
+
+  //verjetno je problem to da editamo dom direktno z document.getElementById("map");
+  //    to ne pomeni da je to narobe, verjetno ni pametno da dosti spreminjaš kodo
   return <div id="map" style={{ height: "600px", width: "1000px" }} />;
 }

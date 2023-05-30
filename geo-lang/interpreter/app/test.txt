@@ -1,1 +1,6 @@
-1 + 2
+let array = []
+array.push(5)
+array.push(1)
+let save = array.get(1)
+array.pop()
+println("array: ${array}, save: ${save}")
