@@ -7,7 +7,7 @@ import INews from "../news/model";
 import { getAll } from "../news/api";
 import Filter, { FilterData } from "./Filter";
 import * as FilterFn from "../news/filter";
-import markIcon from "../assets/marker.png"; //You can change market image here
+import weatherIcon from "../../public/assets/weather.png"; //You can change market image here
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -19,9 +19,29 @@ const sloveniaBounds = [
 ];
 
 const customIcon = L.icon({
-  iconUrl: markIcon,
+  iconUrl: weatherIcon,
+  iconSize: [42, 80],
+  iconAnchor: [21, 80], 
+});
+
+
+const customIconWeather = L.icon({
+  iconUrl: weatherIcon,
   iconSize: [42, 80],
   iconAnchor: [21, 80], //If you want to have marker centered you have to half values from iconSize
+});
+
+const customIconHronika = L.icon({
+  iconUrl: weatherIcon,
+  iconSize: [42, 80],
+  iconAnchor: [21, 80], 
+});
+
+
+const customIconSport = L.icon({
+  iconUrl: weatherIcon,
+  iconSize: [42, 80],
+  iconAnchor: [21, 80],
 });
 
 export default function MapComponent() {
@@ -88,7 +108,7 @@ export default function MapComponent() {
       const markerClusterGroup = L.markerClusterGroup();
 
       filteredNews.forEach((article) => {
-        const { location, title, url } = article;
+        const { location, title, url, categories } = article;
         const { type, coordinates } = location;
 
         if (
@@ -103,7 +123,16 @@ export default function MapComponent() {
           coordinates[1],
           coordinates[0],
         ];
-        const marker = L.marker(switchedCoordinates, { icon: customIcon });
+
+        let markerIcon = customIcon; 
+
+        categories.forEach((category) => {
+          if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta") {
+            markerIcon = customIconWeather;
+          }
+        });
+
+        const marker = L.marker(switchedCoordinates, { icon: markerIcon });
         marker.bindPopup(
           `<b>${title}</b><br><a href="${url}" target="_blank">${url}</a>`
         );
