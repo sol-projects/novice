@@ -60,7 +60,7 @@ export async function update(req: Request, res: Response) {
     const updatedNews = await News.findByIdAndUpdate(
       id,
       updatedNewsData,
-      { new: true, useFindAndModify: false } // This option returns the updated document
+      { new: true, useFindAndModify: false }
     );
 
     if (!updatedNews) {
@@ -98,6 +98,7 @@ export async function store(req: Request, res: Response) {
         );
       }
     }
+
     console.log(`Website ${key} evaluated successfully...`);
   }
 
@@ -114,7 +115,7 @@ export async function store(req: Request, res: Response) {
 
 export async function add(req: Request, res: Response) {
   let news: INews[] = [];
-  
+
   let payload = req.body;
 
   if (Array.isArray(payload)) {
@@ -134,9 +135,9 @@ export async function add(req: Request, res: Response) {
       `Article "${value.title}" already exists. Not pushing to database...`
     );
   }
-  
+
   console.log(`News article evaluated successfully...`);
-  
+
   try {
     await News.create(news);
     Socket.emit('news-added', news);

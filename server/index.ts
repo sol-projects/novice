@@ -45,8 +45,13 @@ const routes = {
     `${site}/news/title/:title`,
     `${site}/news/content/:content`,
   ],
-  POST: [`${site}/news/`],
-  DELETE: [`${site}/news/:id`],
+  POST: [
+      `${site}/news/ requires JWT authorization: admin`,
+      `${site}/news/store requires JWT authorization: admin`,
+      `${site}/news/geolang`
+  ],
+  PUT: [`${site}/news/:id requires JWT authorization: admin`],
+  DELETE: [`${site}/news/:id requires JWT authorization: admin`],
 };
 
 app.get('/', async (req: Request, res: Response) => {
