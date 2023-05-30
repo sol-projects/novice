@@ -11,7 +11,8 @@ import weatherIcon from "../assets/weather.png"; //You can change market image h
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import { VStack, Center } from "@chakra-ui/react";
+import { VStack, Center, Textarea, Button, Box } from "@chakra-ui/react";
+import { geolang } from '../news/geolang';
 
 const sloveniaBounds = [
   [45.4252, 13.3757],
@@ -21,7 +22,7 @@ const sloveniaBounds = [
 const customIcon = L.icon({
   iconUrl: weatherIcon,
   iconSize: [42, 80],
-  iconAnchor: [21, 80], 
+  iconAnchor: [21, 80],
 });
 
 
@@ -47,6 +48,33 @@ const customIconSport = L.icon({
 export default function MapComponent() {
   const [news, setNews] = useState<INews[]>([]);
   const [filteredNews, setFilteredNews] = useState<INews[]>([]);
+  const [code, setCode] = useState('');
+  const [output, setOutput] = useState('');
+
+  const handleRunCode = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/news/geolang', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error executing geolang request');
+      }
+
+      const data = await response.json();
+      setOutput(JSON.stringify(data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCodeChange = (event: any) => {
+    setCode(event.target.value);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,6 +124,39 @@ export default function MapComponent() {
         zoom: 8,
       });
 
+    if(output) {
+        const parsedOutput: any = JSON.parse(output); // Parse the output as JSON if needed
+          parsedOutput.features.forEach((feature: any) => {
+        const { geometry, properties } = feature;
+
+        if (geometry.type === 'Point') {
+          const { coordinates } = geometry;
+          const { title } = properties;
+
+          L.marker(coordinates.reverse())
+            .addTo(map)
+            .bindPopup(title);
+        } else if (geometry.type === 'Polygon') {
+          const { coordinates } = geometry;
+          const { title } = properties;
+
+          const latLngs = coordinates[0].map((coords: any) => [coords[1], coords[0]]);
+          L.polygon(latLngs)
+            .addTo(map)
+            .bindPopup(title);
+        } else if (geometry.type === 'LineString') {
+          const { coordinates } = geometry;
+          const { title } = properties;
+
+          const latLngs = coordinates.map((coords: any) => [coords[1], coords[0]]);
+          L.polyline(latLngs)
+            .addTo(map)
+            .bindPopup(title);
+        }
+
+
+      });
+    }
       const tileLayer = new L.TileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
@@ -124,7 +185,7 @@ export default function MapComponent() {
           coordinates[0],
         ];
 
-        let markerIcon = customIcon; 
+        let markerIcon = customIcon;
 
         categories.forEach((category) => {
           if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta" || category.toLowerCase() === "vreme") {
@@ -141,12 +202,11 @@ export default function MapComponent() {
       });
 
       map.addLayer(markerClusterGroup);
-
       return () => {
         map.remove();
       };
     }
-  }, [filteredNews]);
+  }, [filteredNews, output]);
 
   //v teoriji bi blo najboljše da je to <Center>zemljevid...</Center>
   //    to mi je delal neki cajta, ampak potem je random začelo crashat z JS napakami
@@ -156,5 +216,21 @@ export default function MapComponent() {
 
   //verjetno je problem to da editamo dom direktno z document.getElementById("map");
   //    to ne pomeni da je to narobe, verjetno ni pametno da dosti spreminjaš kodo
-  return <div id="map" style={{ height: "600px", width: "1000px" }} />;
+
+  return <>
+    <div id="map" style={{ height: "600px", width: "1000px" }} />
+    <Box>
+      <Textarea
+        value={code}
+        onChange={handleCodeChange}
+        placeholder="Enter GeoLang code"
+        size="md"
+        resize="none"
+        height="200px"
+      />
+      <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
+        Run Code
+      </Button>
+    </Box>
+  </>;
 }
