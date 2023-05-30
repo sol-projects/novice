@@ -5,15 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b8c3268-2b86-4126-bfcd-a1619b6050fb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/Evaluator.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/EvaluatorError.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/EvaluatorInfo.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/evaluator/Variable.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/parser/Parser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/parser/Parser.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/TokenType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/TokenType.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/Tokenizer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/main/kotlin/interpreter/tokenizer/Tokenizer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/test/kotlin/interpreter/AppTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/src/test/kotlin/interpreter/AppTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/gui/gui.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/gui/gui.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/index.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/index.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/model/News.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/model/News.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/rtvSlo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/rtvSlo.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/servisSta.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/servisSta.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/zurnal24.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/scraper/zurnal24.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +26,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2PpXxJGGLhRlgAIf8PHiGpOcdKG" />
   <component name="ProjectViewState">

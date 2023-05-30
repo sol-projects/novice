@@ -48,13 +48,31 @@ export async function remove(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  //implementiraj
-  res.send('/news/update');
-}
+  const id = req.params.id; // get the id from the route parameter
+  const updatedNewsData = req.body; // get the updated news data directly from the request body
 
-export async function post(req: Request, res: Response) {
-  //implementiraj
-  res.send('/news/post');
+  if (!id) {
+    return res.status(400).send('ID is required for updating news.');
+  }
+
+  try {
+    // Update the news in the database
+    const updatedNews = await News.findByIdAndUpdate(
+      id,
+      updatedNewsData,
+      { new: true, useFindAndModify: false } // This option returns the updated document
+    );
+
+    if (!updatedNews) {
+      return res.status(404).json({ message: `News with ID ${id} not found` });
+    }
+
+    res.json(updatedNews);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error while updating news');
+  }
 }
 
 export async function all(req: Request, res: Response) {
@@ -93,6 +111,43 @@ export async function store(req: Request, res: Response) {
     res.status(500).send('Failed to save news to MongoDB');
   }
 }
+
+export async function add(req: Request, res: Response) {
+  let news: INews[] = [];
+  
+  let payload = req.body;
+
+  if (Array.isArray(payload)) {
+    payload = payload[0];
+  }
+
+  const value = payload;
+  const existingNews = await News.findOne({
+    title: value.title,
+    content: value.content,
+  });
+
+  if (!existingNews) {
+    news.push(value);
+  } else {
+    console.log(
+      `Article "${value.title}" already exists. Not pushing to database...`
+    );
+  }
+  
+  console.log(`News article evaluated successfully...`);
+  
+  try {
+    await News.create(news);
+    Socket.emit('news-added', news);
+    res.status(201).json(news);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to save news to MongoDB');
+  }
+}
+
+
 
 export async function scrape(req: Request, res: Response) {
   let news: INews[] = [];

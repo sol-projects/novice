@@ -1,8 +1,8 @@
 import org.example.model.INews
+import org.example.model.Location
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.WindowType
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -62,6 +62,13 @@ fun _24ur(n: Int): List<INews> {
                 .map {
                     it.getAttribute("innerText").trim()
                 }
+        val coords: Pair<Double, Double> =
+            if (locationDate[0] != "") {
+                Pair(0.0, 0.0)
+            } else {
+                Pair(0.0, 0.0)
+            }
+
 
         news.add(
             INews(
@@ -71,7 +78,10 @@ fun _24ur(n: Int): List<INews> {
                 authors = authors,
                 content = content,
                 categories = categories,
-                location = locationDate[0]
+                location = Location(
+                    type = "Point",
+                    coordinates = coords,
+                ),
             )
         )
 

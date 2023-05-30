@@ -20,9 +20,9 @@ router.get('/title/:title', Controller.Filter.title);
 router.get('/content/:content', Controller.Filter.content);
 //nizka prioriteta: dodaj za fromCoords in toCoords
 
-router.put('/:id', JWT.authorization, Controller.update); //funkcijo "update" implementiraj v controller
-router.delete('/:id', JWT.authorization, Controller.remove); //funkcijo "remove" implementiraj v controller
-router.post('/', JWT.authorization, Controller.post); // funkcijo "post" implementiraj v controller
+router.put('/:id', JWT.authorization, Controller.update);
+router.delete('/:id', JWT.authorization, Controller.remove);
+router.post('/', JWT.authorization, Controller.add);
 router.post('/store', JWT.authorization, Controller.store);
 router.post('/login', JWT.login);
 
