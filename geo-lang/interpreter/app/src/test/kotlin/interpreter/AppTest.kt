@@ -518,5 +518,25 @@ class AppTest {
             assert(parse(it))
             testEvaluator(it, "20 20 20")
         }
+
+        tokenize("""
+            let a = 20
+            let int: i32 = 30
+            a
+            println("${'$'}{int}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "30")
+        }
+
+        tokenize("""
+            let a = [20, 30]
+            let int: i32 = 30
+            a
+            println("${'$'}{int}")
+        """.trimIndent())?.let {
+            assert(parse(it))
+            testEvaluator(it, "30")
+        }
     }
 }

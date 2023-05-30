@@ -81,13 +81,19 @@ private fun primary(parserInfo: ParserInfo): Boolean {
         }
 
         else if (parserInfo.matchToken(TokenType.Dot)) {
+            if(parserInfo.matchToken(TokenType.Location)) {
+                return true
+            }
+
             if(!(parserInfo.matchToken(TokenType.Identifier)
                         || parserInfo.matchToken(TokenType.Push)
                         || parserInfo.matchToken(TokenType.Remove)
-                        || parserInfo.matchToken(TokenType.Pop))) {
+                        || parserInfo.matchToken(TokenType.Pop)
+                        || parserInfo.matchToken(TokenType.Get))) {
                 parserPrintError(ParserError.ExpectedFunctionName(parserInfo.currentTokenInfo))
                 return false
             }
+
             if(!parserInfo.matchToken(TokenType.LeftParenthesis)) {
                 parserPrintError(ParserError.ExpectedStartingParentheses(parserInfo.currentTokenInfo))
                 return false
@@ -113,6 +119,8 @@ private fun primary(parserInfo: ParserInfo): Boolean {
         return group(parserInfo)
     } else if(parserInfo.matchToken(TokenType.LeftBracket)) {
         return array(parserInfo)
+    } else if(parserInfo.matchToken(TokenType.Fetch)) {
+        return true
     } else if (parserInfo.matchToken(TokenType.LeftParenthesis)) {
         if (!bitwise(parserInfo)) {
             return false
@@ -199,6 +207,21 @@ fun group(parserInfo: ParserInfo): Boolean {
         if(parserInfo.matchToken(TokenType.Point)) {
             if(!parserInfo.matchToken(TokenType.String)) {
                 parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
+        }
+
+        if(parserInfo.matchToken(TokenType.Circle)) {
+            if(!parserInfo.matchToken(TokenType.String)) {
+                parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
                 return false
             }
 

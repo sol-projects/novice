@@ -190,7 +190,10 @@ private class Tokenizer(
             "group" -> TokenType.Group
             "curve" -> TokenType.Curve
             "bool" -> TokenType.BoolType
+            "fetch" -> TokenType.Fetch
+            "get" -> TokenType.Get
             "news" -> TokenType.NewsType
+            "location" -> TokenType.Location
             "bend" -> TokenType.Bend
             "line" -> TokenType.Line
             "box" -> TokenType.Box

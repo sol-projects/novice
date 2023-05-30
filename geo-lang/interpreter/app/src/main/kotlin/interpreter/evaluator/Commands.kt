@@ -4,6 +4,51 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import java.lang.Math.pow
+fun createCircleFeature(centerLon: Double, centerLat: Double, radius: Double, name: String): JsonObject {
+    val feature = JsonObject()
+    feature.addProperty("type", "Feature")
+
+    val geometry = JsonObject()
+    geometry.addProperty("type", "Polygon")
+
+    val coordinates = JsonArray()
+
+    val numPoints = 360
+    val angleStep = 360.0 / numPoints
+
+    val points = JsonArray()
+    for (i in 0 until numPoints) {
+        val angle = Math.toRadians(i * angleStep)
+        val pointLon = centerLon + radius * cos(angle)
+        val pointLat = centerLat + radius * sin(angle)
+        val point = JsonArray()
+        point.add(pointLon)
+        point.add(pointLat)
+        points.add(point)
+    }
+
+    val firstPoint = JsonArray()
+    val firstPointCoordinates = points[0].asJsonArray
+    firstPoint.add(firstPointCoordinates[0])
+    firstPoint.add(firstPointCoordinates[1])
+    points.add(firstPoint)
+
+    coordinates.add(points)
+    geometry.add("coordinates", coordinates)
+    feature.add("geometry", geometry)
+
+    val properties = JsonObject()
+    properties.addProperty("name", name.substring(1, name.length - 1))
+    feature.add("properties", properties)
+
+    return feature
+}
+
+fun Circle(center: List<Number>, radius: Double, name: String, evaluatorInfo: EvaluatorInfo) {
+    evaluatorInfo.features.add(createCircleFeature(center[0].toDouble(), center[1].toDouble(), radius, name))
+    evaluatorInfo.featureCollection.add("features", evaluatorInfo.features)
+}
+
 
 fun Box(a: List<Number>, b: List<Number>, evaluatorInfo: EvaluatorInfo, name: String) {
     evaluatorInfo.features.add(createPolygonFeature(a, b, name))

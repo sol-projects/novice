@@ -1,6 +1,6 @@
-group {
-   building "ime_zgradbe" [1, 2] [3, 4]
-   line "ime_linije" [1, 2] [3, 4]
-   point "ime_tocke" [5, 5]
-   curve "ime_tocke" [1, 2] [3, 4] 180
-}
+let array = []
+array.push(5)
+array.push(1)
+let save = array.get(1)
+array.pop()
+println("array: ${array}, save: ${save}")

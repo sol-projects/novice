@@ -5,13 +5,6 @@ import interpreter.tokenizer.Position
 import interpreter.tokenizer.TokenInfo
 import interpreter.tokenizer.TokenType
 
-sealed class Value {
-    data class StringType(val value: String) : Value()
-    data class NumberType(val value: Number) : Value()
-    data class ArrayType(val value: ArrayList<*>) : Value()
-    data class FunctionType(val value: Function) : Value()
-}
-
 fun error(): Value {
     return Value.NumberType(0)
 }
@@ -181,6 +174,7 @@ private fun primary(evaluatorInfo: EvaluatorInfo): Value {
         evaluatorInfo.matchToken(TokenType.For) -> evaluateFor(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.ElseIf) -> evaluateIf(evaluatorInfo)
         evaluatorInfo.matchToken(TokenType.Group) -> evaluateGroup(evaluatorInfo)
+        evaluatorInfo.matchToken(TokenType.Fetch) -> Value.ArrayType(fetch())
         evaluatorInfo.matchToken(TokenType.LeftParenthesis) -> {
             val result = bitwise(evaluatorInfo)
             evaluatorInfo.matchToken(TokenType.RightParenthesis)
@@ -300,6 +294,16 @@ fun evaluateGroup(evaluatorInfo: EvaluatorInfo): Value {
             val name = evaluatorInfo.currentTokenInfo.lexeme
             Curve(toNumericArray(bitwise(evaluatorInfo)), toNumericArray(bitwise(evaluatorInfo)), (bitwise(evaluatorInfo) as Value.NumberType).value.toDouble(), name, evaluatorInfo)
         }
+
+        if (evaluatorInfo.matchToken(TokenType.Circle)) {
+            evaluatorInfo.matchToken(TokenType.String)
+            val name = evaluatorInfo.currentTokenInfo.lexeme
+            val ev = bitwise(evaluatorInfo)
+            val center = toNumericArray(ev)
+
+            val radius = (bitwise(evaluatorInfo) as Value.NumberType).value.toDouble()
+            Circle(center, radius, name, evaluatorInfo)
+        }
     }
 
     return Value.NumberType(0)
@@ -324,6 +328,7 @@ fun evaluateArray(evaluatorInfo: EvaluatorInfo): Value {
             }
             is Value.ArrayType -> getArrayType<ArrayList<*>>()
             is Value.FunctionType -> getArrayType<Function>()
+            is Value.NewsType -> getArrayType<News>()
         })
 
         (list.value as ArrayList<Any?>).add(first)
@@ -405,7 +410,8 @@ private fun evaluateFor(evaluatorInfo: EvaluatorInfo): Value {
         }
         val i = evaluatorInfo.i
         var endi = evaluatorInfo.i
-        for(current: Value in (array as Value.ArrayType).value as ArrayList<Value>) {
+        val ktArr = (array as Value.ArrayType).value as ArrayList<Value>
+        for(current: Value in ktArr) {
             val type = when (current) {
                 is Value.StringType -> {
                     TokenType.StringType
@@ -422,6 +428,9 @@ private fun evaluateFor(evaluatorInfo: EvaluatorInfo): Value {
                 }
                 is Value.FunctionType -> {
                     TokenType.FunctionType
+                }
+                is Value.NewsType -> {
+                    TokenType.NewsType
                 }
             }
 
@@ -462,11 +471,12 @@ private fun evaluatePrintln(evaluatorInfo: EvaluatorInfo): Value {
                     TokenType.I32 -> (variable.value as Value.NumberType).value.toInt().toString()
                     TokenType.F32 -> (variable.value as Value.NumberType).value.toDouble().toString()
                     TokenType.StringType -> (variable.value as Value.StringType).value.substring(1, (variable.value as Value.StringType).value.length - 1)
+                    TokenType.NewsType -> (variable.value as Value.NewsType).value.toString()
                     TokenType.ArrayType -> (variable.value as Value.ArrayType).value.joinToString(separator = ", ") { element ->
                         when (element) {
                             is Value.StringType -> element.value
                             is Value.NumberType -> element.value.toString()
-                            else -> ""
+                            else -> element.toString()
                         }
                     }
                     else -> ""
@@ -484,17 +494,39 @@ private fun evaluatePrintln(evaluatorInfo: EvaluatorInfo): Value {
 
     val formattedOutput = formatString.toString()
     val formattedArgs = args.toTypedArray()
-    val output = formattedOutput.format(*formattedArgs)
-    println(output.substring(1, output.length - 1))
+    var output: String = ""
+    try {
+        output = formattedOutput.format(*formattedArgs)
+        println(output.substring(1, output.length - 1))
+    } catch (e: Exception) {
+        output = "invalid"
+        println(output)
+    }
+
     return Value.NumberType(0.0)
 }
 
 private fun evaluateIdentifier(evaluatorInfo: EvaluatorInfo): Value {
     var name = evaluatorInfo.currentTokenInfo.lexeme
     var variable = evaluatorInfo.variables[evaluatorInfo.currentTokenInfo.lexeme]
-
     if (variable != null) {
         if (evaluatorInfo.matchToken(TokenType.Dot)) {
+            if(evaluatorInfo.matchToken(TokenType.Location)) {
+                val news = (variable.value as? Value.NewsType)?.value
+                val list = ArrayList<Value.NumberType>()
+                if (news != null) {
+                    list.add(news.location.coordinates.first)
+                }
+                if (news != null) {
+                    list.add(news.location.coordinates.second)
+                }
+
+                if(list.isEmpty()) {
+                    evaluatorPrintError(EvaluatorError.AssignmentTypeError(evaluatorInfo.currentTokenInfo, evaluatorInfo.lastNTokensLexemes(3)))
+                }
+
+                return Value.ArrayType(list)
+            }
             if (evaluatorInfo.matchToken(TokenType.Push) || evaluatorInfo.matchToken(TokenType.Pop)) {
                 var isPush = evaluatorInfo.currentTokenInfo.type == TokenType.Push
                 if (!variable.isConst) {
@@ -534,6 +566,20 @@ private fun evaluateIdentifier(evaluatorInfo: EvaluatorInfo): Value {
                     )
                 }
             }
+
+            if(evaluatorInfo.matchToken(TokenType.Get)) {
+                evaluatorInfo.matchToken(TokenType.LeftParenthesis)
+                val arrayValue = variable.value as? Value.ArrayType
+                if (arrayValue != null) {
+                    val array = arrayValue.value as ArrayList<Value>
+                    val n = bitwise(evaluatorInfo)
+                    val getN = (n as Value.NumberType).value.toInt()
+                    evaluatorInfo.matchToken(TokenType.RightParenthesis)
+                    return array[getN]
+                } else {
+                    evaluatorPrintError(EvaluatorError.ArrayTypeError(evaluatorInfo.currentTokenInfo, evaluatorInfo.lastNTokensLexemes(3)))
+                }
+            }
         }
 
         if(evaluatorInfo.matchToken(TokenType.Equals)) {
@@ -568,7 +614,6 @@ private fun createVar(evaluatorInfo: EvaluatorInfo, isConst: Boolean): Value {
         evaluatorInfo.matchToken(TokenType.Equals)
         val value = bitwise(evaluatorInfo)
         evaluatorInfo.variables[name] = Variable(isConst, type_, value)
-
         return value
     } else {
         evaluatorInfo.matchToken(TokenType.Equals)
@@ -581,6 +626,7 @@ private fun createVar(evaluatorInfo: EvaluatorInfo, isConst: Boolean): Value {
                 } else { TokenType.I32 }
             is Value.ArrayType -> TokenType.ArrayType
             is Value.FunctionType -> TokenType.FunctionType
+            is Value.NewsType -> TokenType.NewsType
         }
 
         evaluatorInfo.variables[name] = Variable(isConst, type_, value)

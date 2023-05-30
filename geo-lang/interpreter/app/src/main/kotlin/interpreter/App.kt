@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
             if(parse(it)) {
                 val eval = evaluate(it)
                 if(eval.isNotEmpty()) {
-                    File("out.json").writeText(eval)
+                    File("out.geojson").writeText(eval)
                 }
             }
         }
