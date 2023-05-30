@@ -1,1 +1,1 @@
-group { circle "ime" [1,2] 10 }
+ 

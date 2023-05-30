@@ -14,7 +14,7 @@ import warIcon from "../assets/bomb.png";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import { VStack, Center, Textarea, Button, Box } from "@chakra-ui/react";
+import { VStack, HStack, Center, Textarea, Button, Box } from "@chakra-ui/react";
 import { geolang } from '../news/geolang';
 
 const sloveniaBounds = [
@@ -226,11 +226,26 @@ export default function MapComponent() {
   //verjetno je problem to da editamo dom direktno z document.getElementById("map");
   //    to ne pomeni da je to narobe, verjetno ni pametno da dosti spreminjaš kodo
 
-  return <>
-    <Center>
+  return <HStack>
       <Box>
         <div id="map" style={{ height: "600px", width: "1000px" }} />
-        <VStack spacing={2}>
+
+
+      </Box>
+    <VStack>
+    <Box>
+      <Textarea
+        value={code}
+        onChange={handleCodeChange}
+        placeholder="geolang programska koda"
+        size="md"
+        resize="none"
+      />
+      <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
+        Zaženi kodo
+      </Button>
+      </Box>
+        <HStack spacing={2}>
           <Box>
             <img src={defoultIcon} alt="Default Icon" style={{ width: "24px", height: "24px" }} />
             <span>Default Icon</span>
@@ -247,22 +262,7 @@ export default function MapComponent() {
             <img src={warIcon} alt="War Icon" style={{ width: "24px", height: "24px" }} />
             <span>War Icon</span>
           </Box>
-        </VStack>
-
-      </Box>
-    </Center>    
-    <Box>
-      <Textarea
-        value={code}
-        onChange={handleCodeChange}
-        placeholder="Enter GeoLang code"
-        size="md"
-        resize="none"
-        height="200px"
-      />
-      <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
-        Run Code
-      </Button>
-    </Box>
-  </>;
+        </HStack>
+    </VStack>
+  </HStack>;
 }
