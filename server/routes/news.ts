@@ -25,5 +25,6 @@ router.delete('/:id', JWT.authorization, Controller.remove);
 router.post('/', JWT.authorization, Controller.add);
 router.post('/store', JWT.authorization, Controller.store);
 router.post('/login', JWT.login);
+router.post('/geolang', Controller.geolang);
 
 export = router;

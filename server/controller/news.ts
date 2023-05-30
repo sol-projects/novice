@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import websites from '../scraper/websites';
 import { INews, News } from '../model/News';
 import * as Socket from '../socket/socket';
+import { exec } from 'child_process';
 
 async function run_query(res: Response, query: any) {
   try {
@@ -56,7 +57,6 @@ export async function update(req: Request, res: Response) {
   }
 
   try {
-    // Update the news in the database
     const updatedNews = await News.findByIdAndUpdate(
       id,
       updatedNewsData,
@@ -179,6 +179,34 @@ export async function scrapeAll(req: Request, res: Response) {
   }
 
   res.json(news);
+}
+
+export async function geolang(req: Request, res: Response) {
+  const { code } = req.body;
+
+  const fs = require('fs');
+  fs.writeFile('../geo-lang/interpreter/app/in.txt', code, function (err: any) {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error writing the code to in.txt');
+    }
+
+    exec('gradle run --args="in.txt"', { cwd: '../geo-lang/interpreter' }, function (error, stdout, stderr) {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Error executing the GeoLang interpreter');
+      }
+
+      fs.readFile('../geo-lang/interpreter/app/out.geojson', 'utf8', function (err: any, data: any) {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Error reading the output file');
+        }
+
+        res.send(data);
+      });
+    });
+  });
 }
 
 export namespace Filter {
