@@ -7,7 +7,7 @@ import INews from "../news/model";
 import { getAll } from "../news/api";
 import Filter, { FilterData } from "./Filter";
 import * as FilterFn from "../news/filter";
-import weatherIcon from "../../public/assets/weather.png"; //You can change market image here
+import weatherIcon from "../assets/weather.png"; //You can change market image here
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -127,7 +127,7 @@ export default function MapComponent() {
         let markerIcon = customIcon; 
 
         categories.forEach((category) => {
-          if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta") {
+          if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta" || category.toLowerCase() === "vreme") {
             markerIcon = customIconWeather;
           }
         });
