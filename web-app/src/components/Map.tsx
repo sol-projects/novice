@@ -8,6 +8,9 @@ import { getAll } from "../news/api";
 import Filter, { FilterData } from "./Filter";
 import * as FilterFn from "../news/filter";
 import weatherIcon from "../assets/weather.png"; //You can change market image here
+import defoultIcon from "../assets/marker.png";
+import sportIcon from "../assets/spotr.png";
+import warIcon from "../assets/bomb.png";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -20,7 +23,7 @@ const sloveniaBounds = [
 ];
 
 const customIcon = L.icon({
-  iconUrl: weatherIcon,
+  iconUrl: defoultIcon,
   iconSize: [42, 80],
   iconAnchor: [21, 80],
 });
@@ -28,21 +31,21 @@ const customIcon = L.icon({
 
 const customIconWeather = L.icon({
   iconUrl: weatherIcon,
-  iconSize: [42, 80],
-  iconAnchor: [21, 80], //If you want to have marker centered you have to half values from iconSize
+  iconSize: [42, 42],
+  iconAnchor: [21, 21], //If you want to have marker centered you have to half values from iconSize
 });
 
-const customIconHronika = L.icon({
-  iconUrl: weatherIcon,
-  iconSize: [42, 80],
-  iconAnchor: [21, 80], 
+const customIconWar = L.icon({
+  iconUrl: warIcon,
+  iconSize: [42, 42],
+  iconAnchor: [21, 80],
 });
 
 
 const customIconSport = L.icon({
-  iconUrl: weatherIcon,
-  iconSize: [42, 80],
-  iconAnchor: [21, 80],
+  iconUrl: sportIcon,
+  iconSize: [42, 42],
+  iconAnchor: [21, 21],
 });
 
 export default function MapComponent() {
@@ -124,39 +127,40 @@ export default function MapComponent() {
         zoom: 8,
       });
 
-    if(output) {
+      if (output) {
         const parsedOutput: any = JSON.parse(output); // Parse the output as JSON if needed
-          parsedOutput.features.forEach((feature: any) => {
-        const { geometry, properties } = feature;
 
-        if (geometry.type === 'Point') {
-          const { coordinates } = geometry;
-          const { title } = properties;
+        parsedOutput.features.forEach((feature: any) => {
+          const { geometry, properties } = feature;
 
-          L.marker(coordinates.reverse())
-            .addTo(map)
-            .bindPopup(title);
-        } else if (geometry.type === 'Polygon') {
-          const { coordinates } = geometry;
-          const { title } = properties;
+          if (geometry.type === 'Point') {
+            const { coordinates } = geometry;
+            const { title } = properties;
 
-          const latLngs = coordinates[0].map((coords: any) => [coords[1], coords[0]]);
-          L.polygon(latLngs)
-            .addTo(map)
-            .bindPopup(title);
-        } else if (geometry.type === 'LineString') {
-          const { coordinates } = geometry;
-          const { title } = properties;
+            L.marker(coordinates.reverse())
+              .addTo(map)
+              .bindPopup(title);
+          } else if (geometry.type === 'Polygon') {
+            const { coordinates } = geometry;
+            const { title } = properties;
 
-          const latLngs = coordinates.map((coords: any) => [coords[1], coords[0]]);
-          L.polyline(latLngs)
-            .addTo(map)
-            .bindPopup(title);
-        }
+            const latLngs = coordinates[0].map((coords: any) => [coords[1], coords[0]]);
+            L.polygon(latLngs)
+              .addTo(map)
+              .bindPopup(title);
+          } else if (geometry.type === 'LineString') {
+            const { coordinates } = geometry;
+            const { title } = properties;
+
+            const latLngs = coordinates.map((coords: any) => [coords[1], coords[0]]);
+            L.polyline(latLngs)
+              .addTo(map)
+              .bindPopup(title);
+          }
 
 
-      });
-    }
+        });
+      }
       const tileLayer = new L.TileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
@@ -188,10 +192,15 @@ export default function MapComponent() {
         let markerIcon = customIcon;
 
         categories.forEach((category) => {
-          if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta" || category.toLowerCase() === "vreme") {
+          if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta" || category.toLowerCase() === "vreme" || category.toLowerCase() === "dež") {
             markerIcon = customIconWeather;
+          } else if (category.toLowerCase() === "sport" || category.toLowerCase() === "šport" || category.toLowerCase() === "nogomet" || category.toLowerCase() === "košarka") {
+            markerIcon = customIconSport;
+          } else if (category.toLowerCase() === "vojna" || category.toLowerCase() === "napad") {
+            markerIcon = customIconWar;
           }
         });
+
 
         const marker = L.marker(switchedCoordinates, { icon: markerIcon });
         marker.bindPopup(
@@ -218,7 +227,30 @@ export default function MapComponent() {
   //    to ne pomeni da je to narobe, verjetno ni pametno da dosti spreminjaš kodo
 
   return <>
-    <div id="map" style={{ height: "600px", width: "1000px" }} />
+    <Center>
+      <Box>
+        <div id="map" style={{ height: "600px", width: "1000px" }} />
+        <VStack spacing={2}>
+          <Box>
+            <img src={defoultIcon} alt="Default Icon" style={{ width: "24px", height: "24px" }} />
+            <span>Default Icon</span>
+          </Box>
+          <Box>
+            <img src={weatherIcon} alt="Weather Icon" style={{ width: "24px", height: "24px" }} />
+            <span>Weather Icon</span>
+          </Box>
+          <Box>
+            <img src={sportIcon} alt="Sport Icon" style={{ width: "24px", height: "24px" }} />
+            <span>Sport Icon</span>
+          </Box>
+          <Box>
+            <img src={warIcon} alt="War Icon" style={{ width: "24px", height: "24px" }} />
+            <span>War Icon</span>
+          </Box>
+        </VStack>
+
+      </Box>
+    </Center>    
     <Box>
       <Textarea
         value={code}
