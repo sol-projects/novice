@@ -196,8 +196,51 @@ fun createNPolygonFeature(points: List<List<Number>>, name: String): JsonObject 
 fun Curve(startPoint: List<Number>, endPoint: List<Number>, degree: Double, name: String, evaluatorInfo: EvaluatorInfo) {
     val startPointDouble = startPoint.map { it.toDouble() }
     val endPointDouble = endPoint.map { it.toDouble() }
-    //evaluatorInfo.features.add(createBezierCurveFeature(startPointDouble, endPointDouble, degree.toInt(), name))
-    //evaluatorInfo.featureCollection.add("features", evaluatorInfo.features)
+    evaluatorInfo.features.add(createCurveFeature(startPointDouble, endPointDouble, degree, name))
+    evaluatorInfo.featureCollection.add("features", evaluatorInfo.features)
+}
+
+fun createCurveFeature(startPoint: List<Double>, endPoint: List<Double>, degree: Double, name: String): JsonObject {
+    val midPointX = (startPoint[0] + endPoint[0]) / 2
+    val midPointY = (startPoint[1] + endPoint[1]) / 2
+
+    val deltaX = endPoint[0] - startPoint[0]
+    val deltaY = endPoint[1] - startPoint[1]
+    val distance = sqrt(deltaX*deltaX + deltaY*deltaY)
+    val height = abs(distance * sin(degree * PI / 180.0))
+
+    val curvePoints = mutableListOf<List<Double>>()
+
+    val numberOfPoints = 100
+    for (i in 0..numberOfPoints) {
+        val t = i.toDouble() / numberOfPoints
+        val curveHeight = height * sin(t * PI)
+        val point = listOf(midPointX + t * deltaX, midPointY + curveHeight)
+        curvePoints.add(point)
+    }
+
+    val featureObject = JsonObject()
+    featureObject.addProperty("type", "Feature")
+
+    val propertiesObject = JsonObject()
+    propertiesObject.addProperty("name", name)
+    featureObject.add("properties", propertiesObject)
+
+    val geometryObject = JsonObject()
+    geometryObject.addProperty("type", "LineString")
+
+    val coordinatesArray = JsonArray()
+    curvePoints.forEach { point ->
+        val coordinateArray = JsonArray()
+        point.forEach { coordinate ->
+            coordinateArray.add(coordinate)
+        }
+        coordinatesArray.add(coordinateArray)
+    }
+    geometryObject.add("coordinates", coordinatesArray)
+
+    featureObject.add("geometry", geometryObject)
+    return featureObject
 }
 
 

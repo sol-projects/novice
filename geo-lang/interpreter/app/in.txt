@@ -1,4 +1,11 @@
-group {
-    polyline "ime" [[1,2], [3,4], [5, 6], [11, -19]]
-    npolygon "ime2" [[1,2], [3,4], [5, 6], [11, -19]]
+let articles = fetch
+let loc: [f32] = [0.0, 0.0]
+for article in articles {
+   loc = article.location
+   println("created a circle around ${loc}")
+   group {
+       circle "novica" loc 0.05
+   }
 }
+
+

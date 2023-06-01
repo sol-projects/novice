@@ -233,18 +233,16 @@ export default function MapComponent() {
 
       </Box>
     <VStack>
-    <Box>
       <Textarea
         value={code}
         onChange={handleCodeChange}
         placeholder="geolang programska koda"
-        size="md"
+        height="500px"
         resize="none"
       />
       <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
         Zaženi kodo
       </Button>
-      </Box>
         <HStack spacing={2}>
           <Box>
             <img src={defoultIcon} alt="Default Icon" style={{ width: "24px", height: "24px" }} />
