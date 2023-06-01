@@ -135,6 +135,64 @@ fun createLineFeature(a: List<Number>, b: List<Number>, name: String): JsonObjec
     return feature
 }
 
+fun Polyline(points: List<List<Number>>, name: String, evaluatorInfo: EvaluatorInfo) {
+    evaluatorInfo.features.add(createPolylineFeature(points, name))
+    evaluatorInfo.featureCollection.add("features", evaluatorInfo.features)
+}
+
+fun createPolylineFeature(points: List<List<Number>>, name: String): JsonObject {
+    val feature = JsonObject()
+    feature.addProperty("type", "Feature")
+
+    val geometry = JsonObject()
+    geometry.addProperty("type", "LineString")
+
+    val coordinates = JsonArray()
+    for (point in points) {
+        coordinates.add(createCoordinate(point[0].toDouble(), point[1].toDouble()))
+    }
+
+    geometry.add("coordinates", coordinates)
+    feature.add("geometry", geometry)
+
+    val properties = JsonObject()
+    properties.addProperty("name", name.substring(1, name.length - 1))
+    feature.add("properties", properties)
+
+    return feature
+}
+
+fun NPolygon(points: List<List<Number>>, name: String, evaluatorInfo: EvaluatorInfo) {
+    evaluatorInfo.features.add(createNPolygonFeature(points, name))
+    evaluatorInfo.featureCollection.add("features", evaluatorInfo.features)
+}
+
+fun createNPolygonFeature(points: List<List<Number>>, name: String): JsonObject {
+    val feature = JsonObject()
+    feature.addProperty("type", "Feature")
+
+    val geometry = JsonObject()
+    geometry.addProperty("type", "Polygon")
+
+    val coordinates = JsonArray()
+
+    val polygon = JsonArray()
+    for (point in points) {
+        polygon.add(createCoordinate(point[0].toDouble(), point[1].toDouble()))
+    }
+    polygon.add(createCoordinate(points[0][0].toDouble(), points[0][1].toDouble()))
+    coordinates.add(polygon)
+
+    geometry.add("coordinates", coordinates)
+    feature.add("geometry", geometry)
+
+    val properties = JsonObject()
+    properties.addProperty("name", name.substring(1, name.length - 1))
+    feature.add("properties", properties)
+
+    return feature
+}
+
 fun Curve(startPoint: List<Number>, endPoint: List<Number>, degree: Double, name: String, evaluatorInfo: EvaluatorInfo) {
     val startPointDouble = startPoint.map { it.toDouble() }
     val endPointDouble = endPoint.map { it.toDouble() }

@@ -268,6 +268,22 @@ fun toNumericArray(value: Value): List<Number> {
     return result
 }
 
+fun toNumericArray2(value: Value): List<List<Number>> {
+    val result = mutableListOf<List<Number>>()
+
+    if (value is Value.ArrayType) {
+        if (value.value.isNotEmpty() && value.value[0] is Value.ArrayType) {
+            for (item in value.value) {
+                if (item is Value.ArrayType) {
+                    result.add(toNumericArray(item))
+                }
+            }
+        }
+    }
+
+    return result
+}
+
 fun evaluateGroup(evaluatorInfo: EvaluatorInfo): Value {
     evaluatorInfo.matchToken(TokenType.LeftBraces)
     while(!evaluatorInfo.matchToken(TokenType.RightBraces)) {
@@ -303,6 +319,22 @@ fun evaluateGroup(evaluatorInfo: EvaluatorInfo): Value {
 
             val radius = (bitwise(evaluatorInfo) as Value.NumberType).value.toDouble()
             Circle(center, radius, name, evaluatorInfo)
+        }
+
+        if (evaluatorInfo.matchToken(TokenType.Polyline)) {
+            evaluatorInfo.matchToken(TokenType.String)
+            val name = evaluatorInfo.currentTokenInfo.lexeme
+            val points = toNumericArray2(bitwise(evaluatorInfo))
+
+            Polyline(points, name, evaluatorInfo)
+        }
+
+        if (evaluatorInfo.matchToken(TokenType.NPolygon)) {
+            evaluatorInfo.matchToken(TokenType.String)
+            val name = evaluatorInfo.currentTokenInfo.lexeme
+            val points = toNumericArray2(bitwise(evaluatorInfo))
+
+            NPolygon(points, name, evaluatorInfo)
         }
     }
 

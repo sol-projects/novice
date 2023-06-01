@@ -186,6 +186,7 @@ private class Tokenizer(
             "false" -> TokenType.False
             "road" -> TokenType.Road
             "building" -> TokenType.Building
+            "npolygon" -> TokenType.NPolygon
             "point" -> TokenType.Point
             "group" -> TokenType.Group
             "curve" -> TokenType.Curve
@@ -196,6 +197,7 @@ private class Tokenizer(
             "location" -> TokenType.Location
             "bend" -> TokenType.Bend
             "line" -> TokenType.Line
+            "polyline" -> TokenType.Polyline
             "box" -> TokenType.Box
             "circle" -> TokenType.Circle
             "println" -> TokenType.Println

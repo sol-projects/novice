@@ -229,6 +229,17 @@ fun group(parserInfo: ParserInfo): Boolean {
                 return false
             }
         }
+
+        if(parserInfo.matchToken(TokenType.Polyline) || parserInfo.matchToken(TokenType.NPolygon)) {
+            if(!parserInfo.matchToken(TokenType.String)) {
+                parserPrintError(ParserError.ExpectedName(parserInfo.currentTokenInfo))
+                return false
+            }
+
+            if(!bitwise(parserInfo)) {
+                return false
+            }
+        }
     }
 
     return true
