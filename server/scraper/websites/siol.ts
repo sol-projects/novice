@@ -1,5 +1,6 @@
 import { INews } from '../../model/News';
 import puppeteer from 'puppeteer';
+import * as Db from '../../db/db';
 
 async function _siol(n: number) {
   const news: INews[] = [];
@@ -34,9 +35,14 @@ async function _siol(n: number) {
       continue;
     }
 
-    const authors = await articlePage.$eval('.article__author', (e) =>
-      (e as HTMLElement).innerText.trim().split(': ')[1].split(', ')
-    );
+    let authors: any;
+    try {
+      authors = await articlePage.$eval('.article__author', (e) =>
+        (e as HTMLElement).innerText.trim().split(': ')[1].split(', ')
+      );
+    } catch (err) {
+      continue;
+    }
 
     const dateUnparsed = await articlePage.$eval(
       '.article__publish_date--date',
@@ -50,7 +56,7 @@ async function _siol(n: number) {
     const dateSplit = dateUnparsed.split('.');
     const date = new Date(
       +dateSplit[2],
-      +dateSplit[1] - 1,
+      +dateSplit[1] - 2,
       +dateSplit[0] + 1,
       +time[0],
       +time[1],
@@ -65,6 +71,9 @@ async function _siol(n: number) {
       els.map((e) => (e as HTMLElement).innerText.trim().toLowerCase())
     );
 
+    const location = Db.Util.getFirstSettlement(categories);
+    const coords = await Db.Util.toCoords(location);
+
     news.push({
       title,
       url,
@@ -72,9 +81,10 @@ async function _siol(n: number) {
       authors,
       content,
       categories,
+      views: [],
       location: {
         type: 'Point',
-        coordinates: [0, 0],
+        coordinates: coords,
       },
     });
 

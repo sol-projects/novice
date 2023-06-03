@@ -16,10 +16,13 @@ const app: Express = express();
 app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use('/news', router);
-if (!process.env.DB_NAME) {
-  console.error(`DB with name ${process.env.DB_NAME}`);
-} else {
-  Db.connect(process.env.DB_NAME);
+
+if(process.env.TESTS_FLAG !== 'true') {
+    if (!process.env.DB_NAME) {
+      console.error(`DB with name ${!process.env.DB_NAME}`);
+    } else {
+      Db.connect(process.env.DB_NAME);
+    }
 }
 
 const server = http.createServer(app);
@@ -42,8 +45,13 @@ const routes = {
     `${site}/news/title/:title`,
     `${site}/news/content/:content`,
   ],
-  POST: [`${site}/news/`],
-  DELETE: [`${site}/news/:id`],
+  POST: [
+      `${site}/news/ requires JWT authorization: admin`,
+      `${site}/news/store requires JWT authorization: admin`,
+      `${site}/news/geolang`
+  ],
+  PUT: [`${site}/news/:id requires JWT authorization: admin`],
+  DELETE: [`${site}/news/:id requires JWT authorization: admin`],
 };
 
 app.get('/', async (req: Request, res: Response) => {

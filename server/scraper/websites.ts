@@ -12,7 +12,7 @@ const websites = new Map<string, (n: number) => Promise<INews[]>>([
   ['ekipa24', require('./websites/ekipa24')],
   ['dnevnik', require('./websites/dnevnik')],
   ['svet24', require('./websites/svet24')],
-  ['n1info', require('./websites/n1info')],
+  //['n1info', require('./websites/n1info')],
 ]);
 
 export = websites;

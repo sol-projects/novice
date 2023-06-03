@@ -2,6 +2,7 @@ import { INews } from '../../model/News';
 import cheerio from 'cheerio';
 import axios from 'axios';
 import { parse } from 'date-fns';
+import * as Db from '../../db/db';
 
 function extractCountryFromTitle(title: string): string {
   const countryPrefixes = ['v ', 'v ', 'na '];
@@ -70,7 +71,12 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
       .trim()
       .split('/');
 
-    const location = extractCountryFromTitle(title);
+    let location = extractCountryFromTitle(title);
+    if(location == '') {
+        location = Db.Util.getFirstSettlement(categories);
+    }
+
+    const coords = await Db.Util.toCoords(location);
 
     const date = parse('2000-10-10', 'yyyy-MM-dd', new Date());
 
@@ -81,9 +87,10 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
       authors,
       content,
       categories,
+      views: [],
       location: {
         type: 'Point',
-        coordinates: [0, 0],
+        coordinates: coords,
       },
     };
 

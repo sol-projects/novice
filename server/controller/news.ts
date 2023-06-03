@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import websites from '../scraper/websites';
 import { INews, News } from '../model/News';
 import * as Socket from '../socket/socket';
+import { exec } from 'child_process';
 
 async function run_query(res: Response, query: any) {
   try {
@@ -48,8 +49,28 @@ export async function remove(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  //get URL and find which website it is then call the correct function to fetch new news info
-  res.send('/news/update');
+  const id = req.params.id;
+  const updatedNewsData = req.body;
+
+  if (!id) {
+    return res.status(400).send('ID is required for updating news.');
+  }
+
+  try {
+    const updatedNews = await News.findByIdAndUpdate(id, updatedNewsData, {
+      new: true,
+      useFindAndModify: false,
+    });
+
+    if (!updatedNews) {
+      return res.status(404).json({ message: `News with ID ${id} not found` });
+    }
+
+    res.json(updatedNews);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error while updating news');
+  }
 }
 
 export async function all(req: Request, res: Response) {
@@ -59,10 +80,60 @@ export async function all(req: Request, res: Response) {
 export async function store(req: Request, res: Response) {
   let news: INews[] = [];
   for await (let [key, value] of websites) {
+    console.log(`Evaluating website ${key} before pushing to database...`);
     const result = await value(req.body.n);
-    for (let value of result) {
-      news.push(value);
+    for (let article of result) {
+      let errorMessage = '';
+      if (!isValidDate(article.date)) {
+        errorMessage += `Invalid date (${article.date}): The article "${article.title}" on website ${key} should have a date in the current year. `;
+      }
+
+      if (!article.title || !article.content) {
+        errorMessage += `Missing title or content: The article "${article.title}" on website ${key} should have a title and content. `;
+      }
+
+      if (
+        article.authors.some(
+          (author) => author.includes('/') || author.includes(',')
+        )
+      ) {
+        errorMessage += `Invalid author format: The article "${article.title}" on website ${key} has an invalid author format. Authors should not contain "/" or ",". `;
+      }
+
+      if (hasDuplicates(article.categories)) {
+        errorMessage += `Duplicate categories: The article "${article.title}" on website ${key} has duplicate categories. `;
+      }
+
+      if (hasDuplicates(article.authors)) {
+        errorMessage += `Duplicate authors: The article "${article.title}" on website ${key} has duplicate authors. `;
+      }
+
+      if (!isValidURL(article.url)) {
+        errorMessage += `Invalid URL: The article "${article.title}" on website ${key} has an invalid URL (${article.url}). `;
+      }
+
+      if (errorMessage) {
+        console.error(
+          `Invalid data found: ${errorMessage}Not pushing "${article.url}" to the database...`
+        );
+        continue;
+      }
+
+      const existingNews = await News.findOne({
+        title: article.title,
+        content: article.content,
+      });
+
+      if (!existingNews) {
+        news.push(article);
+      } else {
+        console.log(
+          `Article "${article.title}" on website ${key} already exists. Not pushing to database...`
+        );
+      }
     }
+
+    console.log(`Website ${key} evaluated successfully...`);
   }
 
   news.sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -73,6 +144,76 @@ export async function store(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     res.status(500).send('Failed to save news to MongoDB');
+  }
+}
+
+function isValidDate(date: Date) {
+  const currentYear = new Date().getFullYear();
+  const year = new Date(date).getFullYear();
+  return year === currentYear;
+}
+
+function hasDuplicates(array: string[]) {
+  return new Set(array).size !== array.length;
+}
+
+function isValidURL(url: string) {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function add(req: Request, res: Response) {
+  let news: INews[] = [];
+
+  let payload = req.body;
+
+  if (Array.isArray(payload)) {
+    payload = payload[0];
+  }
+
+  const value = payload;
+  const existingNews = await News.findOne({
+    title: value.title,
+    content: value.content,
+  });
+
+  if (!existingNews) {
+    news.push(value);
+  } else {
+    console.log(
+      `Article "${value.title}" already exists. Not pushing to database...`
+    );
+  }
+
+  console.log(`News ${value.title} evaluated successfully...`);
+
+  try {
+    await News.create(news);
+    Socket.emit('news-added', news);
+    res.status(201).json(news);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to save news to MongoDB');
+  }
+}
+
+export async function addView(req: Request, res: Response) {
+  try {
+    const { id } = req.body;
+
+    let date = new Date();
+    await News.findByIdAndUpdate(id, {
+      $push: { views: date },
+    });
+
+    res.status(201).json({ message: 'View created successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error creating view', error });
   }
 }
 
@@ -106,6 +247,44 @@ export async function scrapeAll(req: Request, res: Response) {
   }
 
   res.json(news);
+}
+
+export async function geolang(req: Request, res: Response) {
+  const { code } = req.body;
+
+  const fs = require('fs');
+  fs.writeFile('../geo-lang/interpreter/app/in.txt', code, function (err: any) {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error writing the code to in.txt');
+    }
+
+    exec(
+      'gradle run --args="in.txt"',
+      { cwd: '../geo-lang/interpreter' },
+      function (error, stdout, stderr) {
+        if (error) {
+          console.error(error);
+          return res
+            .status(500)
+            .send('Error executing the GeoLang interpreter');
+        }
+
+        fs.readFile(
+          '../geo-lang/interpreter/app/out.geojson',
+          'utf8',
+          function (err: any, data: any) {
+            if (err) {
+              console.error(err);
+              return res.status(500).send('Error reading the output file');
+            }
+
+            res.send(data);
+          }
+        );
+      }
+    );
+  });
 }
 
 export namespace Filter {

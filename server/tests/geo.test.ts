@@ -1,4 +1,5 @@
 import * as Db from '../db/db';
+import { closeServer } from '../index';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -26,4 +27,6 @@ test('first settlement in array', () => {
   ).toBeTruthy;
   expect(Db.Util.getFirstSettlement(['dsdds', 'asdaass', 'widwajsk']) == '')
     .toBeTruthy;
+    closeServer(); // Close the HTTP server
+
 });

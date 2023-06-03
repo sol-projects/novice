@@ -1,12 +1,5 @@
 import React from "react";
 import {
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
   Button,
   Input,
   FormControl,
@@ -17,6 +10,15 @@ import {
   useDisclosure,
   Checkbox,
   CheckboxGroup,
+  AccordionPanel,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  Radio,
+  RadioGroup,
+  Stack,
+  Box,
 } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import DynamicInput from "./DynamicInput";
@@ -33,11 +35,10 @@ export interface FilterData {
   authors: string[];
   title: string;
   content: string;
+  sortBy: string;
 }
 
 export default function Filter({ onChange }: FilterProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef<HTMLButtonElement>(null);
   const [data, setData] = useState<FilterData>({
     websites: [],
     from: new Date(),
@@ -46,6 +47,7 @@ export default function Filter({ onChange }: FilterProps) {
     authors: [],
     title: "",
     content: "",
+    sortBy: "dateDesc",
   });
 
   const handleWebsiteChange = (websites: string[]) => {
@@ -97,113 +99,117 @@ export default function Filter({ onChange }: FilterProps) {
     }));
   };
 
+  const handleSortChange = (value: string) => {
+    setData((prevState) => ({
+      ...prevState,
+      sortBy: value,
+    }));
+  };
+
   useEffect(() => {
     onChange(data);
   }, [data, onChange]);
 
   return (
-    <>
-      <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-        Sort & Filter
-      </Button>
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        finalFocusRef={btnRef}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>Filter</DrawerHeader>
+    <Accordion allowToggle>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box as="span" flex="1" textAlign="left">
+              filtriranje
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          <FormControl>
+            <RadioGroup
+              colorScheme="green"
+              onChange={handleSortChange}
+              value={data.sortBy}
+            >
+              <Stack direction="row">
+                <FormLabel>sortiraj: </FormLabel>
+                <Radio value="dateDesc">novejše</Radio>
+                <Radio value="dateAsc">starejše</Radio>
+                <Radio value="popularity">popularnost</Radio>
+                <Radio value="views">ogledi</Radio>
+              </Stack>
+            </RadioGroup>
+            <CheckboxGroup
+              colorScheme="green"
+              defaultValue={[
+                "gov",
+                "rtvslo",
+                "gov-vlada",
+                "24ur",
+                "delo",
+                "mariborinfo",
+                "svet",
+                "sta",
+                "siol",
+                "ekipa24",
+                "dnevnik",
+                "n1",
+              ]}
+              onChange={handleWebsiteChange}
+            >
+              <VStack align="stretch">
+                <HStack>
+                  <Checkbox width="50%" value="rtvslo">
+                    RTV Slovenija
+                  </Checkbox>
+                  <Checkbox value="gov">gov</Checkbox>
+                </HStack>
+                <HStack>
+                  <Checkbox width="50%" value="gov-vlada">
+                    novice vlade
+                  </Checkbox>
+                  <Checkbox value="24ur">24 ur</Checkbox>
+                </HStack>
+                <HStack>
+                  <Checkbox width="50%" value="delo">
+                    Delo
+                  </Checkbox>
+                  <Checkbox value="mariborinfo">Mariborinfo</Checkbox>
+                </HStack>
+                <HStack>
+                  <Checkbox width="50%" value="dnevnik">
+                    Dnevnik
+                  </Checkbox>
+                  <Checkbox value="svet">Svet</Checkbox>
+                </HStack>
+                <HStack>
+                  <Checkbox width="50%" value="siol">
+                    Siol
+                  </Checkbox>
+                  <Checkbox value="sta">STA</Checkbox>
+                </HStack>
+                <HStack>
+                  <Checkbox width="50%" value="n1">
+                    N1
+                  </Checkbox>
+                  <Checkbox value="ekipa24">Ekipa 24</Checkbox>
+                </HStack>
+              </VStack>
+            </CheckboxGroup>
+            <FormLabel>Čas</FormLabel>
+            <HStack>
+              <Input type="date" onChange={handleFromDateChange} />
+              <Input type="date" onChange={handleToDateChange} />
+            </HStack>
+            <FormLabel>Kategorije</FormLabel>
+            <DynamicInput onChange={handleCategoriesChange} />
+            <FormLabel>Avtorji</FormLabel>
+            <DynamicInput onChange={handleAuthorsChange} />
 
-          <DrawerBody>
-            <FormControl>
-              <FormLabel>Website</FormLabel>
-              <CheckboxGroup
-                colorScheme="green"
-                defaultValue={[
-                  "gov",
-                  "rtvslo",
-                  "gov-vlada",
-                  "24ur",
-                  "delo",
-                  "mbinfo",
-                  "svet",
-                  "sta",
-                  "siol",
-                  "ekipa24",
-                  "dnevnik",
-                  "n1",
-                ]}
-                onChange={handleWebsiteChange}
-              >
-                <VStack align="stretch">
-                  <HStack>
-                    <Checkbox width="50%" value="rtvslo">
-                      RTV Slovenija
-                    </Checkbox>
-                    <Checkbox value="gov">gov</Checkbox>
-                  </HStack>
-                  <HStack>
-                    <Checkbox width="50%" value="gov-vlada">
-                      novice vlade
-                    </Checkbox>
-                    <Checkbox value="24ur">24 ur</Checkbox>
-                  </HStack>
-                  <HStack>
-                    <Checkbox width="50%" value="delo">
-                      Delo
-                    </Checkbox>
-                    <Checkbox value="mbinfo">Mariborinfo</Checkbox>
-                  </HStack>
-                  <HStack>
-                    <Checkbox width="50%" value="dnevnik">
-                      Dnevnik
-                    </Checkbox>
-                    <Checkbox value="svet">Svet</Checkbox>
-                  </HStack>
-                  <HStack>
-                    <Checkbox width="50%" value="siol">
-                      Siol
-                    </Checkbox>
-                    <Checkbox value="sta">STA</Checkbox>
-                  </HStack>
-                  <HStack>
-                    <Checkbox width="50%" value="n1">
-                      N1
-                    </Checkbox>
-                    <Checkbox value="ekipa24">Ekipa 24</Checkbox>
-                  </HStack>
-                </VStack>
-              </CheckboxGroup>
-              <FormLabel>Date</FormLabel>
-              <HStack>
-                <Input type="date" onChange={handleFromDateChange} />
-                <Input type="date" onChange={handleToDateChange} />
-              </HStack>
-              <FormLabel>Categories</FormLabel>
-              <DynamicInput onChange={handleCategoriesChange} />
-              <FormLabel>Authors</FormLabel>
-              <DynamicInput onChange={handleAuthorsChange} />
-
-              <FormLabel>Search in title</FormLabel>
-              <Input type="text" onChange={handleTitleChange} />
-              <FormLabel>Search in content</FormLabel>
-              <Input type="text" onChange={handleContentChange} />
-            </FormControl>
-          </DrawerBody>
-
-          <DrawerFooter>
-            <Button colorScheme="red" variant="outline" mr={3}>
-              Reset
-            </Button>
-            <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </>
+            <FormLabel>Išči po naslovu</FormLabel>
+            <Input type="text" onChange={handleTitleChange} />
+            <FormLabel>Išči po vsebini</FormLabel>
+            <Input type="text" onChange={handleContentChange} />
+          </FormControl>
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
   );
 }

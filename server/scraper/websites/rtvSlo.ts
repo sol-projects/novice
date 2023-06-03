@@ -73,6 +73,7 @@ async function rtvSlo(n: number) {
         authors,
         content,
         categories,
+        views: [],
         location: {
           type: 'Point',
           coordinates: coords,

@@ -14,8 +14,28 @@ export default function NewsArticle(props: any) {
   const { article } = props;
   const date = new Date(article.date);
 
+  const addView = async () => {
+    console.log("success");
+    try {
+      await fetch("http://localhost:8000/news/views", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: article._id }),
+      });
+    } catch (error) {
+      console.error("Error creating view", error);
+    }
+  };
+
   return (
-    <Link href={article.url} style={{ textDecoration: "none" }}>
+    <Link
+      href={article.url}
+      style={{ textDecoration: "none" }}
+      onClick={addView}
+      isExternal
+    >
       <Card
         height="100%"
         width="100%"
@@ -30,6 +50,7 @@ export default function NewsArticle(props: any) {
           </Text>
           <Text>Avtorji: {article.authors.toString()}</Text>
           <Text>Datum: {date.toLocaleString("sl-SI")}</Text>
+          <Text>Ogledi: {article.views.length}</Text>
           <Text>Kategorije: {article.categories.toString()}</Text>
         </Stack>
         <Stack width="70%">

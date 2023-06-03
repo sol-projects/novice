@@ -8,7 +8,7 @@ async function _24ur(n: number) {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
-  await page.goto('https://www.24ur.com/novice');
+  await page.goto('https://www.24ur.com/arhiv');
   await page.waitForSelector('.leading-tight', { visible: true });
 
   const links = await page.$$('div.flex-grow > a[href^="/"]');
@@ -38,7 +38,15 @@ async function _24ur(n: number) {
 
     const articlePage = await browser.newPage();
     await articlePage.goto(url);
-    await articlePage.waitForSelector('.article__body', { visible: true });
+    //await articlePage.waitForSelector('.article__body', { visible: true });
+
+    const labels = await articlePage.$$eval('.label', (els) =>
+      els.map((e) => (e as HTMLElement).innerText.trim())
+    );
+    if (labels.includes('OGLAS')) {
+      await articlePage.close();
+      continue;
+    }
 
     const authors = await articlePage.$$eval('.article__author', (els) =>
       els.map((e) => (e as HTMLElement).innerText.split('/')[0].trim())
@@ -81,6 +89,7 @@ async function _24ur(n: number) {
       authors,
       content,
       categories,
+      views: [],
       location: {
         type: 'Point',
         coordinates: coords,

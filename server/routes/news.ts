@@ -18,11 +18,14 @@ router.get('/date/after/:date', Controller.Filter.Date.after);
 router.get('/date/after/:after/before/:before', Controller.Filter.Date.range);
 router.get('/title/:title', Controller.Filter.title);
 router.get('/content/:content', Controller.Filter.content);
-//dodaj za fromCoords in toCoords
+//nizka prioriteta: dodaj za fromCoords in toCoords
 
 router.put('/:id', JWT.authorization, Controller.update);
 router.delete('/:id', JWT.authorization, Controller.remove);
-router.post('/', JWT.authorization, Controller.store);
+router.post('/', JWT.authorization, Controller.add);
+router.post('/views', Controller.addView);
+router.post('/store', JWT.authorization, Controller.store);
 router.post('/login', JWT.login);
+router.post('/geolang', Controller.geolang);
 
 export = router;
