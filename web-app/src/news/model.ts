@@ -6,6 +6,7 @@ export default interface INews {
   authors: string[];
   content: string;
   categories: string[];
+  views: Date[];
   location: {
     type: "Point";
     coordinates: [number, number];

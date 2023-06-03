@@ -89,6 +89,7 @@ async function _24ur(n: number) {
       authors,
       content,
       categories,
+      views: [],
       location: {
         type: 'Point',
         coordinates: coords,

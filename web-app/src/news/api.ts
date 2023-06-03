@@ -4,7 +4,7 @@ export async function getAll() {
   try {
     const response = await fetch("http://localhost:8000/news");
     if (!response.ok) {
-      console.log("Failed to fetch orders");
+      console.log("Failed to fetch news");
     }
 
     const data = await response.json();

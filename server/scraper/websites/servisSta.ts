@@ -87,6 +87,7 @@ async function servisSta(numArticlesToOpen: number): Promise<INews[]> {
       authors,
       content,
       categories,
+      views: [],
       location: {
         type: 'Point',
         coordinates: coords,

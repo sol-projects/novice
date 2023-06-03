@@ -8,6 +8,7 @@ export interface INews {
   authors: string[];
   content: string;
   categories: string[];
+  views: Date[];
   location: {
     type: 'Point';
     coordinates: [number, number];
@@ -21,6 +22,7 @@ export const NewsSchema = new Schema<INews>({
   authors: [String],
   content: String,
   categories: [String],
+  views: [Date],
   location: {
     type: {
       type: String,

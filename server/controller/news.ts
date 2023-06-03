@@ -49,8 +49,8 @@ export async function remove(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  const id = req.params.id; // get the id from the route parameter
-  const updatedNewsData = req.body; // get the updated news data directly from the request body
+  const id = req.params.id;
+  const updatedNewsData = req.body;
 
   if (!id) {
     return res.status(400).send('ID is required for updating news.');
@@ -85,6 +85,36 @@ export async function store(req: Request, res: Response) {
     const result = await value(req.body.n);
     console.log(`Evaluating website ${key} before pushing to database...`);
     for (let value of result) {
+      let errorMessage = '';
+      if (!isValidDate(value.date)) {
+        errorMessage += `Invalid date (${value.date}): The article "${value.title}" on website ${key} should have a date in the current year. `;
+      }
+
+      if (!value.title || !value.content) {
+        errorMessage += `Missing title or content: The article "${value.title}" on website ${key} should have a title and content. `;
+      }
+
+      if (value.authors.some(author => author.includes("/") || author.includes(","))) {
+        errorMessage += `Invalid author format: The article "${value.title}" on website ${key} has an invalid author format. Authors should not contain "/" or ",". `;
+      }
+
+      if (hasDuplicates(value.categories)) {
+        errorMessage += `Duplicate categories: The article "${value.title}" on website ${key} has duplicate categories. `;
+      }
+
+      if (hasDuplicates(value.authors)) {
+        errorMessage += `Duplicate authors: The article "${value.title}" on website ${key} has duplicate authors. `;
+      }
+
+      if (!isValidURL(value.url)) {
+        errorMessage += `Invalid URL: The article "${value.title}" on website ${key} has an invalid URL (${value.url}). `;
+      }
+
+      if (errorMessage) {
+        console.error(`Invalid data found: ${errorMessage}Not pushing "${value.url}" to the database...`);
+        continue;
+      }
+
       const existingNews = await News.findOne({
         title: value.title,
         content: value.content,
@@ -113,6 +143,25 @@ export async function store(req: Request, res: Response) {
   }
 }
 
+function isValidDate(date: Date) {
+  const currentYear = new Date().getFullYear();
+  const year = new Date(date).getFullYear();
+  return year === currentYear;
+}
+
+function hasDuplicates(array: string[]) {
+  return new Set(array).size !== array.length;
+}
+
+function isValidURL(url: string) {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 export async function add(req: Request, res: Response) {
   let news: INews[] = [];
 
@@ -136,7 +185,7 @@ export async function add(req: Request, res: Response) {
     );
   }
 
-  console.log(`News article evaluated successfully...`);
+  console.log(`News ${value.title} evaluated successfully...`);
 
   try {
     await News.create(news);
@@ -148,7 +197,19 @@ export async function add(req: Request, res: Response) {
   }
 }
 
+export async function view(req: Request, res: Response) {
+  try {
+    const { id } = req.body;
 
+    await News.findByIdAndUpdate(id, {
+      $push: { views: { date: new Date() } },
+    });
+
+    res.status(201).json({ message: 'View created successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating view', error });
+  }
+}
 
 export async function scrape(req: Request, res: Response) {
   let news: INews[] = [];
