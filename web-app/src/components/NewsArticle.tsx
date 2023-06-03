@@ -15,14 +15,14 @@ export default function NewsArticle(props: any) {
   const date = new Date(article.date);
 
   const addView = async () => {
-    console.log("success")
+    console.log("success");
     try {
-      await fetch("http://localhost:8000/news/view", {
+      await fetch("http://localhost:8000/news/views", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ newsId: article._id }),
+        body: JSON.stringify({ id: article._id }),
       });
     } catch (error) {
       console.error("Error creating view", error);
@@ -30,10 +30,11 @@ export default function NewsArticle(props: any) {
   };
 
   return (
-    <Link href={article.url}
-    style={{ textDecoration: "none" }}
-    onClick={addView}
-    isExternal
+    <Link
+      href={article.url}
+      style={{ textDecoration: "none" }}
+      onClick={addView}
+      isExternal
     >
       <Card
         height="100%"

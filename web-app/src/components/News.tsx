@@ -66,6 +66,14 @@ export default function News() {
       filtered = SortFn.dateAsc(filtered);
     }
 
+    if (filterData.sortBy === "popularity") {
+      filtered = SortFn.popularity(filtered);
+    }
+
+    if (filterData.sortBy === "views") {
+      filtered = SortFn.views(filtered);
+    }
+
     setFilteredNews(filtered);
   };
 

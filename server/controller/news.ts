@@ -57,18 +57,16 @@ export async function update(req: Request, res: Response) {
   }
 
   try {
-    const updatedNews = await News.findByIdAndUpdate(
-      id,
-      updatedNewsData,
-      { new: true, useFindAndModify: false }
-    );
+    const updatedNews = await News.findByIdAndUpdate(id, updatedNewsData, {
+      new: true,
+      useFindAndModify: false,
+    });
 
     if (!updatedNews) {
       return res.status(404).json({ message: `News with ID ${id} not found` });
     }
 
     res.json(updatedNews);
-
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error while updating news');
@@ -82,49 +80,55 @@ export async function all(req: Request, res: Response) {
 export async function store(req: Request, res: Response) {
   let news: INews[] = [];
   for await (let [key, value] of websites) {
-    const result = await value(req.body.n);
     console.log(`Evaluating website ${key} before pushing to database...`);
-    for (let value of result) {
+    const result = await value(req.body.n);
+    for (let article of result) {
       let errorMessage = '';
-      if (!isValidDate(value.date)) {
-        errorMessage += `Invalid date (${value.date}): The article "${value.title}" on website ${key} should have a date in the current year. `;
+      if (!isValidDate(article.date)) {
+        errorMessage += `Invalid date (${article.date}): The article "${article.title}" on website ${key} should have a date in the current year. `;
       }
 
-      if (!value.title || !value.content) {
-        errorMessage += `Missing title or content: The article "${value.title}" on website ${key} should have a title and content. `;
+      if (!article.title || !article.content) {
+        errorMessage += `Missing title or content: The article "${article.title}" on website ${key} should have a title and content. `;
       }
 
-      if (value.authors.some(author => author.includes("/") || author.includes(","))) {
-        errorMessage += `Invalid author format: The article "${value.title}" on website ${key} has an invalid author format. Authors should not contain "/" or ",". `;
+      if (
+        article.authors.some(
+          (author) => author.includes('/') || author.includes(',')
+        )
+      ) {
+        errorMessage += `Invalid author format: The article "${article.title}" on website ${key} has an invalid author format. Authors should not contain "/" or ",". `;
       }
 
-      if (hasDuplicates(value.categories)) {
-        errorMessage += `Duplicate categories: The article "${value.title}" on website ${key} has duplicate categories. `;
+      if (hasDuplicates(article.categories)) {
+        errorMessage += `Duplicate categories: The article "${article.title}" on website ${key} has duplicate categories. `;
       }
 
-      if (hasDuplicates(value.authors)) {
-        errorMessage += `Duplicate authors: The article "${value.title}" on website ${key} has duplicate authors. `;
+      if (hasDuplicates(article.authors)) {
+        errorMessage += `Duplicate authors: The article "${article.title}" on website ${key} has duplicate authors. `;
       }
 
-      if (!isValidURL(value.url)) {
-        errorMessage += `Invalid URL: The article "${value.title}" on website ${key} has an invalid URL (${value.url}). `;
+      if (!isValidURL(article.url)) {
+        errorMessage += `Invalid URL: The article "${article.title}" on website ${key} has an invalid URL (${article.url}). `;
       }
 
       if (errorMessage) {
-        console.error(`Invalid data found: ${errorMessage}Not pushing "${value.url}" to the database...`);
+        console.error(
+          `Invalid data found: ${errorMessage}Not pushing "${article.url}" to the database...`
+        );
         continue;
       }
 
       const existingNews = await News.findOne({
-        title: value.title,
-        content: value.content,
+        title: article.title,
+        content: article.content,
       });
 
       if (!existingNews) {
-        news.push(value);
+        news.push(article);
       } else {
         console.log(
-          `Article "${value.title}" on website ${key} already exists. Not pushing to database...`
+          `Article "${article.title}" on website ${key} already exists. Not pushing to database...`
         );
       }
     }
@@ -197,16 +201,18 @@ export async function add(req: Request, res: Response) {
   }
 }
 
-export async function view(req: Request, res: Response) {
+export async function addView(req: Request, res: Response) {
   try {
     const { id } = req.body;
 
+    let date = new Date();
     await News.findByIdAndUpdate(id, {
-      $push: { views: { date: new Date() } },
+      $push: { views: date },
     });
 
     res.status(201).json({ message: 'View created successfully' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error creating view', error });
   }
 }
@@ -253,21 +259,31 @@ export async function geolang(req: Request, res: Response) {
       return res.status(500).send('Error writing the code to in.txt');
     }
 
-    exec('gradle run --args="in.txt"', { cwd: '../geo-lang/interpreter' }, function (error, stdout, stderr) {
-      if (error) {
-        console.error(error);
-        return res.status(500).send('Error executing the GeoLang interpreter');
-      }
-
-      fs.readFile('../geo-lang/interpreter/app/out.geojson', 'utf8', function (err: any, data: any) {
-        if (err) {
-          console.error(err);
-          return res.status(500).send('Error reading the output file');
+    exec(
+      'gradle run --args="in.txt"',
+      { cwd: '../geo-lang/interpreter' },
+      function (error, stdout, stderr) {
+        if (error) {
+          console.error(error);
+          return res
+            .status(500)
+            .send('Error executing the GeoLang interpreter');
         }
 
-        res.send(data);
-      });
-    });
+        fs.readFile(
+          '../geo-lang/interpreter/app/out.geojson',
+          'utf8',
+          function (err: any, data: any) {
+            if (err) {
+              console.error(err);
+              return res.status(500).send('Error reading the output file');
+            }
+
+            res.send(data);
+          }
+        );
+      }
+    );
   });
 }
 
