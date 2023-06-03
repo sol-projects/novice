@@ -51,6 +51,7 @@ async function noviceSvet24(n: number) {
         authors: [authorText],
         content: joinedContent,
         categories: [],
+        views: [],
         location: {
           type: 'Point',
           coordinates: [0, 0],

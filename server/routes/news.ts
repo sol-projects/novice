@@ -23,6 +23,7 @@ router.get('/content/:content', Controller.Filter.content);
 router.put('/:id', JWT.authorization, Controller.update);
 router.delete('/:id', JWT.authorization, Controller.remove);
 router.post('/', JWT.authorization, Controller.add);
+router.post('/views', Controller.addView);
 router.post('/store', JWT.authorization, Controller.store);
 router.post('/login', JWT.login);
 router.post('/geolang', Controller.geolang);

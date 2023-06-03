@@ -58,6 +58,7 @@ async function _delo(n: number) {
       authors: [],
       content: '',
       categories: [],
+      views: [],
       location: {
         type: 'Point',
         coordinates: [0, 0],

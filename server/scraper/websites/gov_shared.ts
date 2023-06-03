@@ -51,6 +51,7 @@ async function gov_shared(n: number, website: string) {
       authors: [],
       content: '',
       categories: [],
+      views: [],
       location: {
         type: 'Point',
         coordinates: [0, 0],

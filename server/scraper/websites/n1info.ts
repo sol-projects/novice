@@ -61,6 +61,7 @@ async function n1infoSlovenija(n: number = 5) {
         date: new Date(),
         content: joinedContent,
         categories,
+        views: [],
         location: {
           type: 'Point',
           coordinates: coords,

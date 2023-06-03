@@ -129,9 +129,11 @@ export default function Filter({ onChange }: FilterProps) {
               value={data.sortBy}
             >
               <Stack direction="row">
-                <FormLabel>Sortiraj po: </FormLabel>
-                <Radio value="dateDesc">Novejše</Radio>
-                <Radio value="dateAsc">Starejše</Radio>
+                <FormLabel>sortiraj: </FormLabel>
+                <Radio value="dateDesc">novejše</Radio>
+                <Radio value="dateAsc">starejše</Radio>
+                <Radio value="popularity">popularnost</Radio>
+                <Radio value="views">ogledi</Radio>
               </Stack>
             </RadioGroup>
             <CheckboxGroup

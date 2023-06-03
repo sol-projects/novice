@@ -49,26 +49,24 @@ export async function remove(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  const id = req.params.id; // get the id from the route parameter
-  const updatedNewsData = req.body; // get the updated news data directly from the request body
+  const id = req.params.id;
+  const updatedNewsData = req.body;
 
   if (!id) {
     return res.status(400).send('ID is required for updating news.');
   }
 
   try {
-    const updatedNews = await News.findByIdAndUpdate(
-      id,
-      updatedNewsData,
-      { new: true, useFindAndModify: false }
-    );
+    const updatedNews = await News.findByIdAndUpdate(id, updatedNewsData, {
+      new: true,
+      useFindAndModify: false,
+    });
 
     if (!updatedNews) {
       return res.status(404).json({ message: `News with ID ${id} not found` });
     }
 
     res.json(updatedNews);
-
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error while updating news');
@@ -82,19 +80,55 @@ export async function all(req: Request, res: Response) {
 export async function store(req: Request, res: Response) {
   let news: INews[] = [];
   for await (let [key, value] of websites) {
-    const result = await value(req.body.n);
     console.log(`Evaluating website ${key} before pushing to database...`);
-    for (let value of result) {
+    const result = await value(req.body.n);
+    for (let article of result) {
+      let errorMessage = '';
+      if (!isValidDate(article.date)) {
+        errorMessage += `Invalid date (${article.date}): The article "${article.title}" on website ${key} should have a date in the current year. `;
+      }
+
+      if (!article.title || !article.content) {
+        errorMessage += `Missing title or content: The article "${article.title}" on website ${key} should have a title and content. `;
+      }
+
+      if (
+        article.authors.some(
+          (author) => author.includes('/') || author.includes(',')
+        )
+      ) {
+        errorMessage += `Invalid author format: The article "${article.title}" on website ${key} has an invalid author format. Authors should not contain "/" or ",". `;
+      }
+
+      if (hasDuplicates(article.categories)) {
+        errorMessage += `Duplicate categories: The article "${article.title}" on website ${key} has duplicate categories. `;
+      }
+
+      if (hasDuplicates(article.authors)) {
+        errorMessage += `Duplicate authors: The article "${article.title}" on website ${key} has duplicate authors. `;
+      }
+
+      if (!isValidURL(article.url)) {
+        errorMessage += `Invalid URL: The article "${article.title}" on website ${key} has an invalid URL (${article.url}). `;
+      }
+
+      if (errorMessage) {
+        console.error(
+          `Invalid data found: ${errorMessage}Not pushing "${article.url}" to the database...`
+        );
+        continue;
+      }
+
       const existingNews = await News.findOne({
-        title: value.title,
-        content: value.content,
+        title: article.title,
+        content: article.content,
       });
 
       if (!existingNews) {
-        news.push(value);
+        news.push(article);
       } else {
         console.log(
-          `Article "${value.title}" on website ${key} already exists. Not pushing to database...`
+          `Article "${article.title}" on website ${key} already exists. Not pushing to database...`
         );
       }
     }
@@ -110,6 +144,25 @@ export async function store(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     res.status(500).send('Failed to save news to MongoDB');
+  }
+}
+
+function isValidDate(date: Date) {
+  const currentYear = new Date().getFullYear();
+  const year = new Date(date).getFullYear();
+  return year === currentYear;
+}
+
+function hasDuplicates(array: string[]) {
+  return new Set(array).size !== array.length;
+}
+
+function isValidURL(url: string) {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
   }
 }
 
@@ -136,7 +189,7 @@ export async function add(req: Request, res: Response) {
     );
   }
 
-  console.log(`News article evaluated successfully...`);
+  console.log(`News ${value.title} evaluated successfully...`);
 
   try {
     await News.create(news);
@@ -148,7 +201,21 @@ export async function add(req: Request, res: Response) {
   }
 }
 
+export async function addView(req: Request, res: Response) {
+  try {
+    const { id } = req.body;
 
+    let date = new Date();
+    await News.findByIdAndUpdate(id, {
+      $push: { views: date },
+    });
+
+    res.status(201).json({ message: 'View created successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error creating view', error });
+  }
+}
 
 export async function scrape(req: Request, res: Response) {
   let news: INews[] = [];
@@ -192,21 +259,31 @@ export async function geolang(req: Request, res: Response) {
       return res.status(500).send('Error writing the code to in.txt');
     }
 
-    exec('gradle run --args="in.txt"', { cwd: '../geo-lang/interpreter' }, function (error, stdout, stderr) {
-      if (error) {
-        console.error(error);
-        return res.status(500).send('Error executing the GeoLang interpreter');
-      }
-
-      fs.readFile('../geo-lang/interpreter/app/out.geojson', 'utf8', function (err: any, data: any) {
-        if (err) {
-          console.error(err);
-          return res.status(500).send('Error reading the output file');
+    exec(
+      'gradle run --args="in.txt"',
+      { cwd: '../geo-lang/interpreter' },
+      function (error, stdout, stderr) {
+        if (error) {
+          console.error(error);
+          return res
+            .status(500)
+            .send('Error executing the GeoLang interpreter');
         }
 
-        res.send(data);
-      });
-    });
+        fs.readFile(
+          '../geo-lang/interpreter/app/out.geojson',
+          'utf8',
+          function (err: any, data: any) {
+            if (err) {
+              console.error(err);
+              return res.status(500).send('Error reading the output file');
+            }
+
+            res.send(data);
+          }
+        );
+      }
+    );
   });
 }
 
