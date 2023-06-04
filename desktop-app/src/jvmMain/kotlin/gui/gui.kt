@@ -28,6 +28,9 @@ import org.example.model.INews
 import org.example.model.Location
 import org.example.scraper.gov
 import org.example.scraper.gov_vlada
+import java.io.File
+import java.text.DateFormat
+import kotlin.random.Random
 
 enum class Section {
     DataBaseCollection,
@@ -47,6 +50,7 @@ enum class Scraper {
     _rtvSlo,
     scrapeAll
 }
+
 @Composable
 fun Header(onSelectionChanged: (Section) -> Unit) {
     TopAppBar(
@@ -135,42 +139,6 @@ fun Header(onSelectionChanged: (Section) -> Unit) {
         }
     }
 }
-
-@Composable
-fun Footer(selected: Section, onFilterClicked: () -> Unit, onOrderByClicked: () -> Unit) {
-    BottomAppBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colors.primary)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (selected == Section.DataBaseCollection) {
-                Row(
-                    modifier = Modifier.weight(0.2f),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        onClick = onFilterClicked
-                    ) {
-                        Text("Filter")
-                    }
-                    Button(
-                        onClick = onOrderByClicked
-                    ) {
-                        Text("Order By")
-                    }
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun NewsRow(news: INews, onDeleteClicked: () -> Unit, onEditClicked: () -> Unit) {
@@ -628,6 +596,7 @@ fun Main(selected: Section, news: ArrayList<INews>) {
                 val categories = remember { mutableStateOf("") }
                 val date = remember { mutableStateOf(Date()) }
                 val content = remember { mutableStateOf("") }
+                val location = remember { mutableStateOf("") }
                 val newsList = remember { mutableStateListOf(*news.toTypedArray()) }
 
                 Column(
@@ -675,43 +644,71 @@ fun Main(selected: Section, news: ArrayList<INews>) {
                         label = { Text("Content") },
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    Button(
-                        onClick = {
-
-                            val coords: Pair<Double, Double> = Pair(0.0, 0.0)
-
-                            val newNews = INews(
-                                title = title.value,
-                                url = url.value,
-                                date = date.value,
-                                content = content.value,
-                                authors = authors.value.split(",").map { it.trim() },
-                                categories = categories.value.split(",").map { it.trim() },
-                                location = Location(
-                                    type = "Point",
-                                    coordinates = coords,
-                                )
-                            )
-                            //println(newNews.toString())
-                            news.add(newNews)
-                            newsList.add(newNews)
-                            sendPost(newNews.toString())
-
-                            title.value = ""
-                            url.value = ""
-                            date.value = Date()
-                            content.value = ""
-                            authors.value = ""
-                            categories.value = ""
-
-                        },
-                        modifier = Modifier.align(Alignment.End)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Post")
-                    }
-                }
+                        // Post Button
+                        Button(
+                            onClick = {
 
+                                val coords: Pair<Double, Double> = Pair(0.0, 0.0)
+
+                                val newNews = INews(
+                                    title = title.value,
+                                    url = url.value,
+                                    date = date.value,
+                                    content = content.value,
+                                    authors = authors.value.split(",").map { it.trim() },
+                                    categories = categories.value.split(",").map { it.trim() },
+                                    location = Location(
+                                        type = "Point",
+                                        coordinates = coords,
+                                    )
+                                )
+                                //println(newNews.toString())
+                                news.add(newNews)
+                                newsList.add(newNews)
+                                sendPost(newNews.toString())
+
+                                title.value = ""
+                                url.value = ""
+                                date.value = Date()
+                                content.value = ""
+                                authors.value = ""
+                                categories.value = ""
+
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Post")
+                        }
+
+                        // Generate Button
+                        Button(
+                            onClick = {
+                                // Generate random values
+                                val random = Random.Default
+
+                                url.value = "http://example.com/${random.nextInt(1000)}"
+                                authors.value = getRandomAuthors()
+                                categories.value = getRandomCategories()
+                                val randomLocation = getRandomLocation()
+                                location.value = "${randomLocation.type},${randomLocation.coordinates.first},${randomLocation.coordinates.second}"
+                                val randomDate = getRandomDate()
+                                date.value = randomDate
+
+                                title.value = getRandomTitle()
+                                content.value = getRandomContent()
+
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "Generate")
+                        }
+                    }
+
+                }
             }else if (selected == Section.Scrape) {
                 ScrapeSection()
             }
@@ -727,13 +724,47 @@ fun App(news: ArrayList<INews>) {
         Scaffold(
             content = { Main(selectedSection, news) },
             topBar = { Header { section -> selectedSection = section } },
-            bottomBar = {
-                Footer(
-                    selected = selectedSection,
-                    onFilterClicked = { /* Handle filter button click */ },
-                    onOrderByClicked = { /* Handle order by button click */ }
-                )
-            }
         )
     }
+}
+fun getRandomAuthors(): String {
+    val file = File("file.txt")
+    val authors = file.readLines()
+    return authors.random()
+}
+
+fun getRandomCategories(): String {
+    val file = File("file.txt")
+    val categories = file.readLines()
+    return categories.random()
+}
+
+fun getRandomLocation(): Location {
+    val file = File("file.txt")
+    val locations = file.readLines()
+    val locationData = locations.random().split(",")
+    val type = locationData[0]
+    val latitude = Math.random()
+    val longitude = Math.random()
+    return Location(type, latitude to longitude)
+}
+
+fun getRandomDate(): Date {
+    val startDate = Date(0)
+    val endDate = Date()
+
+    val diffInMillis = endDate.time - startDate.time
+    val randomOffsetInMillis = (Math.random() * diffInMillis).toLong()
+    return Date(startDate.time + randomOffsetInMillis)
+}
+
+fun getRandomContent(): String {
+    val file = File("file.txt")
+    val content = file.readLines()
+    return content.random()
+}
+fun getRandomTitle(): String {
+    val file = File("file.txt")
+    val title = file.readLines()
+    return title.random()
 }
