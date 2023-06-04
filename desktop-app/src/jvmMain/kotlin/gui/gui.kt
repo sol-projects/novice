@@ -3,9 +3,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -29,7 +27,6 @@ import org.example.model.Location
 import org.example.scraper.gov
 import org.example.scraper.gov_vlada
 import java.io.File
-import java.text.DateFormat
 import kotlin.random.Random
 
 enum class Section {
@@ -574,7 +571,7 @@ fun Main(selected: Section, news: ArrayList<INews>) {
                                 news = item,
                                 onDeleteClicked = {
                                     //println(item._id)
-                                    deleteNews(item._id)
+                                    deleteNews(item._id,token)
                                     news.remove(item)
                                     newsList.remove(item)
                                 },

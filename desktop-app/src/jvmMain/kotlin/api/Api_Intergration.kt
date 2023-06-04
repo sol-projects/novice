@@ -11,8 +11,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
 import java.io.IOException
 
+var token: String =  sendLogin()
 fun sendGet(): ArrayList<INews> {
     val url = URL("http://localhost:8000/news")
     val rawData = url.readText()
@@ -40,12 +42,6 @@ fun sendGet(): ArrayList<INews> {
             authorsList.add(authorsArray.getString(j))
         }
 
-        val viewsArray = jsonObject.getJSONArray("views")
-        val viewsList = mutableListOf<Date>()
-        for (j in 0 until viewsArray.length()) {
-            val viewDate = dateFormat.parse(viewsArray.getString(j))
-            viewDate?.let { viewsList.add(it) }
-        }
 
         val categoriesArray = jsonObject.getJSONArray("categories")
         val categoriesList = mutableListOf<String>()
@@ -61,7 +57,6 @@ fun sendGet(): ArrayList<INews> {
             content = jsonObject.getString("content"),
             categories = categoriesList,
             location = location,
-            views = viewsList,
             _id = jsonObject.getString("_id"),
             __v = jsonObject.getInt("__v")
         )
@@ -76,11 +71,13 @@ fun sendGet(): ArrayList<INews> {
 
 
 fun sendPost(data: String) {
-    val url = URL("http://localhost:8000/news/add")
+    val url = URL("http://localhost:8000/news/")
     val connection = url.openConnection() as HttpURLConnection
 
     connection.requestMethod = "POST"
     connection.setRequestProperty("Content-Type", "application/json")
+    connection.setRequestProperty("Authorization", "Bearer $token")
+
     connection.doOutput = true
 
     val outputStream = OutputStreamWriter(connection.outputStream)
@@ -101,7 +98,8 @@ fun updateNews(id: String, updatedNewsJson: String) {
     val request = Request.Builder()
         .url("http://localhost:8000/news/$id")
         .put(requestBody)
-        .build()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
 
     client.newCall(request).execute().use { response ->
         if (!response.isSuccessful) throw IOException("Unexpected code $response")
@@ -110,13 +108,14 @@ fun updateNews(id: String, updatedNewsJson: String) {
 }
 
 
-fun deleteNews(id: String) {
+fun deleteNews(id: String, token: String) {
     val client = OkHttpClient()
-
+    println(token)
     val request = Request.Builder()
-        .url("http://localhost:8000/news/$id")
-        .delete()
-        .build()
+            .url("http://localhost:8000/news/$id")
+            .delete()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
 
     client.newCall(request).execute().use { response ->
         if (!response.isSuccessful) throw IOException("Unexpected code $response")
@@ -124,3 +123,28 @@ fun deleteNews(id: String) {
     }
 }
 
+
+
+fun sendLogin(): String {
+    val url = URL("http://localhost:8000/news/login")
+    val connection = url.openConnection() as HttpURLConnection
+
+    connection.requestMethod = "POST"
+    connection.setRequestProperty("Content-Type", "application/json")
+    connection.doOutput = true
+
+    // Get the response
+    val responseCode = connection.responseCode
+    println("Response Code: $responseCode")
+
+    // Read the response body
+    val responseBody = connection.inputStream.bufferedReader().use { it.readText() }
+
+    connection.disconnect()
+
+    // Extract the token value from the response body
+    val responseJson = JSONObject(responseBody)
+    val token = responseJson.getString("token")
+
+    return token
+}

@@ -4,16 +4,15 @@ import java.util.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 data class INews(
-    var title: String,
-    var url: String,
-    var date: Date,
-    val authors: List<String>,
-    var content: String,
-    val categories: List<String>,
-    val location: Location,
-    val views: List<String>,
-    val _id: String = "0",
-    val __v: Int = 0
+        var title: String,
+        var url: String,
+        var date: Date,
+        val authors: List<String>,
+        var content: String,
+        val categories: List<String>,
+        val location: Location,
+        val _id: String = "0",
+        val __v: Int = 0
 ) {
     override fun toString(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
