@@ -19,6 +19,8 @@ import { getAll } from "../news/api";
 import Filter, { FilterData } from "./Filter";
 import * as FilterFn from "../news/filter";
 import * as Aggregate from "../news/aggregate";
+import { ResponsiveLine } from '@nivo/line'
+
 
 type ChartInfo = {
   bottom: string;
