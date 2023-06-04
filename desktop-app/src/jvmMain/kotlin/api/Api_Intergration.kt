@@ -1,4 +1,3 @@
-import com.google.gson.Gson
 import org.example.model.INews
 import org.example.model.Location
 import org.json.JSONArray
@@ -8,11 +7,6 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import com.mongodb.*
-import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoDatabase
-import com.google.gson.JsonObject
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -34,14 +28,23 @@ fun sendGet(): ArrayList<INews> {
         val locationObj = jsonObject.getJSONObject("location")
         val location = Location(
             locationObj.getString("type"),
-            Pair(locationObj.getJSONArray("coordinates").getDouble(0),
-                locationObj.getJSONArray("coordinates").getDouble(1))
+            Pair(
+                locationObj.getJSONArray("coordinates").getDouble(0),
+                locationObj.getJSONArray("coordinates").getDouble(1)
+            )
         )
 
         val authorsArray = jsonObject.getJSONArray("authors")
         val authorsList = mutableListOf<String>()
         for (j in 0 until authorsArray.length()) {
             authorsList.add(authorsArray.getString(j))
+        }
+
+        val viewsArray = jsonObject.getJSONArray("views")
+        val viewsList = mutableListOf<Date>()
+        for (j in 0 until viewsArray.length()) {
+            val viewDate = dateFormat.parse(viewsArray.getString(j))
+            viewDate?.let { viewsList.add(it) }
         }
 
         val categoriesArray = jsonObject.getJSONArray("categories")
@@ -58,6 +61,7 @@ fun sendGet(): ArrayList<INews> {
             content = jsonObject.getString("content"),
             categories = categoriesList,
             location = location,
+            views = viewsList,
             _id = jsonObject.getString("_id"),
             __v = jsonObject.getInt("__v")
         )
@@ -67,6 +71,7 @@ fun sendGet(): ArrayList<INews> {
 
     return newsList as ArrayList<INews>
 }
+
 
 
 

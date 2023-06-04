@@ -1,12 +1,4 @@
 package org.example.model
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.serialization.encodeToString
@@ -14,11 +6,12 @@ import kotlinx.serialization.json.Json
 data class INews(
     var title: String,
     var url: String,
-    var date: java.util.Date,
+    var date: Date,
     val authors: List<String>,
     var content: String,
     val categories: List<String>,
     val location: Location,
+    val views: List<String>,
     val _id: String = "0",
     val __v: Int = 0
 ) {
