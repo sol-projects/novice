@@ -41,7 +41,7 @@ export interface FilterData {
 export default function Filter({ onChange }: FilterProps) {
   const [data, setData] = useState<FilterData>({
     websites: [],
-    from: new Date(),
+    from: new Date(0),
     to: new Date(),
     categories: [],
     authors: [],

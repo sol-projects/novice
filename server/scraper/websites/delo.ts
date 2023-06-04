@@ -45,7 +45,7 @@ async function _delo(n: number) {
     const date = new Date(
       +date_split[2],
       +date_split[1] - 1,
-      +date_split[0] + 1,
+      +date_split[0],
       0,
       0,
       0

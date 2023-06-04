@@ -16,6 +16,49 @@ export function categories(news: INews[], categories: string[]): INews[] {
   );
 }
 
+export function categoryGroup(news: INews[], category: string): INews[] {
+  if (category === "vreme") {
+    return news.filter((item) =>
+      item.categories.some((c) =>
+        [
+          "toča",
+          "nevihta",
+          "vreme",
+          "dež",
+          "megla",
+          "sončno",
+          "sneg",
+          "sneženo",
+          "ploha",
+        ].includes(c)
+      )
+    );
+  }
+
+  if (category === "šport") {
+    return news.filter((item) =>
+      item.categories.some((c) =>
+        [
+          "rekreacija",
+          "gibanje",
+          "šport",
+          "nogomet",
+          "košarka",
+          "sport",
+          "tenis",
+          "gimnastika",
+          "jahanje",
+          "smučanje",
+          "smuk",
+          "rokomet",
+        ].includes(c)
+      )
+    );
+  }
+
+  return news;
+}
+
 export function title(news: INews[], title: string): INews[] {
   return news.filter((item) => item.title.includes(title));
 }
