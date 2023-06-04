@@ -35,24 +35,24 @@ let chartInfo: ChartInfo = {
 function dataToDisplay(option: string, news: INews[], n: number) {
   switch (option) {
     case "aggrCategories":
-      chartInfo.bottom = "categories";
-      chartInfo.left = "number of articles";
+      chartInfo.bottom = "kategorija";
+      chartInfo.left = "število člankov";
       return Aggregate.byTopCategories(news, n);
     case "aggrDates":
-      chartInfo.bottom = "dates";
-      chartInfo.left = "number of articles";
+      chartInfo.bottom = "datum";
+      chartInfo.left = "število člankov";
       return Aggregate.byDate(news, n);
     case "aggrMonths":
-      chartInfo.bottom = "months";
-      chartInfo.left = "number of articles";
+      chartInfo.bottom = "mesec";
+      chartInfo.left = "število člankov";
       return Aggregate.byMonths(news, n);
     case "aggrAuthors":
-      chartInfo.bottom = "authors";
-      chartInfo.left = "number of articles";
+      chartInfo.bottom = "avtor";
+      chartInfo.left = "število člankov";
       return Aggregate.byTopAuthors(news, n);
     default:
-      chartInfo.bottom = "authors";
-      chartInfo.left = "number of articles";
+      chartInfo.bottom = "avtor";
+      chartInfo.left = "število člankov";
       return Aggregate.byTopCategories(news, n);
   }
 }
@@ -96,24 +96,29 @@ export default function Chart() {
       filtered = FilterFn.authors(filtered, filterData.authors);
     }
 
+    if (filterData.title.length > 0) {
+      filtered = FilterFn.title(filtered, filterData.title);
+    }
+
+    if (filterData.content.length > 0) {
+      filtered = FilterFn.content(filtered, filterData.content);
+    }
+
     setFilteredNews(filtered);
   };
 
   return (
     <Center>
-      <VStack width="80%" style={{ height: 600 }}>
+      <VStack width="80%" height="600px">
         <Filter onChange={handleFilterChange} />
         <RadioGroup onChange={setValue} value={value}>
           <Stack direction="row">
-            <Heading as="h4" size="md">
-              agregacija:
-            </Heading>
             <Radio value="aggrCategories">kategorije</Radio>
             <Radio value="aggrDates">datum</Radio>
             <Radio value="aggrAuthors">avtorji</Radio>
             <Radio value="aggrMonths">meseci</Radio>
             <InputGroup width="35%">
-              <InputLeftAddon children="number of data:" />
+              <InputLeftAddon children="število podatkov:" />
               <Input
                 type="number"
                 placeholder="number"

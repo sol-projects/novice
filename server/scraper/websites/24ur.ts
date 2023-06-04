@@ -38,7 +38,7 @@ async function _24ur(n: number) {
 
     const articlePage = await browser.newPage();
     await articlePage.goto(url);
-    await articlePage.waitForSelector('.article__body', { visible: true });
+    //await articlePage.waitForSelector('.article__body', { visible: true });
 
     const labels = await articlePage.$$eval('.label', (els) =>
       els.map((e) => (e as HTMLElement).innerText.trim())
@@ -89,6 +89,7 @@ async function _24ur(n: number) {
       authors,
       content,
       categories,
+      views: [],
       location: {
         type: 'Point',
         coordinates: coords,

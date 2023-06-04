@@ -48,7 +48,7 @@ private class Tokenizer(
             ';' -> TokenInfo(TokenType.Semicolon, ";", position.copy())
             ':' -> TokenInfo(TokenType.Colon, ":", position.copy())
             '#' -> hex()
-            '.' -> range()
+            '.' -> rangeOrDot()
             '\'' -> char()
             '=' -> equals()
             '"' -> string()
@@ -131,12 +131,11 @@ private class Tokenizer(
         }
     }
 
-    private fun range(): TokenInfo? {
+    private fun rangeOrDot(): TokenInfo? {
         return if(current < input.length - 1) {
             if(input[++current] != '.') {
                 --current
-                println("Tokenizer error: expected another '.' to form a range on line: ${position.row}")
-                return null
+                TokenInfo(TokenType.Dot, ".", position.copy())
             } else {
                 TokenInfo(TokenType.Range, "..", position.copy())
             }
@@ -151,7 +150,7 @@ private class Tokenizer(
         while (current < input.length - 1) {
             val c = input[++current]
             position.col += 1
-            if (c in '0'..'9' || c in 'A'..'z') {
+            if (c in '0'..'9' || c in 'A'..'Z' || c in 'a' .. 'z') {
                 token.lexeme += c
             } else {
                 --current
@@ -167,21 +166,44 @@ private class Tokenizer(
 
     private fun checkIdentifier(lexeme: String): TokenType {
         return when (lexeme) {
+            "break" -> TokenType.Break
+            "continue" -> TokenType.Continue
             "if" -> TokenType.If
+            "elif" -> TokenType.ElseIf
             "else" -> TokenType.Else
             "fn" -> TokenType.Function
             "let" -> TokenType.VarDeclaration
             "const" -> TokenType.ConstDeclaration
             "for" -> TokenType.For
+            "in" -> TokenType.In
             "loop" -> TokenType.Loop
             "return" -> TokenType.Return
             "char" -> TokenType.CharType
             "string" -> TokenType.StringType
             "i32" -> TokenType.I32
             "f32" -> TokenType.F32
-            "true" -> TokenType.Bool
-            "false" -> TokenType.Bool
+            "true" -> TokenType.True
+            "false" -> TokenType.False
+            "road" -> TokenType.Road
+            "building" -> TokenType.Building
+            "npolygon" -> TokenType.NPolygon
+            "point" -> TokenType.Point
+            "group" -> TokenType.Group
+            "curve" -> TokenType.Curve
             "bool" -> TokenType.BoolType
+            "fetch" -> TokenType.Fetch
+            "get" -> TokenType.Get
+            "news" -> TokenType.NewsType
+            "location" -> TokenType.Location
+            "bend" -> TokenType.Bend
+            "line" -> TokenType.Line
+            "polyline" -> TokenType.Polyline
+            "box" -> TokenType.Box
+            "circle" -> TokenType.Circle
+            "println" -> TokenType.Println
+            "push" -> TokenType.Push
+            "remove" -> TokenType.Remove
+            "pop" -> TokenType.Pop
             else -> TokenType.Identifier
         }
     }

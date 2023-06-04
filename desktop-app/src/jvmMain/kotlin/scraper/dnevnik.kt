@@ -1,10 +1,10 @@
 import org.example.model.INews
+import org.example.model.Location
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 import java.util.Date
@@ -43,7 +43,7 @@ fun _dnevnik(n: Int): List<INews> {
 
             val categoryLinks = browser.findElements(By.cssSelector("a[href*=\"/tag/\"]"))
             val categories = categoryLinks.map { it.getAttribute("innerText").trim() }
-
+            val coords: Pair<Double, Double> = Pair(0.0, 0.0)
             news.add(
                 INews(
                     title = title.trim(),
@@ -52,7 +52,10 @@ fun _dnevnik(n: Int): List<INews> {
                     authors = authors,
                     content = content,
                     categories = categories,
-                    location = "Point" // assuming "Point" as a placeholder for location
+                    location = Location(
+                        type = "Point",
+                        coordinates = coords,
+                    )
                 )
             )
 

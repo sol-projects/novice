@@ -66,6 +66,7 @@ async function ekipaSvet24(n: number) {
         authors,
         content,
         categories,
+        views: [],
         location: {
             type: 'Point',
             coordinates: coords

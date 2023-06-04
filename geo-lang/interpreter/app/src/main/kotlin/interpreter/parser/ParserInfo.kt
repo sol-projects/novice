@@ -2,7 +2,7 @@ package interpreter.parser
 import interpreter.tokenizer.*
 
 class ParserInfo(
-    private val tokens: List<TokenInfo>,
+    val tokens: List<TokenInfo>,
     var currentTokenInfo: TokenInfo,
     private var i: Int
 ) {
