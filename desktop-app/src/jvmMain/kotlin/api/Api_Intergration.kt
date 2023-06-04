@@ -133,16 +133,13 @@ fun sendLogin(): String {
     connection.setRequestProperty("Content-Type", "application/json")
     connection.doOutput = true
 
-    // Get the response
     val responseCode = connection.responseCode
     println("Response Code: $responseCode")
 
-    // Read the response body
     val responseBody = connection.inputStream.bufferedReader().use { it.readText() }
 
     connection.disconnect()
 
-    // Extract the token value from the response body
     val responseJson = JSONObject(responseBody)
     val token = responseJson.getString("token")
 
