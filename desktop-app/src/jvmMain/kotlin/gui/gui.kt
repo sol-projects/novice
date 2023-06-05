@@ -45,7 +45,8 @@ enum class Scraper {
     _servisSta,
     _zurnal24,
     _rtvSlo,
-    scrapeAll
+    scrapeAll,
+    _mbinfo
 }
 
 @Composable
@@ -348,7 +349,7 @@ fun ScrapeSection() {
                         Scraper._gov_vlada -> newsScraped.addAll(gov_vlada(selectedNumber))
                         Scraper._dnevnik -> newsScraped.addAll(_dnevnik(selectedNumber))
                         Scraper._ekipa24 -> newsScraped.addAll(_ekipa24(selectedNumber))
-                        //Scraper._mbinfo -> newsScraped.addAll(_mbinfo(selectedNumber))
+                        Scraper._mbinfo -> newsScraped.addAll(_mbinfo(selectedNumber))
                         Scraper._servisSta -> newsScraped.addAll(getServisSta(selectedNumber))
                         Scraper._zurnal24 -> newsScraped.addAll(getZurnal24Slo(selectedNumber))
                         Scraper._rtvSlo -> newsScraped.addAll(getRtvSlo(selectedNumber))
@@ -358,7 +359,7 @@ fun ScrapeSection() {
                             newsScraped.addAll(gov_vlada(selectedNumber))
                             newsScraped.addAll(_dnevnik(selectedNumber))
                             newsScraped.addAll(_ekipa24(selectedNumber))
-                            //newsScraped.addAll(_mbinfo(selectedNumber))
+                            newsScraped.addAll(_mbinfo(selectedNumber))
                             newsScraped.addAll(getServisSta(selectedNumber))
                             newsScraped.addAll(getZurnal24Slo(selectedNumber))
                             newsScraped.addAll(getRtvSlo(selectedNumber))

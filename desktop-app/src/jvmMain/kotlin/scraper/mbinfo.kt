@@ -14,57 +14,50 @@ fun _mbinfo(n: Int): List<INews> {
     val news: MutableList<INews> = mutableListOf()
 
     val options = ChromeOptions()
-    options.addArguments("--headless=new")
+    options.addArguments("--headless")
     val browser: WebDriver = ChromeDriver(options)
 
     browser.get("https://mariborinfo.com/lokalno")
-
-    val wait = WebDriverWait(browser, Duration.ofSeconds(5))
-    //val element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".leading-tight")));
+    println("Opened website: https://mariborinfo.com/lokalno")
 
     val links: List<WebElement> = browser.findElements(By.cssSelector("a[href^=\"/novica/\"]"))
+    println(links.toString())
+
     for (i in 0 until links.size.coerceAtMost(n)) {
         val link: WebElement = links[i]
         val titleElement = link.findElement(By.cssSelector("span.title__value"))
         val titleText: String = titleElement.getAttribute("innerText")
-        //val altTitleElement = link.findElement(By.cssSelector("h1 span, h2 span, h3 span, h4 span, h5 span, h6 span"))
-        //val altTitleText: String = altTitleElement.getAttribute("innerText")
-
         val title: String = titleText.trim()
-        //if (title.isEmpty()) continue
+        println("Title: $title")
 
-        val url: String = "mariborinfo.com${link.getAttribute("href")}"
+        val url: String = link.getAttribute("href")
+        println("URL: $url")
 
         browser.get(url)
+        println("Opened article: $url")
 
-        val wait = WebDriverWait(browser, Duration.ofSeconds(5))
-        //val element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".article__body")));
+        val wait = WebDriverWait(browser, Duration.ofSeconds(1))
 
         val authors: List<String> = browser.findElements(By.cssSelector(".username__name")).map {
-            it.getAttribute("innerText").split("/")[0].trim()
+            val authorName = it.getAttribute("innerText").split("/")[0].trim()
+            println("Author: $authorName")
+            authorName
         }
 
-        //val locationDateUnparsed: String =
-          //  browser.findElement(By.cssSelector(".leading-caption")).getAttribute("innerText")
-        //val locationDate: List<String> = locationDateUnparsed.split(", ")
-        //val dateSplit: List<String> = locationDate[1].split(".")
+        val currentDate: Date = Date()
+        val date: Date = Date()
+        println("Date: $date")
 
-        val currentDate: Date =  Date()
-        val date :Date =  Date()
-        //if (dateSplit[2].toInt() != currentDate.year) {
-          //  browser.close()
-            //continue
-        //}
-        //val date: Date = Date(dateSplit[2].toInt() - 1900, dateSplit[1].toInt() - 1, dateSplit[0].toInt() + 1)
-        val contentElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".field.field--name-field-besedilo")))
-        val content: String = contentElement.getAttribute("innerText")
-
-       // val content: String = browser.findElement(By.cssSelector(".field.field--name-field-besedilo")).getAttribute("innerText")
+        val content = browser.findElement(By.cssSelector("p"))
+            .getAttribute("innerText").trim()
+        println("Content: $content")
 
         val categories: List<String> =
             browser.findElements(By.cssSelector("a[href*=\"/tags/\"]"))
                 .map {
-                    it.getAttribute("innerText").trim()
+                    val category = it.getAttribute("innerText").trim()
+                    println("Category: $category")
+                    category
                 }
 
         news.add(
@@ -77,15 +70,15 @@ fun _mbinfo(n: Int): List<INews> {
                 categories = categories,
                 location = Location(
                     type = "Point",
-                    coordinates = Pair(0.0,0.0),
+                    coordinates = Pair(0.0, 0.0),
                 )
             )
         )
 
-        browser.close()
+        // Go back to the previous page to ensure elements are still valid
+        browser.navigate().back()
     }
 
-    browser.close()
-
-    return news;
+    browser.quit()
+    return news
 }

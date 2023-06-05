@@ -1,5 +1,7 @@
 package org.example
 import App
+import _dnevnik
+import _mbinfo
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.example.model.INews
@@ -8,7 +10,7 @@ import sendGet
 
 fun main() = application {
     val news: ArrayList<INews> = sendGet()
-    news.addAll(gov(2))
+    news.addAll(_mbinfo(1))
 
     Window(onCloseRequest = ::exitApplication) {
         App(news)
