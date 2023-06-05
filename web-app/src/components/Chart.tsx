@@ -196,21 +196,18 @@ if (chartType === "LineChart") {
   chartData = getDataForWaffleChart(waffleChartData) as WaffleDatum[];
 }
 
-
-  
-
   return (
     <Center>
       <VStack width="80%" height="600px">
         <Filter onChange={handleFilterChange} />
         <RadioGroup onChange={handleChartOptionChange} value={value}>
-          <Radio value="aggrCategories">Categories</Radio>
-          <Radio value="aggrDates">Dates</Radio>
-          <Radio value="aggrAuthors">Authors</Radio>
-          <Radio value="aggrMonths">Months</Radio>
+          <Radio value="aggrCategories">kategorije</Radio>
+          <Radio value="aggrDates">datum</Radio>
+          <Radio value="aggrAuthors">avtorji</Radio>
+          <Radio value="aggrMonths">meseci</Radio>
         </RadioGroup>
         <InputGroup width="35%">
-          <InputLeftAddon children="Number of data: " />
+          <InputLeftAddon children="število podatkov: " />
           <Input
             type="number"
             id="nResultsInput"
@@ -226,7 +223,6 @@ if (chartType === "LineChart") {
           <option value="LineChart">Line chart</option>
           <option value="BarChart">Bar chart</option>
           <option value="PieChart">Pie chart</option>
-          <option value="WaffleChart">Waffle chart</option>
         </Select>
 
         {chartType === "LineChart" && (
@@ -377,7 +373,7 @@ if (chartType === "LineChart") {
         )}
         {chartType === "WaffleChart" && (
          <ResponsiveWaffle
-         data={chartData as WaffleDatum[]} 
+         data={chartData as WaffleDatum[]}
          total={totalValue}
          rows={15}
          columns={15}
@@ -411,7 +407,7 @@ if (chartType === "LineChart") {
              })),
            },
          ]}
-       />  
+       />
         )}
       </VStack>
     </Center>
