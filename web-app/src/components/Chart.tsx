@@ -15,7 +15,7 @@ import INews from "../news/model";
 import { getAll } from "../news/api";
 import * as Aggregate from "../news/aggregate";
 import { ResponsiveLine } from "@nivo/line";
-import { Aggregation as AgregationORG } from "../news/aggregate";
+import { Aggregation } from "../news/aggregate";
 import Filter, { FilterData } from "./Filter";
 import * as FilterFn from "../news/filter";
 import { ResponsivePie } from "@nivo/pie";
@@ -32,15 +32,12 @@ type ChartInfo = {
 };
 
 let chartInfo: ChartInfo = {
-  bottom: "categories",
-  left: "number of articles",
+  bottom: "Kategorije",
+  left: "Število novic",
   dataAmount: 10,
 };
 
-type Aggregation = {
-  key: string;
-  value: number;
-};
+
 type BarData = {
   [key: string]: string | number;
 };
@@ -99,18 +96,29 @@ function getDataForPieChart(aggregations: Aggregation[]): MayHaveLabel[] {
 
 
 function getDataForWaffleChart(aggregations: Aggregation[]): WaffleDatum[] {
-  const totalValue = aggregations.reduce(
-    (sum, aggregation) => sum + aggregation.value,
-    0
-  );
-  const colors = ["category10", "category10", "category10"]; // Add as many colors as needed
-  return aggregations.map((aggregation, index) => ({
+  const colors = generateColors(aggregations.length); // Generate colors based on the number of aggregations
+
+  return aggregations.map((aggregation) => ({
     id: aggregation.key,
     value: aggregation.value,
-    label: `${aggregation.key}: ${aggregation.value}`,
-    color: colors[index % colors.length],
+    label: `${aggregation.key}: ${aggregation.value}`, // Add label property
   }));
 }
+
+
+function generateColors(count: number): string[] {
+  // Generate colors dynamically based on the count
+  const colors = [];
+  for (let i = 0; i < count; i++) {
+    // Generate random color codes or use a predefined color scheme
+    // Example: Generate random colors using hexadecimal format
+    const color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    colors.push(color);
+  }
+  return colors;
+}
+
+
 
 
 export default function Chart() {
@@ -130,7 +138,7 @@ export default function Chart() {
     };
 
     get();
-  }, []);
+  }, [filteredNews, nResults, value]);
 
   useEffect(() => {
     setTotalValue(
@@ -185,7 +193,6 @@ if (chartType === "LineChart") {
   chartData = getDataForPieChart(dataToDisplay(value, filteredNews, nResults));
 } else if (chartType === "WaffleChart") {
   const waffleChartData = dataToDisplay(value, filteredNews, nResults);
-  const totalValue = waffleChartData.reduce((sum, data) => sum + data.value, 0);
   chartData = getDataForWaffleChart(waffleChartData) as WaffleDatum[];
 }
 
@@ -370,10 +377,10 @@ if (chartType === "LineChart") {
         )}
         {chartType === "WaffleChart" && (
          <ResponsiveWaffle
-         data={chartData as WaffleDatum[]} // Update the cast to Wafli[]
+         data={chartData as WaffleDatum[]} 
          total={totalValue}
-         rows={10}
-         columns={10}
+         rows={15}
+         columns={15}
          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
          colors={{ scheme: "category10" }}
          legends={[
