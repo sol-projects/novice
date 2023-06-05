@@ -9,6 +9,8 @@ import {
   InputGroup,
   InputLeftAddon,
   Select,
+  HStack,
+  Stack,
 } from "@chakra-ui/react";
 import { io } from "socket.io-client";
 import INews from "../news/model";
@@ -37,11 +39,9 @@ let chartInfo: ChartInfo = {
   dataAmount: 10,
 };
 
-
 type BarData = {
   [key: string]: string | number;
 };
-
 
 function dataToDisplay(chartType: string, news: INews[], n: number) {
   let aggregations: Aggregation[] = [];
@@ -74,7 +74,6 @@ function getDataForBarChart(aggregations: Aggregation[]): BarData[] {
   }));
 }
 
-
 function getDataForLineChart(aggregations: Aggregation[]): Serie[] {
   return [
     {
@@ -94,7 +93,6 @@ function getDataForPieChart(aggregations: Aggregation[]): MayHaveLabel[] {
   })) as MayHaveLabel[];
 }
 
-
 function getDataForWaffleChart(aggregations: Aggregation[]): WaffleDatum[] {
   const colors = generateColors(aggregations.length); // Generate colors based on the number of aggregations
 
@@ -104,7 +102,6 @@ function getDataForWaffleChart(aggregations: Aggregation[]): WaffleDatum[] {
     label: `${aggregation.key}: ${aggregation.value}`, // Add label property
   }));
 }
-
 
 function generateColors(count: number): string[] {
   // Generate colors dynamically based on the count
@@ -117,9 +114,6 @@ function generateColors(count: number): string[] {
   }
   return colors;
 }
-
-
-
 
 export default function Chart() {
   const [news, setNews] = useState<INews[]>([]);
@@ -185,46 +179,58 @@ export default function Chart() {
 
   let chartData: Serie[] | MayHaveLabel[] | WaffleDatum[] = [];
 
-if (chartType === "LineChart") {
-  chartData = getDataForLineChart(dataToDisplay(value, filteredNews, nResults));
-} else if (chartType === "BarChart") {
-  chartData = getDataForBarChart(dataToDisplay(value, filteredNews, nResults));
-} else if (chartType === "PieChart") {
-  chartData = getDataForPieChart(dataToDisplay(value, filteredNews, nResults));
-} else if (chartType === "WaffleChart") {
-  const waffleChartData = dataToDisplay(value, filteredNews, nResults);
-  chartData = getDataForWaffleChart(waffleChartData) as WaffleDatum[];
-}
+  if (chartType === "LineChart") {
+    chartData = getDataForLineChart(
+      dataToDisplay(value, filteredNews, nResults)
+    );
+  } else if (chartType === "BarChart") {
+    chartData = getDataForBarChart(
+      dataToDisplay(value, filteredNews, nResults)
+    );
+  } else if (chartType === "PieChart") {
+    chartData = getDataForPieChart(
+      dataToDisplay(value, filteredNews, nResults)
+    );
+  } else if (chartType === "WaffleChart") {
+    const waffleChartData = dataToDisplay(value, filteredNews, nResults);
+    chartData = getDataForWaffleChart(waffleChartData) as WaffleDatum[];
+  }
 
   return (
     <Center>
       <VStack width="80%" height="600px">
         <Filter onChange={handleFilterChange} />
-        <RadioGroup onChange={handleChartOptionChange} value={value}>
-          <Radio value="aggrCategories">kategorije</Radio>
-          <Radio value="aggrDates">datum</Radio>
-          <Radio value="aggrAuthors">avtorji</Radio>
-          <Radio value="aggrMonths">meseci</Radio>
-        </RadioGroup>
-        <InputGroup width="35%">
-          <InputLeftAddon children="število podatkov: " />
-          <Input
-            type="number"
-            id="nResultsInput"
-            placeholder="number"
-            value={nResults}
-            onChange={(event) => setNResults(Number(event.target.value))}
-          />
-        </InputGroup>
-        <Select
-          onChange={(e) => setChartType(e.target.value)}
-          value={chartType}
-        >
-          <option value="LineChart">Line chart</option>
-          <option value="BarChart">Bar chart</option>
-          <option value="PieChart">Pie chart</option>
-        </Select>
+        <HStack marginLeft="10%">
+          <InputGroup width="50%">
+            <InputLeftAddon children="število podatkov: " />
+            <Input
+              width="50%"
+              type="number"
+              id="nResultsInput"
+              placeholder="number"
+              value={nResults}
+              onChange={(event) => setNResults(Number(event.target.value))}
+            />
+          </InputGroup>
+          <Select
+            onChange={(e) => setChartType(e.target.value)}
+            value={chartType}
+            width="auto"
+          >
+            <option value="LineChart">črtni</option>
+            <option value="BarChart">stolpčni</option>
+            <option value="PieChart">tortni</option>
+          </Select>
+        </HStack>
 
+        <RadioGroup onChange={handleChartOptionChange} value={value}>
+          <Stack spacing={4} direction="row">
+            <Radio value="aggrCategories">kategorije</Radio>
+            <Radio value="aggrDates">datum</Radio>
+            <Radio value="aggrAuthors">avtorji</Radio>
+            <Radio value="aggrMonths">meseci</Radio>
+          </Stack>
+        </RadioGroup>
         {chartType === "LineChart" && (
           <ResponsiveLine
             data={chartData as Serie[]}
@@ -270,66 +276,66 @@ if (chartType === "LineChart") {
         )}
         {chartType === "BarChart" && (
           <ResponsiveBar
-          data={dataToDisplay(value, filteredNews, nResults)}
-          keys={["value"]}
-          indexBy="key"
-          margin={{ top: 50, right: 200, bottom: 100, left: 100 }}
-          padding={0.3}
-          valueScale={{ type: "linear" }}
-          indexScale={{ type: "band", round: true }}
-          colors={{ scheme: "nivo" }}
-          defs={[
-            {
-              id: "dots",
-              type: "patternDots",
-              background: "inherit",
-              color: "#38bcb2",
-              size: 4,
-              padding: 1,
-              stagger: true,
-            },
-            {
-              id: "lines",
-              type: "patternLines",
-              background: "inherit",
-              color: "#eed312",
-              rotation: -45,
-              lineWidth: 6,
-              spacing: 10,
-            },
-          ]}
-          borderColor={{
-            from: "color",
-            modifiers: [["darker", 1.6]],
-          }}
-          axisTop={null}
-          axisRight={null}
-          axisBottom={{
-            format: (v) => {
-              return v.length > 10 ? `${v.substring(0, 10)}...` : v;
-            },
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: chartInfo.bottom,
-            legendPosition: "middle",
-            legendOffset: 32,
-          }}
-          axisLeft={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: chartInfo.left,
-            legendPosition: "middle",
-            legendOffset: -40,
-          }}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
-          labelTextColor={{
-            from: "color",
-            modifiers: [["darker", 1.6]],
-          }}
-          /*legends={[
+            data={dataToDisplay(value, filteredNews, nResults)}
+            keys={["value"]}
+            indexBy="key"
+            margin={{ top: 50, right: 200, bottom: 100, left: 100 }}
+            padding={0.3}
+            valueScale={{ type: "linear" }}
+            indexScale={{ type: "band", round: true }}
+            colors={{ scheme: "nivo" }}
+            defs={[
+              {
+                id: "dots",
+                type: "patternDots",
+                background: "inherit",
+                color: "#38bcb2",
+                size: 4,
+                padding: 1,
+                stagger: true,
+              },
+              {
+                id: "lines",
+                type: "patternLines",
+                background: "inherit",
+                color: "#eed312",
+                rotation: -45,
+                lineWidth: 6,
+                spacing: 10,
+              },
+            ]}
+            borderColor={{
+              from: "color",
+              modifiers: [["darker", 1.6]],
+            }}
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+              format: (v) => {
+                return v.length > 10 ? `${v.substring(0, 10)}...` : v;
+              },
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: chartInfo.bottom,
+              legendPosition: "middle",
+              legendOffset: 32,
+            }}
+            axisLeft={{
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: chartInfo.left,
+              legendPosition: "middle",
+              legendOffset: -40,
+            }}
+            labelSkipWidth={12}
+            labelSkipHeight={12}
+            labelTextColor={{
+              from: "color",
+              modifiers: [["darker", 1.6]],
+            }}
+            /*legends={[
             {
                 dataFrom: 'indexes',
                 anchor: 'bottom-right',
@@ -353,61 +359,61 @@ if (chartType === "LineChart") {
                 ]
             }
         ]}*/
-          role="application"
-          //ariaLabel="Nivo bar chart demo"
-          //barAriaLabel={e=>e.id+": "+e.formattedValue+" in country: "+e.indexValue}
-        />
+            role="application"
+            //ariaLabel="Nivo bar chart demo"
+            //barAriaLabel={e=>e.id+": "+e.formattedValue+" in country: "+e.indexValue}
+          />
         )}
         {chartType === "PieChart" && (
           <ResponsivePie
-          data={chartData as MayHaveLabel[]}
-          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-          innerRadius={0.5}
-          padAngle={0.7}
-          cornerRadius={3}
-          colors={{ scheme: "category10" }}
-          enableArcLabels={true}
-          arcLabelsSkipAngle={10}
-          arcLabelsTextColor="#333333"
-        />
+            data={chartData as MayHaveLabel[]}
+            margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+            innerRadius={0.5}
+            padAngle={0.7}
+            cornerRadius={3}
+            colors={{ scheme: "category10" }}
+            enableArcLabels={true}
+            arcLabelsSkipAngle={10}
+            arcLabelsTextColor="#333333"
+          />
         )}
         {chartType === "WaffleChart" && (
-         <ResponsiveWaffle
-         data={chartData as WaffleDatum[]}
-         total={totalValue}
-         rows={15}
-         columns={15}
-         margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-         colors={{ scheme: "category10" }}
-         legends={[
-           {
-             anchor: "bottom",
-             direction: "row",
-             justify: false,
-             translateX: 0,
-             translateY: 80,
-             itemsSpacing: 2,
-             itemWidth: 120,
-             itemHeight: 20,
-             itemDirection: "left-to-right",
-             itemOpacity: 0.8,
-             symbolSize: 20,
-             symbolShape: "circle",
-             effects: [
-               {
-                 on: "hover",
-                 style: {
-                   itemOpacity: 1,
-                 },
-               },
-             ],
-             items: (chartData as WaffleDatum[]).map((data, index) => ({
-               id: `${index}`,
-               value: data.value,
-             })),
-           },
-         ]}
-       />
+          <ResponsiveWaffle
+            data={chartData as WaffleDatum[]}
+            total={totalValue}
+            rows={15}
+            columns={15}
+            margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+            colors={{ scheme: "category10" }}
+            legends={[
+              {
+                anchor: "bottom",
+                direction: "row",
+                justify: false,
+                translateX: 0,
+                translateY: 80,
+                itemsSpacing: 2,
+                itemWidth: 120,
+                itemHeight: 20,
+                itemDirection: "left-to-right",
+                itemOpacity: 0.8,
+                symbolSize: 20,
+                symbolShape: "circle",
+                effects: [
+                  {
+                    on: "hover",
+                    style: {
+                      itemOpacity: 1,
+                    },
+                  },
+                ],
+                items: (chartData as WaffleDatum[]).map((data, index) => ({
+                  id: `${index}`,
+                  value: data.value,
+                })),
+              },
+            ]}
+          />
         )}
       </VStack>
     </Center>
