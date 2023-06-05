@@ -270,14 +270,15 @@ export default function MapComponent() {
       <Center>
         <Filter onChange={handleFilterChange} />
       </Center>
-      <HStack padding="2%" flex={1} height="100vh">
-        <div id="map" style={{ height: "100vh", width: "100%" }} />;
+      <HStack padding="5%" flex={1} height="100vh">
+        <div id="map" style={{ height: "90vh", width: "100%" }} />;
         <VStack flex={1}>
           <Textarea
             value={code}
             onChange={handleCodeChange}
             placeholder="geolang programska koda"
             height="600px"
+            width="300px"
             resize="none"
           />
           <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
