@@ -121,6 +121,10 @@ export default function MapComponent() {
       filtered = FilterFn.authors(filtered, filterData.authors);
     }
 
+    if(filterData.websites.length > 0) {
+      filtered = FilterFn.websites(filtered, filterData.websites);
+    }
+
     if (filterData.title.length > 0) {
       filtered = FilterFn.title(filtered, filterData.title);
     }

@@ -19,8 +19,8 @@ export default function News() {
   const [news, setNews] = useState<INews[]>([]);
   const [filteredNews, setFilteredNews] = useState<INews[]>([]);
   const [count, setCount] = useState<number>(50);
-  const presets = ["popularno", "vreme", "šport"];
-  const [preset, setPreset] = useState<string>("popularno");
+  const presets = ["privzeto", "popularno", "vreme", "šport"];
+  const [preset, setPreset] = useState<string>("privzeto");
 
   const presetsChange = (value: string) => {
     setPreset(value);
@@ -62,6 +62,10 @@ export default function News() {
     let filtered = [...news];
     filterData.categories = filterData.categories.filter((item) => item !== "");
     filterData.authors = filterData.authors.filter((item) => item !== "");
+
+    if(filterData.websites.length > 0) {
+      filtered = FilterFn.websites(filtered, filterData.websites);
+    }
 
     if (filterData.categories.length > 0) {
       filtered = FilterFn.categories(filtered, filterData.categories);

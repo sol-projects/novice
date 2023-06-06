@@ -158,6 +158,11 @@ export default function Chart() {
     let filtered = news;
     filterData.categories = filterData.categories.filter((item) => item !== "");
     filterData.authors = filterData.authors.filter((item) => item !== "");
+
+    if(filterData.websites.length > 0) {
+      filtered = FilterFn.websites(filtered, filterData.websites);
+    }
+
     if (filterData.categories.length > 0) {
       filtered = FilterFn.categories(filtered, filterData.categories);
     }
