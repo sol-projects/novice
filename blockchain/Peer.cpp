@@ -223,10 +223,11 @@ Client::Client()
     socket = std::make_unique<asio::ip::tcp::socket>(ioContext);
 }
 
-Client::Client(const std::string& ip, int port)
+Client::Client(const std::string& ip, int port, const OptionFlags& options)
     : m_ip(ip)
     , m_port(port)
     , m_read(buffer)
+    , m_options(options)
 {
     socket = std::make_unique<asio::ip::tcp::socket>(ioContext);
     connect(m_ip, m_port);
@@ -284,7 +285,7 @@ void Client::mine()
         for (;;)
         {
             resetWrite = false;
-            m_blockchain = blockchain::new_block_pow(m_blockchain, resetWrite);
+            m_blockchain = blockchain::new_block_pow(m_blockchain, resetWrite, m_options);
             if(resetWrite)
             {
                 m_blockchain.erase(std::end(m_blockchain) - 1);

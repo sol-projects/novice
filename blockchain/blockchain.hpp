@@ -3,14 +3,16 @@
 #include <string>
 #include <vector>
 #include <atomic>
+#include "options.hpp"
 
 using Blockchain = std::vector<Block>;
 
 namespace blockchain
 {
     Blockchain init();
+    Blockchain empty();
     bool validate(const Blockchain& blockchain);
-    Blockchain new_block_pow(Blockchain& blockchain, std::atomic<bool>& reset);
+    Blockchain new_block_pow(Blockchain& blockchain, std::atomic<bool>& stop, const OptionFlags& options);
 
     std::string to_string(const Blockchain& blockchain);
     std::string to_readable_string(const Blockchain& blockchain);

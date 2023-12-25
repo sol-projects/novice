@@ -11,72 +11,60 @@
 #include <sys/utsname.h>
 #include <thread>
 #include <atomic>
+#include "options.hpp"
+
+OptionFlags parse(int argc, char* argv[])
+{
+    OptionFlags options {};
+
+    cag_option_context context;
+    cag_option_prepare(&context, options_info, CAG_ARRAY_SIZE(options_info), argc, argv);
+    while (cag_option_fetch(&context))
+    {
+        auto identifier = cag_option_get(&context);
+        switch (identifier)
+        {
+            case 't':
+                options.threads = std::stoi(cag_option_get_value(&context));
+                break;
+            case 'h':
+                cag_option_print(options_info, CAG_ARRAY_SIZE(options_info), stdout);
+                std::exit(1);
+        }
+    }
+
+    return options;
+}
 
 int main(int argc, char* argv[])
 {
+    auto options = parse(argc, argv);
+    constexpr int port = 2310;
+    const std::string ip = asio::ip::address_v4::any().to_string();
 
-    if (argc > 1)
-    {
-        std::atomic<bool> never_stop = false;
-        if (!std::strcmp(argv[1], "run_tests"))
+    auto app = new QApplication(argc, argv);
+    Gui gui(app);
+
+    std::thread t2([&]() {
+        asio::io_context ioContext;
+        std::unique_ptr<Server> server;
+        if (!available(ip, port))
         {
-            Blockchain blockchain = blockchain::init();
-            blockchain = blockchain::new_block_pow(blockchain, never_stop);
-
-            for (int i = 0; i < 3; i++)
-            {
-                blockchain = blockchain::new_block_pow(blockchain, never_stop);
-            }
-
-            std::cout << (blockchain::validate(blockchain) ? "true" : "false")
-                      << std::endl;
-
-            blockchain.at(2).id = 10;
-            std::cout << (blockchain::validate(blockchain) ? "true" : "false")
-                      << std::endl;
-
-            auto to = blockchain::to_string(blockchain);
-            auto from = blockchain::from_string(to);
-
-            if (blockchain::to_string(from) == to)
-            {
-                std::cout << "ok" << std::endl;
-            }
-            else
-            {
-                std::cout << "no" << std::endl;
-            }
+            std::cout << "new node" << std::endl;
+            server = std::make_unique<Server>(ioContext, port);
+            ioContext.run();
         }
-    }
-    else
-    {
-        constexpr int port = 2310;
-        const std::string ip = asio::ip::address_v4::any().to_string();
+    });
 
-        auto app = new QApplication(argc, argv);
-        Gui gui(app);
+    using namespace std::chrono_literals;
+    std::thread t([&]() {
+        Client c(ip, port, options);
+        c.process([&]([[maybe_unused]] auto client) {
 
-        std::thread t2([&]() {
-            asio::io_context ioContext;
-            std::unique_ptr<Server> server;
-            if (!available(ip, port))
-            {
-                std::cout << "new node" << std::endl;
-                server = std::make_unique<Server>(ioContext, port);
-                ioContext.run();
-            }
         });
+    });
 
-        using namespace std::chrono_literals;
-        std::thread t([&]() {
-            Client c(ip, port);
-            c.process([&]([[maybe_unused]] auto client) {
-
-            });
-        });
-
-        app->exec();
-        t.join();
-        t2.join();
-    }
+    app->exec();
+    t.join();
+    t2.join();
 }

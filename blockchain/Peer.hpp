@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "options.hpp"
 
 constexpr int buffer = 50000;
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>
@@ -48,11 +49,12 @@ public:
 };
 
 bool available(const std::string& ip, int port);
+
 class Client
 {
 public:
     Client();
-    Client(const std::string& ip, int port);
+    Client(const std::string& ip, int port, const OptionFlags& options);
 
     void write(const std::string& data);
     static void writeSignal(const std::string& data);
@@ -84,4 +86,5 @@ private:
     std::string m_username;
     static inline std::string m_signalWrite = "";
     std::vector<char> m_read;
+    OptionFlags m_options;
 };

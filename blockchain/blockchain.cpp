@@ -1,4 +1,5 @@
 #include "blockchain.hpp"
+#include "options.hpp"
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -7,40 +8,27 @@
 
 Blockchain blockchain::init()
 {
-    Blockchain blockchain;
-    blockchain.push_back(block::genesis());
+    return {Block::genesis()};
+}
 
-    return blockchain;
+Blockchain blockchain::empty() {
+    return {};
 }
 
 bool blockchain::validate(const Blockchain& blockchain)
 {
     using namespace std::chrono_literals;
-    for (auto it = std::next(std::begin(blockchain)); it != std::end(blockchain);
-         ++it)
-    {
-        if (!block::validation(*std::prev(it), *it))
-        {
-            return false;
-        }
-
-        if (std::chrono::duration_cast<std::chrono::seconds>(
-                (*it).timestamp - (*std::prev(it)).timestamp)
-            > 60s)
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return std::adjacent_find(std::begin(blockchain), std::end(blockchain), [](const auto& current, const auto& previous) {
+        return current.validation(previous) && std::chrono::duration_cast<std::chrono::seconds>(current.timestamp - previous.timestamp) <= 60s;
+    }) == std::end(blockchain);
 }
 
 std::string blockchain::to_string(const Blockchain& blockchain)
 {
     return std::accumulate(
         std::next(std::cbegin(blockchain)), std::cend(blockchain),
-        block::to_string(blockchain.at(0)), [](auto blockchain, auto block) {
-            return std::move(blockchain) + block::to_string(block);
+        blockchain.at(0).to_string(), [](auto blockchain, auto block) {
+            return std::move(blockchain) + block.to_string();
         });
 }
 
@@ -48,9 +36,9 @@ std::string blockchain::to_readable_string(const Blockchain& blockchain)
 {
     return std::accumulate(
         std::next(std::cbegin(blockchain)), std::cend(blockchain),
-        block::to_readable_string(blockchain.at(0)),
+        blockchain.at(0).to_readable_string(),
         [](auto blockchain, auto block) {
-            return std::move(blockchain) + block::to_readable_string(block);
+            return std::move(blockchain) + block.to_readable_string();
         });
 }
 
@@ -62,7 +50,7 @@ std::size_t blockchain::difficulty(const Blockchain& blockchain)
         });
 }
 
-Blockchain blockchain::new_block_pow(Blockchain& blockchain, std::atomic<bool>& stop)
+Blockchain blockchain::new_block_pow(Blockchain& blockchain, std::atomic<bool>& stop, const OptionFlags& options)
 {
     using namespace std::chrono_literals;
     const auto difficulty_change_interval = 10;
@@ -102,7 +90,7 @@ Blockchain blockchain::new_block_pow(Blockchain& blockchain, std::atomic<bool>& 
         }
     }
 
-    Block block = block::new_from_previous_pow(blockchain.back(), stop, difficulty);
+    Block block = Block::new_from_previous_pow(blockchain.back(), stop, difficulty, options);
     blockchain.push_back(block);
     return std::move(blockchain);
 }
@@ -121,7 +109,7 @@ Blockchain blockchain::from_string(const std::string& blockchain_)
             n--;
             if (n == 0)
             {
-                blockchain.push_back(block::from_string(block));
+                blockchain.push_back(Block::from_string(block));
                 block.clear();
                 n = Block::num_fields;
             }

@@ -1,13 +1,15 @@
 #include "block.hpp"
 #include "hash.hpp"
+#include "options.hpp"
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <limits>
 #include <string>
+#include <thread>
 
-Block block::genesis()
+Block Block::genesis()
 {
     Block block { .id = 0,
         .timestamp = std::chrono::system_clock::now(),
@@ -22,7 +24,7 @@ Block block::genesis()
     return block;
 }
 
-Block block::new_from_previous(const Block& previous_block)
+Block Block::new_from_previous(const Block& previous_block)
 {
     Block block { .id = previous_block.id + 1,
         .timestamp = std::chrono::system_clock::now(),
@@ -37,82 +39,103 @@ Block block::new_from_previous(const Block& previous_block)
     return block;
 }
 
-bool block::validation(const Block& previous_block, const Block& block)
+bool Block::validation(const Block& previous_block) const
 {
-    return block.previous_hash == previous_block.hash && hash::block(block) == block.hash && block.id == (previous_block.id + 1);
+    return previous_hash == previous_block.hash && hash::block(*this) == hash && id == (previous_block.id + 1);
 }
 
-std::string block::to_string(const Block& block)
+std::string Block::to_string() const
 {
-    return std::to_string(block.id) + "\n" + std::to_string(std::chrono::system_clock::to_time_t(block.timestamp)) + "\n" + block.data + "\n" + block.previous_hash + "\n" + block.hash + "\n" + std::to_string(block.difficulty) + "\n" + std::to_string(block.nonce) + "\n";
+    return std::to_string(id) + "\n" + std::to_string(std::chrono::system_clock::to_time_t(timestamp)) + "\n" + data + "\n" + previous_hash + "\n" + hash + "\n" + std::to_string(difficulty) + "\n" + std::to_string(nonce) + "\n";
 }
 
-std::string block::to_readable_string(const Block& block)
+std::string Block::to_readable_string() const
 {
-    auto t = std::chrono::system_clock::to_time_t(block.timestamp);
+    auto t = std::chrono::system_clock::to_time_t(timestamp);
     auto time = *std::localtime(&t);
 
     std::ostringstream oss;
     oss << std::put_time(&time, "%d-%m-%Y %H:%M:%S");
     auto time_string = oss.str();
 
-    return "id: " + std::to_string(block.id) + "\n" + "time: " + time_string + "\n" + "data: " + block.data + "\n" + "previous hash: " + block.previous_hash + "\n" + "hash: " + block.hash + "\n" + "difficulty: " + std::to_string(block.difficulty) + "\n" + "nonce: " + std::to_string(block.nonce) + "\n";
+    return "id: " + std::to_string(id) + "\n" + "time: " + time_string + "\n" + "data: " + data + "\n" + "previous hash: " + previous_hash + "\n" + "hash: " + hash + "\n" + "difficulty: " + std::to_string(difficulty) + "\n" + "nonce: " + std::to_string(nonce) + "\n";
 }
 
-Block block::from_string(const std::string& string)
+Block Block::from_string(const std::string& string)
 {
     Block block {};
+    std::istringstream iss(string);
 
     std::string id;
-    std::string time;
-    std::string nonce;
-    std::string difficulty;
-    auto it = string.begin();
-    for (; *it != '\n'; ++it)
-    {
-        id += *it;
-    }
-
-    for (it = ++it; *it != '\n'; ++it)
-    {
-        time += *it;
-    }
-
-    for (it = ++it; *it != '\n'; ++it)
-    {
-        block.data += *it;
-    }
-
-    for (it = ++it; *it != '\n'; ++it)
-    {
-        block.previous_hash += *it;
-    }
-
-    for (it = ++it; *it != '\n'; ++it)
-    {
-        block.hash += *it;
-    }
-
-    for (it = ++it; *it != '\n'; ++it)
-    {
-        difficulty += *it;
-    }
-
-    for (it = ++it; it != string.end(); ++it)
-    {
-        nonce += *it;
-    }
-
+    std::getline(iss, id);
     block.id = std::stoi(id);
+
+    std::string time;
+    std::getline(iss, time);
     block.timestamp = std::chrono::system_clock::from_time_t(std::stoi(time));
+
+    std::getline(iss, block.data);
+
+    std::getline(iss, block.previous_hash);
+
+    std::getline(iss, block.hash);
+
+    std::string difficulty;
+    std::getline(iss, difficulty);
     block.difficulty = std::stoi(difficulty);
+
+    std::string nonce;
+    std::getline(iss, nonce);
     block.nonce = std::stoi(nonce);
+
     return block;
 }
 
-Block block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty)
+/*Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options)
 {
-    auto block = block::new_from_previous(previous_block);
+    auto block = new_from_previous(previous_block);
+    std::atomic<bool> nonce_found(false);
+    std::size_t nonce_increment = std::numeric_limits<std::size_t>::max() / options.threads;
+    std::vector<std::thread> threads;
+
+    for (int i = 0; i < options.threads; ++i)
+    {
+        threads.emplace_back([&, i, nonce_increment]()
+        {
+            std::size_t nonce_start = i * nonce_increment;
+            std::size_t nonce_end = (i + 1) * nonce_increment;
+            for (std::size_t nonce = nonce_start; nonce < nonce_end; ++nonce)
+            {
+                if (stop || nonce_found)
+                {
+                    return;
+                }
+
+                block.nonce = nonce;
+                block.difficulty = difficulty;
+                block.hash = hash::block(block);
+                if (std::all_of(std::begin(block.hash),
+                        std::begin(block.hash) + block.difficulty,
+                        [](auto c) { return c == '0'; }))
+                {
+                    nonce_found = true;
+                    return;
+                }
+            }
+        });
+    }
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    return block;
+}*/
+
+Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options)
+{
+    auto block = new_from_previous(previous_block);
 
     static std::size_t nonce = 0;
     while (true)
@@ -142,3 +165,4 @@ Block block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
 
     return block;
 }
+
