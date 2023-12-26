@@ -16,7 +16,13 @@ constexpr cag_option options_info[]
         .value_name = "threads",
         .description = "Number of threads for mining on a single system."
     },
-
+    {
+        .identifier = 'b',
+        .access_letters = "b",
+        .access_name = "benchmark",
+        .value_name = nullptr,
+        .description = "Benchmarking for measuring mining speed."
+    },
     {
         .identifier = 'h',
         .access_letters = "h",

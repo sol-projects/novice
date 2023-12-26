@@ -91,9 +91,9 @@ Block Block::from_string(const std::string& string)
     return block;
 }
 
-/*Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options)
+Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options)
 {
-    auto block = new_from_previous(previous_block);
+    auto new_block = new_from_previous(previous_block);
     std::atomic<bool> nonce_found(false);
     std::size_t nonce_increment = std::numeric_limits<std::size_t>::max() / options.threads;
     std::vector<std::thread> threads;
@@ -102,12 +102,14 @@ Block Block::from_string(const std::string& string)
     {
         threads.emplace_back([&, i, nonce_increment]()
         {
+            auto block = new_block;
             std::size_t nonce_start = i * nonce_increment;
             std::size_t nonce_end = (i + 1) * nonce_increment;
             for (std::size_t nonce = nonce_start; nonce < nonce_end; ++nonce)
             {
                 if (stop || nonce_found)
                 {
+                    new_block = block;
                     return;
                 }
 
@@ -119,6 +121,7 @@ Block Block::from_string(const std::string& string)
                         [](auto c) { return c == '0'; }))
                 {
                     nonce_found = true;
+                    new_block = block;
                     return;
                 }
             }
@@ -130,39 +133,6 @@ Block Block::from_string(const std::string& string)
         thread.join();
     }
 
-    return block;
-}*/
-
-Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options)
-{
-    auto block = new_from_previous(previous_block);
-
-    static std::size_t nonce = 0;
-    while (true)
-    {
-        if(nonce == std::numeric_limits<decltype(nonce)>::max())
-        {
-            nonce = 0;
-        }
-
-        if(stop)
-        {
-            return block;
-        }
-
-        block.nonce = nonce;
-        block.difficulty = difficulty;
-        block.hash = hash::block(block);
-        if (std::all_of(std::begin(block.hash),
-                std::begin(block.hash) + block.difficulty,
-                [](auto c) { return c == '0'; }))
-        {
-            return block;
-        }
-
-        nonce++;
-    }
-
-    return block;
+    return new_block;
 }
 
