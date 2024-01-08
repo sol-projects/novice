@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="title_activity_setings">SetingsActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="title">TITLE: </string>
+    <string name="date">DATE: </string>
+    <string name="url">URL: </string>
+    <string name="authors">AUTHORS: </string>
+    <string name="location">LOCATION: </string>
+    <string name="catagories">CATEGORIES: </string>
+    <string name="id">ID: </string>
+    <string name="emptyString">//NONE:</string>
+</resources>

@@ -1,0 +1,130 @@
+[
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\layout_list_item.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\layout\\list_item.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_circle_image.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\circle_image.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_camera_dravable_buton.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\camera_dravable_buton.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_outline_photo_camera_24.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\outline_photo_camera_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\layout_activity_display.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\layout\\activity_display.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_baseline_arrow_back_24.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\baseline_arrow_back_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\navigation_nav_graph.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\navigation\\nav_graph.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_botomtotollbarmain.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\botomtotollbarmain.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_baseline_menu_24.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\baseline_menu_24.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\xml\\data_extraction_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\layout_toolbar_menu.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\layout\\toolbar_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\layout_activity_camera_activty.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\layout\\activity_camera_activty.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_newsicon2.jpg.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\newsicon2.jpg"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\drawable_item_bacground.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\drawable\\item_bacground.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\layout_activity_setings.xml.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\layout\\activity_setings.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "com.prvavaja.noviceprojekt.app-merged_res-45:/layout_activity_main.xml.flat",
+        "source": "com.prvavaja.noviceprojekt.app-main-47:/layout/activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-merged_res-45:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\filip\\.gradle\\daemon\\8.0\\com.prvavaja.noviceprojekt.app-main-47:\\mipmap-mdpi\\ic_launcher.webp"
+    }
+]
