@@ -1,8 +1,8 @@
 package com.mygdx.game.utils;
 
 public class Geolocation {
-    public double lat;
-    public double lng;
+    public double lat;  // širina
+    public double lng;  // dolžina
 
     public Geolocation(double lat, double lng) {
         this.lat = lat;

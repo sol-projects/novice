@@ -44,7 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class ProjectTest extends ApplicationAdapter implements GestureDetector.GestureListener {
+public class ProjectTest extends ApplicationAdapter implements GestureDetector.GestureListener {//Gesturelistener Enables to handle touch gestures.
 
     private ShapeRenderer shapeRenderer;
     private Vector3 touchPosition;
@@ -102,16 +102,17 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
 
         touchPosition = new Vector3();
 
-        try {
+        try {//TU SE ZLADA MAPA
             //in most cases, geolocation won't be in the center of the tile because tile borders are predetermined (geolocation can be at the corner of a tile)
             ZoomXY centerTile = MapRasterTiles.getTileNumber(CENTER_GEOLOCATION.lat, CENTER_GEOLOCATION.lng, Constants.ZOOM);
             mapTiles = MapRasterTiles.getRasterTileZone(centerTile, Constants.NUM_TILES);
             //you need the beginning tile (tile on the top left corner) to convert geolocation to a location in pixels.
+            //beginingTILE=the code calculates the beginning tile (the top-left tile)
             beginTile = new ZoomXY(Constants.ZOOM, centerTile.x - ((Constants.NUM_TILES - 1) / 2), centerTile.y - ((Constants.NUM_TILES - 1) / 2));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        //TU SE USTVARI MAPA
         tiledMap = new TiledMap();
         MapLayers layers = tiledMap.getLayers();
 

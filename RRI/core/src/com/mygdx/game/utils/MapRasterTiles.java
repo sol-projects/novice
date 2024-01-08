@@ -76,7 +76,7 @@ public class MapRasterTiles {
      * @return
      * @throws IOException
      */
-    public static Texture[] getRasterTileZone(ZoomXY zoomXY, int size) throws IOException {
+    public static Texture[] getRasterTileZone(ZoomXY zoomXY, int size) throws IOException {//zgradi mapo
         Texture[] array = new Texture[size * size];
         int[] factorY = new int[size * size]; //if size is 3 {-1, -1, -1, 0, 0, 0, 1, 1, 1};
         int[] factorX = new int[size * size]; //if size is 3 {-1, 0, 1, -1, 0, 1, -1, 0, 1};
@@ -136,7 +136,7 @@ public class MapRasterTiles {
      * @param zoom
      * @return
      */
-    public static ZoomXY getTileNumber(final double lat, final double lon, final int zoom) {
+    public static ZoomXY getTileNumber(final double lat, final double lon, final int zoom) {//pretvori sirino in dolzino v kordinate
         int xtile = (int) Math.floor((lon + 180) / 360 * (1 << zoom));
         int ytile = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom));
         if (xtile < 0)
