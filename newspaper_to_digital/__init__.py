@@ -29,7 +29,7 @@ class Params:
     TRANSFORMED_IMAGE_SIZE = (256, 256)
     MAX_LABELS = 10
     LR = 0.0000001
-    EPOCHS = 700
+    EPOCHS = 200
     BATCH_SIZE = 32
     PAD_VALUE = -1e9
 
