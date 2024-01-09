@@ -2,7 +2,11 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version "1.9.0"
+    id("io.realm.kotlin") version "1.13.0" apply false
+    id("org.jetbrains.kotlin.kapt")
 }
+
+apply(plugin = "io.realm.kotlin")
 
 android {
     namespace = "com.prvavaja.noviceprojekt"
@@ -49,4 +53,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("io.realm.kotlin:library-base:1.13.0")
+    implementation("io.realm.kotlin:library-sync:1.13.0")
 }
