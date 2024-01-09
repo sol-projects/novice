@@ -1,4 +1,3 @@
-import com.google.gson.Gson
 import org.example.model.INews
 import org.example.model.Location
 import org.json.JSONArray
@@ -8,17 +7,14 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import com.mongodb.*
-import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoDatabase
-import com.google.gson.JsonObject
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
 import java.io.IOException
 
+var token: String =  sendLogin()
 fun sendGet(): ArrayList<INews> {
     val url = URL("http://localhost:8000/news")
     val rawData = url.readText()
@@ -34,8 +30,10 @@ fun sendGet(): ArrayList<INews> {
         val locationObj = jsonObject.getJSONObject("location")
         val location = Location(
             locationObj.getString("type"),
-            Pair(locationObj.getJSONArray("coordinates").getDouble(0),
-                locationObj.getJSONArray("coordinates").getDouble(1))
+            Pair(
+                locationObj.getJSONArray("coordinates").getDouble(0),
+                locationObj.getJSONArray("coordinates").getDouble(1)
+            )
         )
 
         val authorsArray = jsonObject.getJSONArray("authors")
@@ -43,6 +41,7 @@ fun sendGet(): ArrayList<INews> {
         for (j in 0 until authorsArray.length()) {
             authorsList.add(authorsArray.getString(j))
         }
+
 
         val categoriesArray = jsonObject.getJSONArray("categories")
         val categoriesList = mutableListOf<String>()
@@ -70,12 +69,15 @@ fun sendGet(): ArrayList<INews> {
 
 
 
+
 fun sendPost(data: String) {
-    val url = URL("http://localhost:8000/news/add")
+    val url = URL("http://localhost:8000/news/")
     val connection = url.openConnection() as HttpURLConnection
 
     connection.requestMethod = "POST"
     connection.setRequestProperty("Content-Type", "application/json")
+    connection.setRequestProperty("Authorization", "Bearer $token")
+
     connection.doOutput = true
 
     val outputStream = OutputStreamWriter(connection.outputStream)
@@ -96,7 +98,8 @@ fun updateNews(id: String, updatedNewsJson: String) {
     val request = Request.Builder()
         .url("http://localhost:8000/news/$id")
         .put(requestBody)
-        .build()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
 
     client.newCall(request).execute().use { response ->
         if (!response.isSuccessful) throw IOException("Unexpected code $response")
@@ -105,13 +108,14 @@ fun updateNews(id: String, updatedNewsJson: String) {
 }
 
 
-fun deleteNews(id: String) {
+fun deleteNews(id: String, token: String) {
     val client = OkHttpClient()
-
+    println(token)
     val request = Request.Builder()
-        .url("http://localhost:8000/news/$id")
-        .delete()
-        .build()
+            .url("http://localhost:8000/news/$id")
+            .delete()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
 
     client.newCall(request).execute().use { response ->
         if (!response.isSuccessful) throw IOException("Unexpected code $response")
@@ -119,3 +123,25 @@ fun deleteNews(id: String) {
     }
 }
 
+
+
+fun sendLogin(): String {
+    val url = URL("http://localhost:8000/news/login")
+    val connection = url.openConnection() as HttpURLConnection
+
+    connection.requestMethod = "POST"
+    connection.setRequestProperty("Content-Type", "application/json")
+    connection.doOutput = true
+
+    val responseCode = connection.responseCode
+    println("Response Code: $responseCode")
+
+    val responseBody = connection.inputStream.bufferedReader().use { it.readText() }
+
+    connection.disconnect()
+
+    val responseJson = JSONObject(responseBody)
+    val token = responseJson.getString("token")
+
+    return token
+}

@@ -3,9 +3,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -29,7 +27,6 @@ import org.example.model.Location
 import org.example.scraper.gov
 import org.example.scraper.gov_vlada
 import java.io.File
-import java.text.DateFormat
 import kotlin.random.Random
 
 enum class Section {
@@ -48,7 +45,8 @@ enum class Scraper {
     _servisSta,
     _zurnal24,
     _rtvSlo,
-    scrapeAll
+    scrapeAll,
+    _mbinfo
 }
 
 @Composable
@@ -351,7 +349,7 @@ fun ScrapeSection() {
                         Scraper._gov_vlada -> newsScraped.addAll(gov_vlada(selectedNumber))
                         Scraper._dnevnik -> newsScraped.addAll(_dnevnik(selectedNumber))
                         Scraper._ekipa24 -> newsScraped.addAll(_ekipa24(selectedNumber))
-                        //Scraper._mbinfo -> newsScraped.addAll(_mbinfo(selectedNumber))
+                        Scraper._mbinfo -> newsScraped.addAll(_mbinfo(selectedNumber))
                         Scraper._servisSta -> newsScraped.addAll(getServisSta(selectedNumber))
                         Scraper._zurnal24 -> newsScraped.addAll(getZurnal24Slo(selectedNumber))
                         Scraper._rtvSlo -> newsScraped.addAll(getRtvSlo(selectedNumber))
@@ -361,7 +359,7 @@ fun ScrapeSection() {
                             newsScraped.addAll(gov_vlada(selectedNumber))
                             newsScraped.addAll(_dnevnik(selectedNumber))
                             newsScraped.addAll(_ekipa24(selectedNumber))
-                            //newsScraped.addAll(_mbinfo(selectedNumber))
+                            newsScraped.addAll(_mbinfo(selectedNumber))
                             newsScraped.addAll(getServisSta(selectedNumber))
                             newsScraped.addAll(getZurnal24Slo(selectedNumber))
                             newsScraped.addAll(getRtvSlo(selectedNumber))
@@ -574,7 +572,7 @@ fun Main(selected: Section, news: ArrayList<INews>) {
                                 news = item,
                                 onDeleteClicked = {
                                     //println(item._id)
-                                    deleteNews(item._id)
+                                    deleteNews(item._id,token)
                                     news.remove(item)
                                     newsList.remove(item)
                                 },

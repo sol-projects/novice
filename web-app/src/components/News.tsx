@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { VStack, Center, Select } from "@chakra-ui/react";
+import {
+  VStack,
+  Center,
+  Select,
+  HStack,
+  useRadioGroup,
+} from "@chakra-ui/react";
 import { io } from "socket.io-client";
 import NewsArticle from "./NewsArticle";
 import INews from "../news/model";
@@ -7,11 +13,26 @@ import { getAll } from "../news/api";
 import Filter, { FilterData } from "./Filter";
 import * as FilterFn from "../news/filter";
 import * as SortFn from "../news/sort";
+import RadioCard from "./RadioCard";
 
 export default function News() {
   const [news, setNews] = useState<INews[]>([]);
   const [filteredNews, setFilteredNews] = useState<INews[]>([]);
   const [count, setCount] = useState<number>(50);
+  const presets = ["privzeto", "popularno", "vreme", "šport"];
+  const [preset, setPreset] = useState<string>("privzeto");
+
+  const presetsChange = (value: string) => {
+    setPreset(value);
+  };
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "customOptions",
+    defaultValue: "popularno",
+    onChange: presetsChange,
+  });
+
+  const group = getRootProps();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +63,10 @@ export default function News() {
     filterData.categories = filterData.categories.filter((item) => item !== "");
     filterData.authors = filterData.authors.filter((item) => item !== "");
 
+    if(filterData.websites.length > 0) {
+      filtered = FilterFn.websites(filtered, filterData.websites);
+    }
+
     if (filterData.categories.length > 0) {
       filtered = FilterFn.categories(filtered, filterData.categories);
     }
@@ -66,7 +91,7 @@ export default function News() {
       filtered = SortFn.dateAsc(filtered);
     }
 
-    if (filterData.sortBy === "popularity") {
+    if (filterData.sortBy === "popularity" || preset === "popularno") {
       filtered = SortFn.popularity(filtered);
     }
 
@@ -74,6 +99,8 @@ export default function News() {
       filtered = SortFn.views(filtered);
     }
 
+    filtered = FilterFn.date(filtered, filterData.from, filterData.to);
+    filtered = FilterFn.categoryGroup(filtered, preset);
     setFilteredNews(filtered);
   };
 
@@ -86,7 +113,7 @@ export default function News() {
     <>
       <Center>
         <VStack width="80%">
-          <VStack width="20%">
+          <HStack width="20%">
             <Filter onChange={handleFilterChange} />
             <Select
               width="auto"
@@ -99,7 +126,18 @@ export default function News() {
               <option value={50}>50</option>
               <option value={100}>100</option>
             </Select>
-          </VStack>
+          </HStack>
+
+          <HStack {...group}>
+            {presets.map((value) => {
+              const radio = getRadioProps({ value });
+              return (
+                <RadioCard key={value} {...radio}>
+                  {value}
+                </RadioCard>
+              );
+            })}
+          </HStack>
           {filteredNews.slice(0, count).map((article) => (
             <NewsArticle key={article._id} article={article} />
           ))}

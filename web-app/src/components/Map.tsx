@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Map, TileLayer } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -14,8 +14,15 @@ import warIcon from "../assets/bomb.png";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import { VStack, HStack, Center, Textarea, Button, Box } from "@chakra-ui/react";
-import { geolang } from '../news/geolang';
+import {
+  VStack,
+  HStack,
+  Center,
+  Textarea,
+  Button,
+  Box,
+} from "@chakra-ui/react";
+import { geolang } from "../news/geolang";
 
 const sloveniaBounds = [
   [45.4252, 13.3757],
@@ -27,7 +34,6 @@ const customIcon = L.icon({
   iconSize: [42, 80],
   iconAnchor: [21, 80],
 });
-
 
 const customIconWeather = L.icon({
   iconUrl: weatherIcon,
@@ -41,7 +47,6 @@ const customIconWar = L.icon({
   iconAnchor: [21, 80],
 });
 
-
 const customIconSport = L.icon({
   iconUrl: sportIcon,
   iconSize: [42, 42],
@@ -51,21 +56,22 @@ const customIconSport = L.icon({
 export default function MapComponent() {
   const [news, setNews] = useState<INews[]>([]);
   const [filteredNews, setFilteredNews] = useState<INews[]>([]);
-  const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
+  const [code, setCode] = useState("");
+  const [output, setOutput] = useState("");
+  const mapContainerRef = useRef(null);
 
   const handleRunCode = async () => {
     try {
-      const response = await fetch('http://localhost:8000/news/geolang', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/news/geolang", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ code }),
       });
 
       if (!response.ok) {
-        throw new Error('Error executing geolang request');
+        throw new Error("Error executing geolang request");
       }
 
       const data = await response.json();
@@ -115,6 +121,18 @@ export default function MapComponent() {
       filtered = FilterFn.authors(filtered, filterData.authors);
     }
 
+    if(filterData.websites.length > 0) {
+      filtered = FilterFn.websites(filtered, filterData.websites);
+    }
+
+    if (filterData.title.length > 0) {
+      filtered = FilterFn.title(filtered, filterData.title);
+    }
+
+    if (filterData.content.length > 0) {
+      filtered = FilterFn.content(filtered, filterData.content);
+    }
+
     setFilteredNews(filtered);
   };
 
@@ -128,37 +146,35 @@ export default function MapComponent() {
       });
 
       if (output) {
-        const parsedOutput: any = JSON.parse(output); // Parse the output as JSON if needed
+        const parsedOutput: any = JSON.parse(output);
 
         parsedOutput.features.forEach((feature: any) => {
           const { geometry, properties } = feature;
 
-          if (geometry.type === 'Point') {
+          if (geometry.type === "Point") {
             const { coordinates } = geometry;
             const { title } = properties;
 
-            L.marker(coordinates.reverse())
-              .addTo(map)
-              .bindPopup(title);
-          } else if (geometry.type === 'Polygon') {
+            L.marker(coordinates.reverse()).addTo(map).bindPopup(title);
+          } else if (geometry.type === "Polygon") {
             const { coordinates } = geometry;
             const { title } = properties;
 
-            const latLngs = coordinates[0].map((coords: any) => [coords[1], coords[0]]);
-            L.polygon(latLngs)
-              .addTo(map)
-              .bindPopup(title);
-          } else if (geometry.type === 'LineString') {
+            const latLngs = coordinates[0].map((coords: any) => [
+              coords[1],
+              coords[0],
+            ]);
+            L.polygon(latLngs).addTo(map).bindPopup(title);
+          } else if (geometry.type === "LineString") {
             const { coordinates } = geometry;
             const { title } = properties;
 
-            const latLngs = coordinates.map((coords: any) => [coords[1], coords[0]]);
-            L.polyline(latLngs)
-              .addTo(map)
-              .bindPopup(title);
+            const latLngs = coordinates.map((coords: any) => [
+              coords[1],
+              coords[0],
+            ]);
+            L.polyline(latLngs).addTo(map).bindPopup(title);
           }
-
-
         });
       }
       const tileLayer = new L.TileLayer(
@@ -191,16 +207,48 @@ export default function MapComponent() {
 
         let markerIcon = customIcon;
 
-        categories.forEach((category) => {
-          if (category.toLowerCase() === "toča" || category.toLowerCase() === "nevihta" || category.toLowerCase() === "vreme" || category.toLowerCase() === "dež") {
-            markerIcon = customIconWeather;
-          } else if (category.toLowerCase() === "sport" || category.toLowerCase() === "šport" || category.toLowerCase() === "nogomet" || category.toLowerCase() === "košarka") {
-            markerIcon = customIconSport;
-          } else if (category.toLowerCase() === "vojna" || category.toLowerCase() === "napad") {
-            markerIcon = customIconWar;
-          }
-        });
-
+        if (
+          categories.some((category) =>
+            [
+              "toča",
+              "nevihta",
+              "vreme",
+              "dež",
+              "megla",
+              "sončno",
+              "sneg",
+              "sneženo",
+              "ploha",
+            ].includes(category)
+          )
+        ) {
+          markerIcon = customIconWeather;
+        } else if (
+          categories.some((category) =>
+            [
+              "rekreacija",
+              "gibanje",
+              "šport",
+              "nogomet",
+              "košarka",
+              "sport",
+              "tenis",
+              "gimnastika",
+              "jahanje",
+              "smučanje",
+              "smuk",
+              "rokomet",
+            ].includes(category)
+          )
+        ) {
+          markerIcon = customIconSport;
+        } else if (
+          categories.some((category) =>
+            ["vojna", "napad", "bombandiranje", "tank"].includes(category)
+          )
+        ) {
+          markerIcon = customIconWar;
+        }
 
         const marker = L.marker(switchedCoordinates, { icon: markerIcon });
         marker.bindPopup(
@@ -209,58 +257,73 @@ export default function MapComponent() {
 
         markerClusterGroup.addLayer(marker);
       });
-
+      const updateMapSize = () => {
+        map.invalidateSize();
+      };
       map.addLayer(markerClusterGroup);
+      window.addEventListener("resize", updateMapSize);
       return () => {
         map.remove();
+        window.removeEventListener("resize", updateMapSize);
       };
     }
   }, [filteredNews, output]);
 
-  //v teoriji bi blo najboljše da je to <Center>zemljevid...</Center>
-  //    to mi je delal neki cajta, ampak potem je random začelo crashat z JS napakami
-  //    definitivno rabi bit dodan nek padding v CSS za umik od roba ekrana če chakra-ui komponente ne delajo s tem zemljevidom
-  //height in width ne moreta bit v % (ne dela), ampak px ni v redu zared manjših ekranov
-  //    to bi lahko v teoriji rešu tak da bi menjavu px glede na trenutno velikost zaslona, ne vem če bi to delal. mislim da ma chakra-ui neke stvari za to vgrajene tud? https://chakra-ui.com/docs/styled-system/responsive-styles
-
-  //verjetno je problem to da editamo dom direktno z document.getElementById("map");
-  //    to ne pomeni da je to narobe, verjetno ni pametno da dosti spreminjaš kodo
-
-  return <HStack>
-      <Box>
-        <div id="map" style={{ height: "600px", width: "1000px" }} />
-
-
-      </Box>
-    <VStack>
-      <Textarea
-        value={code}
-        onChange={handleCodeChange}
-        placeholder="geolang programska koda"
-        height="500px"
-        resize="none"
-      />
-      <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
-        Zaženi kodo
-      </Button>
-        <HStack spacing={2}>
-          <Box>
-            <img src={defoultIcon} alt="Default Icon" style={{ width: "24px", height: "24px" }} />
-            <span>Default Icon</span>
-          </Box>
-          <Box>
-            <img src={weatherIcon} alt="Weather Icon" style={{ width: "24px", height: "24px" }} />
-            <span>Weather Icon</span>
-          </Box>
-          <Box>
-            <img src={sportIcon} alt="Sport Icon" style={{ width: "24px", height: "24px" }} />
-            <span>Sport Icon</span>
-          </Box>
-          <Box>
-            <img src={warIcon} alt="War Icon" style={{ width: "24px", height: "24px" }} />
-            <span>War Icon</span>
-          </Box>
-        </HStack>
-    </VStack>
-  </HStack>;
+  return (
+    <>
+      <Center>
+        <Filter onChange={handleFilterChange} />
+      </Center>
+      <HStack padding="5%" flex={1} height="100vh">
+        <div id="map" style={{ height: "90vh", width: "100%" }} />;
+        <VStack flex={1}>
+          <Textarea
+            value={code}
+            onChange={handleCodeChange}
+            placeholder="geolang programska koda"
+            height="600px"
+            width="300px"
+            resize="none"
+          />
+          <Button colorScheme="blue" onClick={handleRunCode} mt={4}>
+            Zaženi kodo
+          </Button>
+          <HStack spacing={2}>
+            <Box>
+              <img
+                src={defoultIcon}
+                alt="Default Icon"
+                style={{ width: "24px", height: "24px" }}
+              />
+              <span>/</span>
+            </Box>
+            <Box>
+              <img
+                src={weatherIcon}
+                alt="Weather Icon"
+                style={{ width: "24px", height: "24px" }}
+              />
+              <span>Vreme</span>
+            </Box>
+            <Box>
+              <img
+                src={sportIcon}
+                alt="Sport Icon"
+                style={{ width: "24px", height: "24px" }}
+              />
+              <span>Šport</span>
+            </Box>
+            <Box>
+              <img
+                src={warIcon}
+                alt="War Icon"
+                style={{ width: "24px", height: "24px" }}
+              />
+              <span>Vojna</span>
+            </Box>
+          </HStack>
+        </VStack>
+      </HStack>
+    </>
+  );
 }

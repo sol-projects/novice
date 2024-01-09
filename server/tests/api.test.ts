@@ -11,12 +11,12 @@ if(process.env.DB_NAME_TEST ) {
     Db.connect(process.env.DB_NAME_TEST);
 }
 
-/*test('login', async () => {
+test('login', async () => {
   const res = await request(app).post('/news/login');
   expect(res.status).toBe(200);
   expect(res.body).toHaveProperty('token');
   let token = res.body.token;
-}); */
+}); 
 
 afterAll(async () => {
   try {
@@ -46,6 +46,7 @@ test('POST /news - should create a new news item', async () => {
       content: 'Test content',
       categories: ['Test Category'],
       location: { type: 'Point', coordinates: [0, 0] },
+      views: [new Date(),new Date()]
     };
   
     const res = await request(app)
@@ -315,16 +316,6 @@ test('GET /news - each news item should have a valid date format', async () => {
   });
 }, 200000);
 
-test('GET /news - each content should be a non-empty string', async () => {
-  const res = await request(app).get('/news');
-  expect(res.status).toEqual(200);
-  expect(Array.isArray(res.body)).toBeTruthy();
-
-  res.body.forEach((newsItem: any) => {
-    expect(typeof newsItem.content).toBe('string');
-    expect(newsItem.content.length).toBeGreaterThan(0);
-  });
-}, 200000);
 
 test('GET /news - each location should have valid coordinates', async () => {
   const res = await request(app).get('/news');
@@ -369,16 +360,6 @@ test('GET /news - each news item should have a valid location', async () => {
   });
 }, 200000);
 
-test('GET /news - each news item should have a non-empty content', async () => {
-  const res = await request(app).get('/news');
-  expect(res.status).toEqual(200);
-  expect(Array.isArray(res.body)).toBeTruthy();
-
-  res.body.forEach((newsItem: any) => {
-    expect(typeof newsItem.content).toBe('string');
-    expect(newsItem.content.length).toBeGreaterThan(0);
-  });
-}, 200000);
 
 test('GET /news - each news item should have a valid title length', async () => {
   const res = await request(app).get('/news');

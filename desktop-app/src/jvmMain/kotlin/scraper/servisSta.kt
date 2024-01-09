@@ -33,10 +33,8 @@ fun getServisSta(numArticlesToOpen: Int): List<INews> {
     driver.get("https://servis.sta.si/")
 
 
-    // Create an empty list to store the news articles
     val newsList = mutableListOf<INews>()
 
-    // Loop through the specified number of news articles and extract the data
     for (i in 0 until numArticlesToOpen) {
         val articles: List<WebElement> = driver.findElements(By.className("item"))
 
@@ -47,7 +45,6 @@ fun getServisSta(numArticlesToOpen: Int): List<INews> {
 
         val title = driver.findElement(By.cssSelector("article.articleui h1")).text
 
-        //had a problem here. This is a workaround if a page doesn't have lead or text
         val articleElement = driver.findElement(By.tagName("article"))
         val leadElement = try {
             articleElement.findElement(By.className("lead"))
@@ -78,13 +75,6 @@ fun getServisSta(numArticlesToOpen: Int): List<INews> {
         } else {
             ""
         }
-/*
-        val asideElement = article.findElement(By.cssSelector("aside.articlemeta"))
-        val dateElement = asideElement.findElement(By.cssSelector("div.items > div:nth-child(1) time"))
-        val dateString = dateElement.getAttribute("datetime")
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-        val date: Date = dateFormat.parse(dateString)
-*/
 
         val categoryElement = driver.findElement(By.cssSelector("aside.articlemeta div.items > div:nth-child(2)"))
         val categories = listOf(categoryElement.text.replace("Kategorija:", "").trim())
@@ -97,7 +87,6 @@ fun getServisSta(numArticlesToOpen: Int): List<INews> {
 
         val date: Date = SimpleDateFormat("yyyy-MM-dd").parse("2000-10-10")
 
-        //Create an instance of INews and add it to the newsList
         val news = INews(title, url, date, authors, content, categories, Location(
             type = "Point",
             coordinates = Pair(0.0,0.0),

@@ -24,7 +24,7 @@ async function _mbinfo(n: number = 5) {
     const articlePage = await browser.newPage();
     await articlePage.goto(url);
     //await articlePage.waitForSelector('div.field field--name-field-besedilo', { visible: true });
-    const authors = await articlePage.$$eval('.username__name', (els) =>
+    const authors = await articlePage.$$eval('.page-title-meta.block.block--app-breadcrumb.block--app .username__name', (els) =>
       els.map((e) => (e as HTMLElement).innerText.split('/')[0].trim())
     );
 
