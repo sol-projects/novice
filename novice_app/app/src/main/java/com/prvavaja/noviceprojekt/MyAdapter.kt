@@ -5,17 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 
-class MyAdapter (private var newsList: List<Novica>) : RecyclerView.Adapter<NewsViewHolder>()  {
+class MyAdapter (private var newsList: List<NewsArticle>) : RecyclerView.Adapter<NewsViewHolder>()  {
     private var onItemClickListener: OnItemClickListener? = null
     private var onItemLongClickListener: OnItemLongClickListener? = null
     interface OnItemLongClickListener {
-        fun onItemLongClick(stadion: Novica): Boolean
+        fun onItemLongClick(stadion: NewsArticle): Boolean
     }
     fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
         this.onItemLongClickListener = listener
     }
     interface OnItemClickListener {
-        fun onItemClick(stadion: Novica)
+        fun onItemClick(stadion: NewsArticle)
     }
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.onItemClickListener = listener
@@ -54,7 +54,7 @@ class MyAdapter (private var newsList: List<Novica>) : RecyclerView.Adapter<News
         return newsList.size
     }
     //TO KLICES DA UPDATAS IZGLED RECYCLERVIEWA
-    fun updateData(newData: List<Novica>) {
+    fun updateData(newData: List<NewsArticle>) {
         newsList = newData
         notifyDataSetChanged()
     }
