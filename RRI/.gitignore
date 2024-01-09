@@ -1,5 +1,9 @@
 ## Java
 
+
+desktop/build/
+core/build/
+
 *.class
 *.war
 *.ear
