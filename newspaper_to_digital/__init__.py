@@ -33,7 +33,7 @@ class Params:
     MAX_LABELS = 10
     LR = 0.00001
     EPOCHS = 80
-    AUGMENTATIONS_PER_IMAGE = 10
+    AUGMENTATIONS_PER_IMAGE = 1
     BATCH_SIZE = 32
     PAD_VALUE = -1e9
 
@@ -72,7 +72,7 @@ class Articles(Dataset):
             VerticalFlip(p=0.3),
             RandomScale(scale_limit=0.3),
             GaussNoise(var_limit=(5, 70), p=0.3),
-            Rotate(limit=105, p=0.3),
+            Rotate(limit=105, p=0.3), #brez rotacij
             RandomBrightnessContrast(brightness_limit=0.5, contrast_limit=0.4, p=0.5),
             Resize(width=Params.TRANSFORMED_IMAGE_SIZE[0], height=Params.TRANSFORMED_IMAGE_SIZE[1]),
             ToTensorV2()
@@ -179,10 +179,10 @@ def ssd300():
     in_channels = _utils.retrieve_out_channels(model.backbone, (Params.TRANSFORMED_IMAGE_SIZE[0], Params.TRANSFORMED_IMAGE_SIZE[0]))
     num_anchors = model.anchor_generator.num_anchors_per_location()
 
+    # freeze layers requires_grad_
     model.head.classification_head = SSDClassificationHead(
         in_channels=in_channels,
         num_anchors=num_anchors,
-        #num_classes=Params.MAX_LABELS,
         num_classes=len(ARTICLE_LABELS) + 1 # + 1 za background
     )
 
@@ -289,7 +289,6 @@ if __name__ == '__main__':
 
         predicted_bboxes = outputs[0]['boxes'].detach().cpu().numpy()
         predicted_scores = outputs[0]['scores'].detach().cpu().numpy()
-        #bboxes = predicted_bboxes[predicted_scores >= 0.5].astype(np.int32)
         predicted_labels = [to_label(val) for val in outputs[0]['labels'].cpu().numpy()]
         print(predicted_bboxes)
         print(predicted_scores)
