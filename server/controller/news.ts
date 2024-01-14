@@ -3,6 +3,7 @@ import websites from '../scraper/websites';
 import { INews, News } from '../model/News';
 import * as Socket from '../socket/socket';
 import { exec } from 'child_process';
+import multer from 'multer';
 
 async function run_query(res: Response, query: any) {
   try {
@@ -285,6 +286,54 @@ export async function geolang(req: Request, res: Response) {
       }
     );
   });
+}
+
+export async function findTextAreas(req: Request, res: Response) {
+  const image = req.file;
+
+  if (!image) {
+    return res.status(400).send('No image file provided');
+  }
+
+  console.log(image.buffer);
+
+  const fs = require('fs');
+  fs.writeFile(
+    '../newspaper_to_digital/input.png',
+    image.buffer,
+    'binary',
+    function (err: any) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error writing the image to input.png');
+      }
+
+      exec(
+        'source env/bin/activate && python __init__.py --eval',
+        { cwd: '../newspaper_to_digital' },
+        function (error, stdout, stderr) {
+          if (error) {
+            console.error(error);
+            return res
+              .status(500)
+              .send('Error during execution. Invalid file?');
+          }
+
+          fs.readFile(
+            '../newspaper_to_digital/output.png',
+            function (err: any, data: any) {
+              if (err) {
+                console.error(err);
+                return res.status(500).send('Error reading the output file');
+              }
+
+              res.send(data);
+            }
+          );
+        }
+      );
+    }
+  );
 }
 
 export namespace Filter {
