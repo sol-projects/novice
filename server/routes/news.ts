@@ -1,6 +1,12 @@
 import express, { Express, Request, Response } from 'express';
 import * as Controller from '../controller/news';
 import * as JWT from '../security/jwt';
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 const router = express.Router();
 
@@ -27,5 +33,6 @@ router.post('/views', Controller.addView);
 router.post('/store', JWT.authorization, Controller.store);
 router.post('/login', JWT.login);
 router.post('/geolang', Controller.geolang);
+router.post('/find-text', upload.single('file'), Controller.findTextAreas);
 
 export = router;
