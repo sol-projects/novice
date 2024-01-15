@@ -37,7 +37,7 @@ class Params:
     MAX_LABELS = 10
     LR = 0.0001
     EPOCHS = 11
-    AUGMENTATIONS_PER_IMAGE = 15
+    AUGMENTATIONS_PER_IMAGE = 18
     BATCH_SIZE = 32
     SEED = 3407
 
@@ -75,7 +75,6 @@ class Articles(Dataset):
             HorizontalFlip(p=0.3),
             VerticalFlip(p=0.3),
             RandomScale(scale_limit=0.3),
-            GaussNoise(var_limit=(10, 100), p=0.3),
             RandomBrightnessContrast(brightness_limit=0.5, contrast_limit=0.4, p=0.5),
             MotionBlur(blur_limit=(3, 7), p=0.3),
             Resize(width=Params.TRANSFORMED_IMAGE_SIZE[0], height=Params.TRANSFORMED_IMAGE_SIZE[1]),
@@ -194,8 +193,8 @@ def ssd300():
     in_channels = _utils.retrieve_out_channels(model.backbone, (Params.TRANSFORMED_IMAGE_SIZE[0], Params.TRANSFORMED_IMAGE_SIZE[0]))
     num_anchors = model.anchor_generator.num_anchors_per_location()
 
-    for param in model.parameters():
-        param.requires_grad_(False)
+    #for param in model.parameters():
+    #    param.requires_grad_(False)
 
     model.head.classification_head = SSDClassificationHead(
         in_channels=in_channels,
@@ -262,7 +261,7 @@ if __name__ == '__main__':
             if label is None:
                 label = "None"
 
-            if score < 0.30:
+            if score < 0.20:
                 continue
 
             rect = patches.Rectangle((bbox[0], bbox[1]), bbox[2] - bbox[0], bbox[3] - bbox[1], linewidth=1, edgecolor='r', facecolor='none')
@@ -325,10 +324,15 @@ if __name__ == '__main__':
                 with torch.no_grad():
                     for i, data in enumerate(val_dataloader, 0):
                         images, targets = data
-                        #print(targets)
                         outputs = model(images, targets)
-                        #https://lightning.ai/docs/torchmetrics/stable/detection/mean_average_precision.html
-                        ious = box_iou(outputs[0]['boxes'], targets[0]['boxes']) #tu šteje tud tiste ko majo low score...
+
+                        keep = nms(outputs[0]['boxes'], outputs[0]['scores'], iou_threshold=0.25)
+
+                        kept_boxes = []
+                        for i in keep:
+                            kept_boxes.append(outputs[0]['boxes'][i])
+
+                        ious = box_iou(torch.stack(kept_boxes), targets[0]['boxes'])
                         accuracy = torch.mean(ious).item()
                         scores += (outputs[0]['scores'] > 0.5).sum().item()
 

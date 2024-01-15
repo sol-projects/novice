@@ -8,7 +8,6 @@
 #include <iostream>
 #include <openssl/aes.h>
 #include <string>
-#include <sys/utsname.h>
 #include <thread>
 #include <atomic>
 #include "options.hpp"
