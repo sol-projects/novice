@@ -357,7 +357,7 @@ export async function findSportTypes(req: Request, res: Response) {
       }
 
       exec(
-        'source env/bin/activate && python main.py',
+        'python main.py',
         { cwd: '../sistem-za-razpoznavo-sport' },
         function (error, stdout, stderr) {
           if (error) {
