@@ -336,6 +336,54 @@ export async function findTextAreas(req: Request, res: Response) {
   );
 }
 
+export async function findSportTypes(req: Request, res: Response) {
+  const image = req.file;
+
+  if (!image) {
+    return res.status(400).send('No image file provided');
+  }
+
+  console.log(image.buffer);
+
+  const fs = require('fs');
+  fs.writeFile(
+    '../sistem-za-razpoznavo-sport/input2.jpg',
+    image.buffer,
+    'binary',
+    function (err: any) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error writing the image to input.png');
+      }
+
+      exec(
+        'source env/bin/activate && python main.py',
+        { cwd: '../sistem-za-razpoznavo-sport' },
+        function (error, stdout, stderr) {
+          if (error) {
+            console.error(error);
+            return res
+              .status(500)
+              .send('Error during execution. Invalid file?');
+          }
+
+          fs.readFile(
+            '../sistem-za-razpoznavo-sport/outputh.txt',
+            function (err: any, data: any) {
+              if (err) {
+                console.error(err);
+                return res.status(500).send('Error reading the output file');
+              }
+
+              res.send(data);
+            }
+          );
+        }
+      );
+    }
+  );
+}
+
 export namespace Filter {
   export async function categories(req: Request, res: Response) {
     run_query(res, { categories: { $all: req.params.categories.split(',') } });
