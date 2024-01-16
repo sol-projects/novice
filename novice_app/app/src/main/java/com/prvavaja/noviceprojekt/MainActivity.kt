@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
             startActivity(intent) }
         binding.buttonCamera.setOnClickListener {  val intent = Intent(this, CameraActivty::class.java)
             startActivity(intent) }
+        binding.btnGenerate.setOnClickListener {  val intent = Intent(this, GenarateActivity::class.java)
+            startActivity(intent) }
 
         runBlocking {
             try {
