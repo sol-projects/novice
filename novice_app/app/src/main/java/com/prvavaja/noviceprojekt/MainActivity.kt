@@ -26,26 +26,21 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater) //ADD THIS LINE
         setContentView(binding.root)
         myApplication = application as MyAplication
-        val recyclerView: RecyclerView = binding.recyclerView
+
         //setContentView(R.layout.activity_main)
 
-        //TEST DA VIDIM CE SO OBJEKTI NOVIC PRAVILNO SJRANJENI V LISTU
-        var list1=myApplication.list
-        var list2=list1.getItems()
-        //ADAPTER
-        adapter = MyAdapter(myApplication.list.getItems())
-        adapter.setOnItemClickListener(this)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this) // Use GridLayoutManager for a grid layout
+
+
+
 
         binding.btnSetings.setOnClickListener {  val intent = Intent(this, SetingsActivity::class.java)
             startActivity(intent) }
         binding.buttonCamera.setOnClickListener {  val intent = Intent(this, CameraActivty::class.java)
             startActivity(intent) }
-        binding.btnGenerate.setOnClickListener {  val intent = Intent(this, GenarateActivity::class.java)
+        binding.btnMessage.setOnClickListener {  val intent = Intent(this, MasageActivity::class.java)
             startActivity(intent) }
 
-        runBlocking {
+        /*runBlocking {
             try {
                 myApplication.realm_app = io.realm.kotlin.mongodb.App.create("application-0-qcgjd")
                 myApplication.user = myApplication.realm_app.login(Credentials.anonymous())
@@ -75,7 +70,7 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
                 }
                 return@runBlocking
             }
-        }
+        }*/
     }
     override fun onItemClick(novica: NewsArticle) {
         val intent = Intent(this, DisplayActivity::class.java)
@@ -100,8 +95,8 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
         startActivity(intent)
     }
 
-    override fun onDestroy() {
+    /*override fun onDestroy() {
         super.onDestroy()
         myApplication.realm.close()
-    }
+    }*/
 }

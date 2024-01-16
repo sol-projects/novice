@@ -29,50 +29,12 @@ class GenarateActivity : AppCompatActivity() {
         binding = ActivityGenarateBinding.inflate(layoutInflater) //ADD THIS LINE
         setContentView(binding.root)
 
-        val textX=binding.textViewMapX
-        val textY=binding.textViewMapY
-        val numberPicker=binding.numberPickergenerate
-        numberPicker.maxValue=10
-        numberPicker.minValue=0
-        numberPicker.value = 1
-        val mapView = binding.map2
-        mapView.setMultiTouchControls(true)
-        mapController = mapView.controller
 
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.setMultiTouchControls(true)
-        //val sloveniaBoundingBox = BoundingBox(45.4214, 13.3754, 46.8762, 16.5645) // Adjust coordinates if needed
-        //mapView.zoomToBoundingBox(sloveniaBoundingBox, true)
-        val mapController = mapView.controller
-        mapController.setZoom(8.7)
-        val defaultLocation = GeoPoint(46.0767495796062, 14.853535025063707) // Adjust coordinates as needed
-        mapController.setCenter(defaultLocation)
-
-        val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
-            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-                // Handle the click event
-                p?.let {
-                    clickedLocation = p
-                    println("Clicked Location: ${p.latitude}, ${p.longitude}")
-                    textX.text=(p.latitude).toString()
-                    textY.text=(p.longitude).toString()
-                    isLocationSelected=true
-                    // Save the location in your variable or perform any other actions
-                }
-                return true
-            }
-
-            override fun longPressHelper(p: GeoPoint?): Boolean {
-                // Handle long press if needed
-                return false
-            }
-        })
-        mapView.overlays.add(0, mapEventsOverlay)
 
         binding.btnDisplayBackGenerate.setOnClickListener {
             finish()
         }
-        binding.buttonGenerate.setOnClickListener {
+        /*binding.buttonGenerate.setOnClickListener {
             if(isLocationSelected) {
                 var listgeneratedNews = ListNovic()
                 val loopCount = numberPicker.value
@@ -124,7 +86,7 @@ class GenarateActivity : AppCompatActivity() {
             else{
                 Toast.makeText(this@GenarateActivity, "You did not select a location", Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
 
     }
 }
