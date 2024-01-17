@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="70dp"
-            android:text="News"
+            android:text="Senzors"
             android:textColor="@android:color/white"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -43,17 +43,488 @@
     </androidx.appcompat.widget.Toolbar>
 
 
-    <Button
-        android:id="@+id/buttonGenerate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginBottom="24dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView1"
+        android:layout_width="380dp"
+        android:layout_height="149dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="true"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarGenerate">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/cardTemSimTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Simulated temperature:"
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cardTimeSimDisplay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Every "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardTemSimTitle1" />
+
+            <TextView
+                android:id="@+id/cardTimeSimDisplaySeconds2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="10 "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardTimeSimDisplay1"
+                app:layout_constraintTop_toBottomOf="@id/cardTemSimTitle1" />
+
+            <TextView
+                android:id="@+id/cardTimeSimDisplay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="seconds."
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardTimeSimDisplaySeconds2"
+                app:layout_constraintTop_toBottomOf="@id/cardTemSimTitle1" />
+
+            <TextView
+                android:id="@+id/cardTemperaturaSInterval1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="From "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardTimeSimDisplay1" />
+
+            <EditText
+                android:id="@+id/cardTemperaturaSIntervalEdittextFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:inputType="number"
+                android:text="10"
+                app:layout_constraintStart_toEndOf="@+id/cardTemperaturaSInterval1"
+                app:layout_constraintTop_toBottomOf="@id/cardTimeSimDisplaySeconds2">
+
+            </EditText>
+
+            <TextView
+                android:id="@+id/cardTemperaturaSinterval2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text=" to "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardTemperaturaSIntervalEdittextFrom"
+                app:layout_constraintTop_toBottomOf="@id/cardTimeSimDisplaySeconds2" />
+
+            <EditText
+                android:id="@+id/cardTemperaturaSIntervalEdittextTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:inputType="number"
+                android:text="20"
+                app:layout_constraintStart_toEndOf="@+id/cardTemperaturaSinterval2"
+                app:layout_constraintTop_toBottomOf="@id/cardTimeSimDisplay2">
+
+            </EditText>
+            <TextView
+                android:id="@+id/cardTemperaturaSintervalUnits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text=" °C"
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardTemperaturaSIntervalEdittextTo"
+                app:layout_constraintTop_toBottomOf="@id/cardTimeSimDisplaySeconds2" />
+
+            <Switch
+                android:id="@+id/temperatureSwitchSimulated"
+                android:layout_width="112dp"
+                android:layout_height="28dp"
+
+                android:layout_marginTop="12dp"
+                android:text="Disabled"
+                android:textSize="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.509"
+                app:layout_constraintStart_toEndOf="@+id/cardTimeSimDisplay2"
+                app:layout_constraintTop_toBottomOf="@+id/cardTemSimTitle1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="380dp"
+        android:layout_height="119dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/cardTemSensorTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Temperature sensor:"
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cardTimeSensorDisplay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Every "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardTemSensorTitle1" />
+
+            <TextView
+                android:id="@+id/cardTimeSensorDisplaySeconds2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="10 "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardTimeSensorDisplay1"
+                app:layout_constraintTop_toBottomOf="@id/cardTemSensorTitle1" />
+
+            <TextView
+                android:id="@+id/cardTimeSensorDisplay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="seconds."
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardTimeSensorDisplaySeconds2"
+                app:layout_constraintTop_toBottomOf="@id/cardTemSensorTitle1" />
 
 
+            <Switch
+                android:id="@+id/temperatureSwitchSensor"
+                android:layout_width="112dp"
+                android:layout_height="28dp"
+
+                android:layout_marginTop="12dp"
+                android:text="Disabled"
+                android:textSize="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.509"
+                app:layout_constraintStart_toEndOf="@+id/cardTimeSensorDisplay2"
+                app:layout_constraintTop_toBottomOf="@+id/cardTemSensorTitle1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="380dp"
+        android:layout_height="149dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="true"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView2">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/cardHumidSimTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Simulated humidity:"
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cardHumidTimeSimDisplay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Every "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidSimTitle1" />
+
+            <TextView
+                android:id="@+id/cardHumidTimeSimDisplaySeconds2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="10 "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardHumidTimeSimDisplay1"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidSimTitle1" />
+
+            <TextView
+                android:id="@+id/cardHumidTimeSimDisplay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="seconds."
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardHumidTimeSimDisplaySeconds2"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidSimTitle1" />
+
+            <TextView
+                android:id="@+id/cardHumidSInterval1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="From "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidTimeSimDisplay1" />
+
+            <EditText
+                android:id="@+id/cardHumidSIntervalEdittextFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:inputType="number"
+                android:text="10"
+                app:layout_constraintStart_toEndOf="@+id/cardHumidSInterval1"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidTimeSimDisplaySeconds2">
+
+            </EditText>
+
+            <TextView
+                android:id="@+id/cardHumidSinterval2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text=" to "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardHumidSIntervalEdittextFrom"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidTimeSimDisplaySeconds2" />
+
+            <EditText
+                android:id="@+id/cardHumidSIntervalEdittextTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:inputType="number"
+                android:text="20"
+                app:layout_constraintStart_toEndOf="@+id/cardHumidSinterval2"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidTimeSimDisplay2">
+
+            </EditText>
+
+            <TextView
+                android:id="@+id/cardHumidSintervalUnits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text=" %"
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardHumidSIntervalEdittextTo"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidTimeSimDisplaySeconds2" />
+
+            <Switch
+                android:id="@+id/humidSwitchSimulated"
+                android:layout_width="112dp"
+                android:layout_height="28dp"
+
+                android:layout_marginTop="12dp"
+                android:text="Disabled"
+                android:textSize="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.509"
+                app:layout_constraintStart_toEndOf="@+id/cardHumidTimeSimDisplay2"
+                app:layout_constraintTop_toBottomOf="@+id/cardHumidSimTitle1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView4"
+        android:layout_width="380dp"
+        android:layout_height="119dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView3">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/cardHumidSensorTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Humidity sensor:"
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cardHumidTimeSensorDisplay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Every "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidSensorTitle1" />
+
+            <TextView
+                android:id="@+id/cardHumidTimeSensorDisplaySeconds2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="10 "
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardHumidTimeSensorDisplay1"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidSensorTitle1" />
+
+            <TextView
+                android:id="@+id/cardHumidTimeSensorDisplay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                android:text="seconds."
+                android:textColor="#57385c"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/cardHumidTimeSensorDisplaySeconds2"
+                app:layout_constraintTop_toBottomOf="@id/cardHumidSensorTitle1" />
+
+
+            <Switch
+                android:id="@+id/humidSwitchSensor"
+                android:layout_width="112dp"
+                android:layout_height="28dp"
+
+                android:layout_marginTop="12dp"
+                android:text="Disabled"
+                android:textSize="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.509"
+                app:layout_constraintStart_toEndOf="@+id/cardHumidTimeSensorDisplay2"
+                app:layout_constraintTop_toBottomOf="@+id/cardHumidSensorTitle1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

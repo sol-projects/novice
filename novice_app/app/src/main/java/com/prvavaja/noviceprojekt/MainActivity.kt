@@ -39,7 +39,10 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
             startActivity(intent) }
         binding.btnMessage.setOnClickListener {  val intent = Intent(this, MasageActivity::class.java)
             startActivity(intent) }
-
+        //DODAL SEM GUMB
+        binding.buttonSenzors.setOnClickListener {  val intent = Intent(this, GenarateActivity::class.java)
+            startActivity(intent) }
+        ///////////
         /*runBlocking {
             try {
                 myApplication.realm_app = io.realm.kotlin.mongodb.App.create("application-0-qcgjd")

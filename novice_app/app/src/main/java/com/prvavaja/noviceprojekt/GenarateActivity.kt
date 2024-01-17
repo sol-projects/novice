@@ -6,6 +6,7 @@ import com.prvavaja.noviceprojekt.databinding.ActivityGenarateBinding
 import com.prvavaja.noviceprojekt.databinding.ActivityMainBinding
 import org.osmdroid.config.Configuration
 import android.content.Context
+import android.hardware.SensorManager
 import android.widget.Toast
 import io.github.serpro69.kfaker.Faker
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -16,6 +17,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import kotlinx.serialization.json.Json
 import java.util.Random
+import android.hardware.Sensor
 
 class GenarateActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGenarateBinding //ADD THIS LINE
@@ -26,6 +28,26 @@ class GenarateActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Configuration.getInstance().load(applicationContext,this.getPreferences(Context.MODE_PRIVATE))
         //setContentView(R.layout.activity_genarate)
+
+
+        if (hasAmbientTemperatureSensor()) {
+            println("ima ambient senzor")
+            // The device has the ambient temperature sensor
+            // You can proceed with using the sensor
+        } else {
+            println("nima ambient senzor")
+            // The device does not have the ambient temperature sensor
+            // Handle the case where the sensor is not available on the device
+        }
+        if (hasHumiditySensor()) {
+            println("ima vlaznostni senzor")
+            // The device has the ambient temperature sensor
+            // You can proceed with using the sensor
+        } else {
+            println("nima vlaznostni senzor")
+            // The device does not have the ambient temperature sensor
+            // Handle the case where the sensor is not available on the device
+        }
         binding = ActivityGenarateBinding.inflate(layoutInflater) //ADD THIS LINE
         setContentView(binding.root)
 
@@ -88,5 +110,24 @@ class GenarateActivity : AppCompatActivity() {
             }
         }*/
 
+    }
+    private fun hasAmbientTemperatureSensor(): Boolean {
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+        // Get the list of sensors
+        val sensorList: List<Sensor> = sensorManager.getSensorList(Sensor.TYPE_AMBIENT_TEMPERATURE)
+
+        // Check if the list is not empty, indicating the presence of the ambient temperature sensor
+        return sensorList.isNotEmpty()
+    }
+
+    private fun hasHumiditySensor(): Boolean {
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+        // Get the list of sensors for TYPE_RELATIVE_HUMIDITY
+        val sensorList: List<Sensor> = sensorManager.getSensorList(Sensor.TYPE_RELATIVE_HUMIDITY)
+
+        // Check if the list is not empty, indicating the presence of the humidity sensor
+        return sensorList.isNotEmpty()
     }
 }
