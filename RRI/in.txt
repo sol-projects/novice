@@ -1,0 +1,11 @@
+let articles = fetch
+let loc: [f32] = [0.0, 0.0]
+for article in articles {
+   loc = article.location
+   println("created a circle around ${loc}")
+   group {
+       circle "novica" loc 0.05
+   }
+}
+
+

@@ -5,20 +5,73 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e80c73d1-6a03-425a-8501-e9001ac9c29b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/lang/Geolang.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/core/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/ApiConnection.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/ApiConnection.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/INews.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/INews.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/ProjectTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/ProjectTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/utils/Geolocation.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/utils/Geolocation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/utils/MapRasterTiles.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/utils/MapRasterTiles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/utils/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/utils/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/Peer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/Peer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/Peer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/Peer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/block.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/block.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/block.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/block.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/blockchain.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/blockchain.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/blockchain.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/blockchain.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blockchain/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../blockchain/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../geo-lang/interpreter/app/in.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../geo-lang/interpreter/app/in.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/controller/news.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/controller/news.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\filip\.android\avd\5.4_FWVGA_API_34.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -31,15 +84,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/filip/projekt3letnik/novice/RRI/assets&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "/home/liam/Desktop/novice/novice_app"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.Desktop">
     <configuration name="android" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="RRI.android.main" />
@@ -51,6 +105,7 @@
       <option name="ALL_USERS" value="false" />
       <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
       <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="CLEAR_LOGCAT" value="false" />

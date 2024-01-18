@@ -1,14 +1,19 @@
 package com.mygdx.game;
 
+import static com.mygdx.game.ApiConnectionKt.sendGet;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.MapLayers;
@@ -30,19 +35,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.lang.Context;
+import com.mygdx.game.lang.GeolangKt;
 import com.mygdx.game.lang.Renderer;
 import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.Geolocation;
 import com.mygdx.game.utils.MapRasterTiles;
 import com.mygdx.game.utils.ZoomXY;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ProjectTest extends ApplicationAdapter implements GestureDetector.GestureListener {//Gesturelistener Enables to handle touch gestures.
 
@@ -79,13 +98,39 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
     BoatAnimation boatAnimation;
 
     // center geolocation
-    private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.557314, 15.637771);
+    private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.119944,14.815333);
 
-    // test marker
-    private final Geolocation MARKER_GEOLOCATION = new Geolocation(46.559070, 15.638100);
+    private ArrayList<INews> news;
+    private String code;
+    private String current_geojson_code;
 
+    private Mesh geojson_points_mesh;
+    private ShaderProgram geojson_points_shader;
+
+    private ArrayList<Geolocation> code_points;
     @Override
     public void create() {
+        news = sendGet();
+        Iterator<INews> iterator = news.iterator();
+
+        while (iterator.hasNext()) {
+            INews currentNews = iterator.next();
+            double firstCoordinate = currentNews.getLocation().getCoordinates().getFirst();
+            double secondCoordinate = currentNews.getLocation().getCoordinates().getSecond();
+
+            if (firstCoordinate == 0.0 || secondCoordinate == 0.0) {
+                iterator.remove();
+            }
+        }
+
+        code = GeolangKt.load();
+        System.out.println(code);
+
+        String geojson = GeolangKt.get_geojson_from_interpreter(code);
+        System.out.println(geojson);
+
+        code_points = GeolangKt.get_points_from_geojson(geojson);
+
         shapeRenderer = new ShapeRenderer();
 
         camera = new OrthographicCamera();
@@ -141,6 +186,28 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         boatAnimation = new BoatAnimation(boatCoordinates, beginTile, 5);
         stage = new Stage(viewport, spriteBatch);
         stage.addActor(boatAnimation.create());
+        geojson_points_mesh = GeolangKt.create_point_mesh(shapeRenderer, code_points, beginTile);
+
+        String vertexShader = "attribute vec4 a_position;\n" +
+                "uniform mat4 u_projTrans;\n" +
+                "void main() {\n" +
+                "    gl_Position = u_projTrans * a_position;\n" +
+                "}";
+
+        String fragmentShader = "#ifdef GL_ES\n" +
+                "precision mediump float;\n" +
+                "#endif\n" +
+                "void main() {\n" +
+                "gl_FragColor = vec4(40.0/255.0, 67.0/255.0, 135.0/255.0, 1.0);\n" +
+                "}";
+
+        geojson_points_shader = new ShaderProgram(vertexShader, fragmentShader);
+        if (!geojson_points_shader.isCompiled()) {
+            Gdx.app.error("Shader", geojson_points_shader.getLog());
+            Gdx.app.exit();
+        }
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     @Override
@@ -174,12 +241,39 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
     }
 
     private void drawMarkers() {
-        Vector2 marker = MapRasterTiles.getPixelPosition(MARKER_GEOLOCATION.lat, MARKER_GEOLOCATION.lng, beginTile.x, beginTile.y);
-
+        // DA NE POZABIM
+        // IDEJA:
+        // 1. "markerji" se izrisujejo kot kategorije npr. novice/web-app/src/assets/
+        // 2. animacija: dež ki pada ob kategoriji "toča/dež..."
+        //    pomoje zelo simpl, 3 kaplje narišeš pa sam uporabiš moveTo dol po y za ene 20 pisklov
+        //    potem se pa to loopa
         shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.setColor(Color.RED);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.circle(marker.x, marker.y, 10);
+        for (int i = 0; i < news.size(); i++) {
+            Vector2 marker = MapRasterTiles.getPixelPosition(
+                    news.get(i).getLocation().getCoordinates().getSecond(),
+                    news.get(i).getLocation().getCoordinates().getFirst(),
+                    beginTile.x, beginTile.y);
+
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.circle(marker.x, marker.y, 20);
+        }
+        shapeRenderer.end();
+
+        /*geojson_points_shader.bind();
+        geojson_points_shader.setUniformMatrix("u_projTrans", camera.combined);
+        geojson_points_mesh.render(geojson_points_shader, GL20.GL_POINTS);*/
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLUE);
+        for (int i = 0; i < code_points.size(); i++) {
+            Vector2 marker = MapRasterTiles.getPixelPosition(
+                    code_points.get(i).lat,
+                    code_points.get(i).lng,
+                    beginTile.x, beginTile.y);
+
+            shapeRenderer.circle(marker.x, marker.y, 1);
+        }
         shapeRenderer.end();
 
         // boat positions
@@ -196,6 +290,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
     public void dispose() {
         shapeRenderer.dispose();
         hudStage.dispose();
+        geojson_points_mesh.dispose();
     }
 
     @Override
