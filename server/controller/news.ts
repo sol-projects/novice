@@ -261,7 +261,7 @@ export async function geolang(req: Request, res: Response) {
     }
 
     exec(
-      'gradle run --args="in.txt"',
+      './gradlew run --args="in.txt"',
       { cwd: '../geo-lang/interpreter' },
       function (error, stdout, stderr) {
         if (error) {
