@@ -41,11 +41,16 @@ find_package(OpenSSL REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto Threads::Threads Qt6::Widgets)
 
+find_package(MPI REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC MPI::MPI_CXX)
+
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 target_compile_definitions(${PROJECT_NAME} PUBLIC ASIO_STANDALONE PURIFY)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-#target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address)
+
+#add_compile_options(-fsanitize=address)
+#add_link_options(-fsanitize=address)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR "clang")
     target_compile_options(${PROJECT_NAME} PRIVATE -Ofast -Wall -Wextra -Wpedantic)

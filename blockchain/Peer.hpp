@@ -30,11 +30,13 @@ private:
 class Server
 {
 public:
-    Server(asio::io_context& ioContext, int port);
+    Server(asio::io_context& ioContext, int port, int world_rank, int mpi_world_size);
     static void broadcastFromAllServersToAllClients(const std::string& msg);
     void startAccepting();
 
 private:
+    int m_world_rank;
+    int m_world_size;
     asio::ip::tcp::endpoint endpoint;
     asio::ip::tcp::acceptor acceptor;
     asio::ip::tcp::socket socket;
@@ -54,7 +56,7 @@ class Client
 {
 public:
     Client();
-    Client(const std::string& ip, int port, const OptionFlags& options);
+    Client(const std::string& ip, int port, const OptionFlags& options, int world_rank, int mpi_world_size);
 
     void write(const std::string& data);
     static void writeSignal(const std::string& data);
@@ -78,6 +80,8 @@ public:
     }
 
 private:
+    int m_world_rank;
+    int m_world_size;
     std::string m_ip;
     int m_port;
     asio::io_context ioContext;

@@ -21,6 +21,7 @@
 #include <random>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <mpi.h>
 
 namespace
 {
@@ -100,8 +101,10 @@ void TcpConnection::read()
         });
 }
 
-Server::Server(asio::io_context& ioContext, int port)
-    : endpoint(asio::ip::address_v4::any(), port)
+Server::Server(asio::io_context& ioContext, int port, int world_rank, int world_size)
+    : m_world_rank(world_rank)
+    , m_world_size(world_size)
+    , endpoint(asio::ip::address_v4::any(), port)
     , acceptor(ioContext, endpoint)
     , socket(ioContext)
 {
@@ -223,8 +226,10 @@ Client::Client()
     socket = std::make_unique<asio::ip::tcp::socket>(ioContext);
 }
 
-Client::Client(const std::string& ip, int port, const OptionFlags& options)
-    : m_ip(ip)
+Client::Client(const std::string& ip, int port, const OptionFlags& options, int world_rank, int world_size)
+    : m_world_rank(world_rank)
+    , m_world_size(world_size)
+    , m_ip(ip)
     , m_port(port)
     , m_read(buffer)
     , m_options(options)
@@ -285,7 +290,7 @@ void Client::mine()
         for (;;)
         {
             resetWrite = false;
-            m_blockchain = blockchain::new_block_pow(m_blockchain, resetWrite, m_options);
+            m_blockchain = blockchain::new_block_pow(m_blockchain, resetWrite, m_options, m_world_rank, m_world_size);
             if(resetWrite)
             {
                 m_blockchain.erase(std::end(m_blockchain) - 1);
