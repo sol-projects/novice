@@ -27,7 +27,7 @@ namespace
 {
     std::vector<std::shared_ptr<TcpConnection>> connections;
     Blockchain m_blockchain = blockchain::init();
-
+    std::mutex m_blockchain_update_mutex;
     QWidget* m_window;
     QLineEdit* m_lineEdit;
     QVBoxLayout* m_layout;
@@ -250,12 +250,11 @@ bool Client::connect(const std::string& ip, int port)
         }
         else
         {
-            std::cout << "connected" << std::endl;
+            std::cout << "Successfully connected." << std::endl;
             return true;
         }
     });
 
-    std::cerr << "not connected" << std::endl;
     return false;
 }
 
@@ -267,7 +266,6 @@ void Client::write(const std::string& data)
         [this](const asio::error_code& code, std::size_t bytesTransferred) {
             if (!code)
             {
-                std::cout << "CLIENT SENT: " << m_write << std::endl;
                 m_read.clear();
                 m_read.resize(buffer);
                 m_write.clear();
@@ -290,10 +288,20 @@ void Client::mine()
         for (;;)
         {
             resetWrite = false;
+            m_blockchain_update_mutex.lock();
             m_blockchain = blockchain::new_block_pow(m_blockchain, resetWrite, m_options, m_world_rank, m_world_size);
+            m_blockchain_update_mutex.unlock();
+
             if(resetWrite)
             {
-                m_blockchain.erase(std::end(m_blockchain) - 1);
+                std::cout << "Resetting to last valid." << std::endl;
+                m_blockchain_update_mutex.lock();
+                while(!blockchain::validate(m_blockchain))
+                {
+                    m_blockchain.erase(std::end(m_blockchain) - 1);
+                }
+                m_blockchain_update_mutex.unlock();
+
             }
             else if (blockchain::validate(m_blockchain))
             {
@@ -314,7 +322,7 @@ void Client::read()
             if (!code)
             {
                 auto received = std::string(m_read.data());
-                std::cout << "CLIENT RECEIVED: " << received << std::endl;
+                std::cout << "Client received information." << std::endl;
                 if (received.starts_with("Client connected.") || bytesTransferred == 0)
                 {
                     read();
@@ -322,10 +330,14 @@ void Client::read()
                 }
 
                 auto newBlockchain = blockchain::from_string(received);
+                std::cout << "Reading new blockchain, deciding what to do..." << std::endl;
                 if (blockchain::validate(newBlockchain))
                 {
+                    m_blockchain_update_mutex.lock();
+                    std::cout << "Checking if possible to update local blockchain." << std::endl;
                     if (blockchain::difficulty(newBlockchain) >= blockchain::difficulty(m_blockchain))
                     {
+                        std::cout << "Updating local blockchain with up to date blocks." << std::endl;
                         m_blockchain = newBlockchain;
                         resetWrite = true;
                         outputToGui(
@@ -333,11 +345,15 @@ void Client::read()
                     }
                     else
                     {
+                        std::cout << "Not updating local blockchain due to lower difficulty." << std::endl;
                         outputToGui("Ignored new blocks due to lower difficulty. Last 5 of hash: " + std::string(m_blockchain.back().hash.end() - 5, m_blockchain.back().hash.end()));
                     }
+                    m_blockchain_update_mutex.unlock();
+                    ioContext.post([this]() { read(); });
                 }
                 else
                 {
+                    std::cout << "Unsuccessfully validated new blocks, ignoring." << std::endl;
                     outputToGui("Unsuccessfully validated new blocks, ignoring." + std::string(m_blockchain.back().hash.end() - 5, m_blockchain.back().hash.end()));
                 }
 

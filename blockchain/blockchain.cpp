@@ -50,7 +50,7 @@ std::size_t blockchain::difficulty(const Blockchain& blockchain)
         });
 }
 
-Blockchain blockchain::new_block_pow(Blockchain& blockchain, std::atomic<bool>& stop, const OptionFlags& options, int mpi_rank, int mpi_world_size)
+Blockchain blockchain::new_block_pow(const Blockchain& blockchain, std::atomic<bool>& stop, const OptionFlags& options, int mpi_rank, int mpi_world_size)
 {
     using namespace std::chrono_literals;
     const auto difficulty_change_interval = 10;
@@ -91,8 +91,9 @@ Blockchain blockchain::new_block_pow(Blockchain& blockchain, std::atomic<bool>& 
     }
 
     Block block = Block::new_from_previous_pow(blockchain.back(), stop, difficulty, options, mpi_rank, mpi_world_size);
-    blockchain.push_back(block);
-    return std::move(blockchain);
+    auto out_blockchain = blockchain;
+    out_blockchain.push_back(block);
+    return out_blockchain;
 }
 
 Blockchain blockchain::from_string(const std::string& blockchain_)
@@ -118,8 +119,6 @@ Blockchain blockchain::from_string(const std::string& blockchain_)
         {
             block += c;
         }
-
-        std::cout << c << std::flush;
     }
 
     return blockchain;

@@ -12,6 +12,21 @@
 #include <mpi.h>
 #include <cstring>
 
+
+namespace
+{
+    void check(int error_code, const std::string& msg)
+    {
+        if (error_code != MPI_SUCCESS) {
+            char error_string[MPI_MAX_ERROR_STRING];
+            int length_of_error_string;
+            MPI_Error_string(error_code, error_string, &length_of_error_string);
+            std::cerr << "MPI ERROR (" << msg << "): " << error_string << std::endl;
+            MPI_Abort(MPI_COMM_WORLD, error_code);
+        }
+    }
+}
+
 Block Block::genesis()
 {
     Block block { .id = 0,
@@ -75,7 +90,7 @@ Block Block::from_string(const std::string& string)
 
     std::string time;
     std::getline(iss, time);
-    block.timestamp = std::chrono::system_clock::from_time_t(std::stoi(time));
+    block.timestamp = std::chrono::system_clock::from_time_t(std::stoull(time));
 
     std::getline(iss, block.data);
 
@@ -89,14 +104,14 @@ Block Block::from_string(const std::string& string)
 
     std::string nonce;
     std::getline(iss, nonce);
-    block.nonce = std::stoi(nonce);
+    block.nonce = std::stoull(nonce);
 
     return block;
 }
 
 Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options, int mpi_rank, int mpi_world_size)
 {
-    std::cout << "new";
+    //MPI_Barrier(MPI_COMM_WORLD);
     constexpr int mpi_block_found = 1;
     constexpr int mpi_terminate_pow = 2;
 
@@ -114,16 +129,17 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
     if (main_mpi_process) {
         serialized_size = serialized.size();
     }
-    MPI_Bcast(&serialized_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    int err = MPI_Bcast(&serialized_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    check(err, "serialized size");
 
     if (!main_mpi_process) {
         serialized.resize(serialized_size);
     }
-    MPI_Bcast(serialized.data(), serialized_size, MPI_CHAR, 0, MPI_COMM_WORLD);
+    err = MPI_Bcast(serialized.data(), serialized_size, MPI_CHAR, 0, MPI_COMM_WORLD);
+    check(err, "serialized data");
 
-    MPI_Bcast(&difficulty, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-    MPI_Barrier(MPI_COMM_WORLD);
+    err = MPI_Bcast(&difficulty, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    check(err, "difficulty");
 
     serialized.clear();
     serialized_size = 0;
@@ -135,8 +151,8 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
     std::atomic<bool> nonce_found(false);
     std::size_t total_nonce_space = std::numeric_limits<std::size_t>::max();
     std::size_t nonce_range = total_nonce_space / mpi_world_size;
-    std::size_t my_nonce_start = mpi_rank * nonce_range;
-    std::size_t my_nonce_end = (mpi_rank + 1) * nonce_range;
+    std::size_t mpi_nonce_start = mpi_rank * nonce_range;
+    std::size_t mpi_nonce_end = (mpi_rank + 1) * nonce_range;
     std::size_t nonce_increment = nonce_range / options.threads;
 
     std::vector<std::thread> threads;
@@ -146,8 +162,9 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
 
     if (main_mpi_process)
     {
-        serialized.resize(serialized_size + 12000);
-        MPI_Irecv(serialized.data(), serialized_size + 12000, MPI_CHAR, MPI_ANY_SOURCE, mpi_block_found, MPI_COMM_WORLD, &recv_request);
+        serialized.resize(serialized_size + 32768);
+        err = MPI_Irecv(serialized.data(), serialized_size + 32768, MPI_CHAR, MPI_ANY_SOURCE, mpi_block_found, MPI_COMM_WORLD, &recv_request);
+        check(err, "irecv");
     }
 
     for (int i = 0; i < options.threads; ++i)
@@ -155,14 +172,30 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
         threads.emplace_back([&, i, nonce_increment]()
         {
             auto block = new_block;
-            std::size_t nonce_start = my_nonce_start + i * nonce_increment;
-            std::size_t nonce_end = my_nonce_start + (i + 1) * nonce_increment;
+            std::size_t nonce_start = mpi_nonce_start + i * nonce_increment;
+            std::size_t nonce_end = mpi_nonce_start + (i + 1) * nonce_increment;
             for (std::size_t nonce = nonce_start; nonce < nonce_end; ++nonce)
             {
                 bool n = nonce_found;
-                MPI_Bcast(&n, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
+                err = MPI_Bcast(&n, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
+                check(err, "stuck at nonce_found check");
+
                 nonce_found.store(n);
-                if (stop || nonce_found.load())
+
+                if(stop)
+                {
+                    if (!main_mpi_process)
+                    {
+                        auto serialized_block = block.serialize();
+                        err = MPI_Send(serialized_block.data(), serialized_block.size(), MPI_CHAR, 0, mpi_block_found, MPI_COMM_WORLD);
+                        check(err, "sending discarded data to main process");
+
+                        std::cout << "MPI process " << mpi_rank << " is discarding work due to the block being found by another program." << std::endl;
+                        new_block = block;
+                    }
+                }
+
+                if (nonce_found.load())
                 {
                     return;
                 }
@@ -178,7 +211,9 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
                     if (!main_mpi_process)
                     {
                         auto serialized_block = block.serialize();
-                        MPI_Send(serialized_block.data(), serialized_block.size(), MPI_CHAR, 0, mpi_block_found, MPI_COMM_WORLD);
+                        err = MPI_Send(serialized_block.data(), serialized_block.size(), MPI_CHAR, 0, mpi_block_found, MPI_COMM_WORLD);
+                        check(err, "sending data to main process");
+
                         std::cout << "MPI process " << mpi_rank << " found block with hash: " << block.hash << "for prev block hash (last 5): " << std::string(std::end(block.previous_hash) - 5, std::end(block.previous_hash)) << std::endl;
                         new_block = block;
                     }
@@ -187,17 +222,18 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
                         new_block = block;
                     }
 
-                    return;
                 }
 
                 if (main_mpi_process)
                 {
                     int flag;
-                    MPI_Test(&recv_request, &flag, &recv_status);
+                    err = MPI_Test(&recv_request, &flag, &recv_status);
+                    check(err, "testing if block found");
                     if (flag)
                     {
                         int count;
-                        MPI_Get_count(&recv_status, MPI_CHAR, &count);
+                        err = MPI_Get_count(&recv_status, MPI_CHAR, &count);
+                        check(err, "receiving new block count");
 
                         if (count > 0)
                         {
@@ -222,10 +258,12 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
         thread.join();
     }
 
+
     if(main_mpi_process) {
         std::cout << "Main MPI process is returning block with hash: " << new_block.hash << "for prev block hash (last 5): " << std::string(std::end(new_block.previous_hash) - 5, std::end(new_block.previous_hash)) << std::endl;
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
     std::cout << "Process finished: " << mpi_rank << "\n";
     return new_block;
 }
