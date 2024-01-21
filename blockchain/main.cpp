@@ -122,7 +122,6 @@ int main(int argc, char* argv[])
         for(;;)
         {
             Block::new_from_previous_pow(Block::genesis(), stop, 0, options, world_rank, world_size);
-            std::cout << "here" << world_rank << std::endl;
         }
     }
 

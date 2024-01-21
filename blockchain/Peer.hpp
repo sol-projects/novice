@@ -9,7 +9,7 @@
 #include <string>
 #include "options.hpp"
 
-constexpr int buffer = 50000;
+constexpr int buffer = 524288;
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>
 {
 public:

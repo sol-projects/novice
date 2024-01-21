@@ -7,6 +7,9 @@ project(Blockchain
 
 include(FetchContent)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
 add_executable(${PROJECT_NAME}
     main.cpp
     Peer.cpp
@@ -53,7 +56,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 #add_link_options(-fsanitize=address)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR "clang")
-    target_compile_options(${PROJECT_NAME} PRIVATE -Ofast -Wall -Wextra -Wpedantic)
+    target_compile_options(${PROJECT_NAME} PRIVATE -g -Wall -Wextra -Wpedantic)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
