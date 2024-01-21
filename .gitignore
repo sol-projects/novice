@@ -3,7 +3,6 @@
 desktop-app/.gradle/7.5.1/checksums/sha1-checksums.bin
 *.bin
 *.lock
-*.xml
 *.klib
 *.xml
 desktop-app/.idea/workspace.xml
