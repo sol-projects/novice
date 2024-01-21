@@ -33,8 +33,12 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -45,6 +49,14 @@ import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.Geolocation;
 import com.mygdx.game.utils.MapRasterTiles;
 import com.mygdx.game.utils.ZoomXY;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,7 +67,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -79,13 +96,25 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
 
     // buttons
     private FitViewport hudViewport;
+    ScrollPane scrollPane;
     private Stage hudStage;
     private Skin skin;
     private boolean showLangExample = false;
-
+    private boolean animationStarted = false;
+    Texture backgroundTexture;
     // animation
     private Stage stage;
     private FitViewport viewport;
+    private Texture clickImage;
+    private Texture spor;
+    private Texture bomb;
+    private Texture mark;
+    private Texture marker;
+    private Texture weather;
+    private Texture raindrop;
+    private boolean risiMarkerje=true;
+    Array<Image> raindrops;
+
 
     // boat animation
     Geolocation[] boatCoordinates = {
@@ -96,6 +125,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
             new Geolocation(46.5553f, 15.657566f)
     };
     BoatAnimation boatAnimation;
+
 
     // center geolocation
     private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.119944,14.815333);
@@ -108,6 +138,13 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
     private ShaderProgram geojson_points_shader;
 
     private ArrayList<Geolocation> code_points;
+    boolean testdate=true;
+
+    Map<Vector2, Integer> newsByLocation=new HashMap<>();
+
+    List<Vector2> circleLocations = new ArrayList<>();
+    List<List<INews>> razdeljeneNovice = new ArrayList<>();
+    Table contentTable;
     @Override
     public void create() {
         news = sendGet();
@@ -122,7 +159,8 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 iterator.remove();
             }
         }
-
+        backgroundTexture= new Texture(Gdx.files.internal("bacground.jpg"));
+        //clickImage= new Texture(Gdx.files.internal("bomb.png"));
         code = GeolangKt.load();
         System.out.println(code);
 
@@ -132,6 +170,13 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         code_points = GeolangKt.get_points_from_geojson(geojson);
 
         shapeRenderer = new ShapeRenderer();
+        clickImage= new Texture(Gdx.files.internal("mark.png"));
+        mark = new Texture(Gdx.files.internal("novicebasic.png"));
+        bomb = new Texture(Gdx.files.internal("bomb.png"));
+        marker = new Texture(Gdx.files.internal("marker.png"));
+        spor = new Texture(Gdx.files.internal("spotr.png"));
+        weather = new Texture(Gdx.files.internal("weather.png"));
+        raindrop= new Texture(Gdx.files.internal("kaplaj.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
@@ -185,7 +230,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         // boat
         boatAnimation = new BoatAnimation(boatCoordinates, beginTile, 5);
         stage = new Stage(viewport, spriteBatch);
-        stage.addActor(boatAnimation.create());
+        //stage.addActor(boatAnimation.create());
         geojson_points_mesh = GeolangKt.create_point_mesh(shapeRenderer, code_points, beginTile);
 
         String vertexShader = "attribute vec4 a_position;\n" +
@@ -220,15 +265,24 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
 
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
-
+        drawImageMarkers();
         hudStage.act(Gdx.graphics.getDeltaTime());
         stage.act(Gdx.graphics.getDeltaTime());
-
+        hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
-        stage.draw();
+        if(risiMarkerje) {
+            stage.draw();
+        }
 
         drawMarkers();
-
+        if(raindrops != null && raindrops.size > 0) {
+            for (Image raindrop : raindrops) {
+                if (!raindrop.hasActions()) {
+                    raindrops.removeValue(raindrop, true);
+                    raindrop.remove();
+                }
+            }
+        }
         // lang
         if(showLangExample){
             Renderer renderer = new Renderer();
@@ -239,27 +293,132 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
             }
         }
     }
+    public static boolean hasCommonElement(List<String> list1, List<String> list2) {//NAJE CE SE NAHAJA STRING V LISTU
+        for (String str : list1) {
+            if (list2.contains(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    int katagorijeMarkerjev(List<String>catagories){//NAJDE KATERA KATAGORIJA JE ZA SLIKO
+        int rezultat=0;
+        List<String> weatherCategories = new ArrayList<>(Arrays.asList("toča", "nevihta","okolje", "vreme", "dež", "megla", "sončno", "sneg", "sneženo", "ploha"));
+        List<String> sportCategories = new ArrayList<>(Arrays.asList("rekreacija", "gibanje", "šport", "nogomet", "košarka", "sport", "tenis", "gimnastika", "jahanje", "smučanje", "smuk", "rokomet"));
+        List<String> warCategories = new ArrayList<>(Arrays.asList("vojna", "napad", "bombandiranje", "tank"));
+        if (hasCommonElement(catagories, weatherCategories)) {
+            rezultat=1;
+            // Do something related to weather
+        } else if (hasCommonElement(catagories, sportCategories)) {
+            rezultat=2;
+            // Do something related to sports
+        } else if(hasCommonElement(catagories, warCategories)){
+            rezultat=3;
+        }
+        return rezultat;
 
-    private void drawMarkers() {
+    }
+
+    private void drawImageMarkers(){//NARISE MARKERJE
+        /*Map<Vector2, List<INews>> hashMapOfNews = new HashMap<>();
+        List<List<INews>> newsWithLocations = new ArrayList<>();
+        for (int i = 0; i < news.size(); i++) {
+            Vector2 markerTexture = MapRasterTiles.getPixelPosition(
+                    news.get(i).getLocation().getCoordinates().getSecond(),
+                    news.get(i).getLocation().getCoordinates().getFirst(),
+                    beginTile.x, beginTile.y);
+            if(!hashMapOfNews.containsKey(markerTexture)){
+                hashMapOfNews.put(markerTexture,new ArrayList<>());
+                hashMapOfNews.get(markerTexture).add(news.get(i).)
+            }
+
+        }*/
+        Map<Vector2, Integer> displayedMarkers=new HashMap<>();
+        Collections.sort(news, new Comparator<INews>() {
+            @Override
+            public int compare(INews news1, INews news2) {
+                return news2.getDate().compareTo(news1.getDate());
+            }
+        });
+
+        for (int i = 0; i < news.size(); i++) {
+            if(testdate) {
+                System.out.println(news.get(i).getDate());
+            }
+            Image image;
+            Geolocation singleGeolocation = new Geolocation(news.get(i).getLocation().getCoordinates().getSecond(), news.get(i).getLocation().getCoordinates().getFirst());
+            Vector2 imagePosition = positionFromGeolocation(singleGeolocation, beginTile);
+            int rezltatkatagorij=katagorijeMarkerjev(news.get(i).getCategories());
+            if(rezltatkatagorij==1){
+                image = new Image(weather);
+            }
+            else if(rezltatkatagorij==2){
+                image = new Image(spor);
+            }
+            else if(rezltatkatagorij==2){
+                image = new Image(bomb);
+            }else {
+                image= new Image(mark);
+            }
+
+            //image = new Image(clickImage);
+            image.setWidth(50f);
+            image.setHeight(50f);
+
+                image.setPosition(imagePosition.x - 25, imagePosition.y - 25);
+
+
+// Add the image to the stage
+        if(!newsByLocation.containsKey(imagePosition)) {
+            stage.addActor(image);
+            newsByLocation.put(imagePosition,rezltatkatagorij);
+        }
+        }
+        testdate=false;
+
+    }
+
+    private void drawMarkers() {//TU NE BRISI KAJ !!!!!!! IZRACUNA POZICIJE NA ZEMLJEVIDU, KI JIH LAHKO PRITISNES DA DOBIS NOVICE
         // DA NE POZABIM
         // IDEJA:
         // 1. "markerji" se izrisujejo kot kategorije npr. novice/web-app/src/assets/
         // 2. animacija: dež ki pada ob kategoriji "toča/dež..."
         //    pomoje zelo simpl, 3 kaplje narišeš pa sam uporabiš moveTo dol po y za ene 20 pisklov
         //    potem se pa to loopa
+        circleLocations.clear();
+        newsByLocation.clear();
+        int vrednost=0;
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        //spriteBatch.setProjectionMatrix(camera.combined);
+        //spriteBatch.begin();
         for (int i = 0; i < news.size(); i++) {
+
             Vector2 marker = MapRasterTiles.getPixelPosition(
                     news.get(i).getLocation().getCoordinates().getSecond(),
                     news.get(i).getLocation().getCoordinates().getFirst(),
                     beginTile.x, beginTile.y);
 
-            shapeRenderer.setColor(Color.RED);
-            shapeRenderer.circle(marker.x, marker.y, 20);
-        }
-        shapeRenderer.end();
+            if (!newsByLocation.containsKey(marker)) {
+                newsByLocation.put(marker, vrednost);
+                vrednost++;
+                circleLocations.add(marker);
+            }
 
+            if(!animationStarted) {
+                //System.out.println("Hello, World!");
+                System.out.println(news.get(i).getLocation().getCoordinates());
+               // System.out.println(marker.x);
+               // System.out.println(marker.y);
+            }
+
+            shapeRenderer.setColor(Color.GREEN);
+            //shapeRenderer.circle(marker.x, marker.y, 20);
+            //spriteBatch.draw(clickImage, marker.x, marker.y, 40, 40);
+        }
+        animationStarted=true;
+        shapeRenderer.end();
+        //spriteBatch.end();
         /*geojson_points_shader.bind();
         geojson_points_shader.setUniformMatrix("u_projTrans", camera.combined);
         geojson_points_mesh.render(geojson_points_shader, GL20.GL_POINTS);*/
@@ -272,9 +431,11 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                     code_points.get(i).lng,
                     beginTile.x, beginTile.y);
 
+
             shapeRenderer.circle(marker.x, marker.y, 1);
         }
         shapeRenderer.end();
+
 
         // boat positions
         /*for(int i=0; i<boatAnimation.getInterpolatedPositions().length; i++){
@@ -284,6 +445,9 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
             shapeRenderer.circle(boatAnimation.getInterpolatedPositions()[i].x, boatAnimation.getInterpolatedPositions()[i].y, 10);
             shapeRenderer.end();
         }*/
+    }
+    private Vector2 positionFromGeolocation(Geolocation geolocation, ZoomXY beginTile) {
+        return MapRasterTiles.getPixelPosition(geolocation.lat, geolocation.lng, beginTile.x, beginTile.y);
     }
 
     @Override
@@ -295,19 +459,212 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
+
         touchPosition.set(x, y, 0);
         camera.unproject(touchPosition);
         return false;
     }
 
     @Override
-    public boolean tap(float x, float y, int count, int button) {
-        return false;
+    public boolean tap(float x, float y, int count, int button) {//PRITISK NA MAPO
+        System.out.println("Tap: ");
+        Vector3 worldCoordinates = camera.unproject(new Vector3(x, y, 0));
+
+        // Call the handleClick method with world coordinates
+        handleClick(worldCoordinates.x, worldCoordinates.y);
+
+        return true;
     }
 
     @Override
     public boolean longPress(float x, float y) {
         return false;
+
+    }
+    public void handleClick(float clickX, float clickY) {//UREJANJE PRITISKA NA MAPO TUKAJ SE USTVARI PRIKAZ NOVIC
+         ArrayList<INews> thisPointnews=new ArrayList<>();;
+
+        // Check if the click is within the radius of any circle
+        for (Vector2 circleLocation : circleLocations) {
+            float distance = new Vector2(clickX, clickY).dst(circleLocation);
+
+            // If the click is within the radius of the circle
+            if (distance <= 20) {
+                risiMarkerje=false;
+                for (int i = 0; i < news.size(); i++) {
+
+                    Vector2 marker = MapRasterTiles.getPixelPosition(
+                            news.get(i).getLocation().getCoordinates().getSecond(),
+                            news.get(i).getLocation().getCoordinates().getFirst(),
+                            beginTile.x, beginTile.y);
+                    float epsilon = 0.001f;
+                    if(circleLocation.epsilonEquals(marker, epsilon)){
+                        thisPointnews.add(news.get(i));
+                    }
+
+                }
+                System.out.println(thisPointnews);
+                System.out.println("Clicked on circle at: " + circleLocation);
+
+                //Table newContent = new Table();
+                contentTable.clear();
+                Table titletable=new Table();
+                Image imageNA;
+                contentTable.add(new Label("NOVICE: ", skin)).left().row();
+                for(int j = 0; j < thisPointnews.size(); j++) {
+                    int rezltatkatagorij=katagorijeMarkerjev(thisPointnews.get(j).getCategories());
+                    if(rezltatkatagorij==1){
+                        imageNA = new Image(weather);
+                    }
+                    else if(rezltatkatagorij==2){
+                        imageNA = new Image(spor);
+                    }
+                    else if(rezltatkatagorij==2){
+                        imageNA = new Image(bomb);
+                    }else {
+                        imageNA= new Image(mark);
+                    }
+
+                    //image = new Image(clickImage);
+
+                    Label label = new Label(thisPointnews.get(j).getTitle(), skin);
+                    final int index = j;
+                    label.addListener(new ClickListener() {//OB PRITISKU NA NOVICO SE POKAZE PRIKAZ NOVICE
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            // Display the text of the clicked label
+                            contentTable.clear();
+                            int rezltatkatprikaz=katagorijeMarkerjev(thisPointnews.get(index).getCategories());
+                            if(rezltatkatprikaz==1) {
+                                rain(contentTable);
+                            }
+                            Table newContent = new Table();
+                            newContent.add(new Label("TITLE:",skin)).left().row();
+                            newContent.add(new Label(thisPointnews.get(index).getTitle(), skin)).left().row();
+                            newContent.add(new Label("URL:",skin)).left().row();
+                            int lengthURL=thisPointnews.get(index).getUrl().length();
+                            int newlengthURL=lengthURL;
+                            for (int i = 0; i < newlengthURL; i += 48) {
+                                int end = Math.min(i + 48, newlengthURL);
+                                String part = thisPointnews.get(index).getContent().substring(i, end);
+
+                                Label labelContentPart = new Label(part, skin);
+                                newContent.add(labelContentPart).left().row();;
+
+                            }
+                            //newContent.add(new Label(thisPointnews.get(index).getUrl(), skin)).left().row();
+                            newContent.add(new Label("DATE:",skin)).left().row();
+                            newContent.add(new Label(thisPointnews.get(index).getDate().toString(), skin)).left().row();
+                            newContent.add(new Label("AUTHORD:",skin)).left().row();
+                            newContent.add(new Label(thisPointnews.get(index).getAuthors().toString(), skin)).left().row();
+                            newContent.add(new Label("CONTENT:",skin)).left().row();
+                            int length=thisPointnews.get(index).getContent().length();
+                            int newlength=length/2;
+                            for (int i = 0; i < newlength; i += 48) {
+                                int end = Math.min(i + 48, newlength);
+                                String part = thisPointnews.get(index).getContent().substring(i, end);
+
+                                Label labelContentPart = new Label(part, skin);
+                               newContent.add(labelContentPart).left().row();;
+
+                            }
+                            newContent.add(new Label("CATEGORIES:",skin)).left().row();
+                            newContent.add(new Label(thisPointnews.get(index).getCategories().toString(), skin)).left().row();
+                            TextButton backbtn = new TextButton("Back to map", skin, "toggle");
+                            backbtn.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    contentTable.clear();
+                                    risiMarkerje=true;
+                                    contentTable.add(new Label("Tukaj bodo novice:",skin));
+                                }
+                            });
+                            //contentTable.clear();
+                            //contentTable=newContent;
+                            newContent.add(backbtn).left().row();
+                            ScrollPane scrollPane1 = new ScrollPane(newContent);
+                            contentTable.add(scrollPane1);
+                            TextureRegionDrawable drawable = new TextureRegionDrawable(backgroundTexture);
+                            contentTable.background(drawable);
+
+
+                            //scrollPane.clear();
+                            //scrollPane.setScrollingDisabled(false, true);
+                            //scrollPane.setActor(newContent);
+                            //scrollPane.layout();
+
+                        }
+                    });
+
+                    titletable.add(label).left().pad(0).space(0);
+                    titletable.add(imageNA).left().size(30f,30f).pad(0).space(0).row();
+
+                }
+                TextButton backbtn2 = new TextButton("Back to map", skin, "toggle");
+                backbtn2.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        contentTable.clear();
+                        risiMarkerje=true;
+                        contentTable.add(new Label("Tukaj bodo novice:",skin));
+                    }
+                });
+                titletable.add(backbtn2).left().row();
+                titletable.left();
+                ScrollPane scrollPane2 = new ScrollPane(titletable);
+                contentTable.add(scrollPane2);
+                TextureRegionDrawable drawable = new TextureRegionDrawable(backgroundTexture);
+                contentTable.background(drawable);
+
+                //contentTable=newContent;
+                //scrollPane.clear();
+                //scrollPane.setScrollingDisabled(false, true);
+                //scrollPane.setActor(newContent);
+                //scrollPane.layout();
+
+                // Perform any actions you want here
+            }
+        }
+    }
+    void rain(Table containerTable){//ANIMACIJA ZA DEZ
+        Image raindropImage = new Image(raindrop);
+        float initialX;
+        float initialY = Gdx.graphics.getHeight();
+        int numRaindrops = 25;
+        float screenWidth = Gdx.graphics.getWidth();
+        raindrops = new Array<>();
+        float spacing = 20f;
+        float duration=5f;
+        raindropImage.setSize(20f,20f);
+        // Create raindrops and add them to the stage
+        for (int row = 0; row < 10; row++) {
+            for (int i = 0; i < numRaindrops; i++) {
+                Image raindrop = new Image(raindropImage.getDrawable());
+
+                // Set initial position
+                //initialX = i * (raindropImage.getWidth() + spacing);
+
+                // Create a new Image using the raindrop texture
+                float randomX = MathUtils.random(screenWidth);
+                raindrop.setSize(20f, 20f);
+                // Set the initial position of the raindrop
+                raindrop.setPosition(randomX, initialY);
+
+                // Create a sequence of actions for each raindrop
+                raindrop.addAction(Actions.sequence(
+                        Actions.moveTo(randomX, 0, duration),
+                        Actions.removeActor()
+                ));
+
+                // Add raindrop to the stage and array
+                hudStage.addActor(raindrop);
+                raindrops.add(raindrop);
+                containerTable.addActor(raindrop);
+            }
+            initialY += 20f + spacing;
+            duration+=0.5f;
+        }
+
     }
 
     @Override
@@ -382,18 +739,59 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         langButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                showLangExample = !showLangExample;
+                //showLangExample = !showLangExample;
+                //rain();
             }
         });
+        langButton.left();
 
-        TextButton animButton = new TextButton("Animation", skin);
+        TextButton animButton = new TextButton("Legend", skin);
         animButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                stage.addActor(boatAnimation.create());
+                contentTable.clear();
+                risiMarkerje=false;
+                //stage.addActor(boatAnimation.create());
+                //Table newContent = new Table();
+                contentTable.add(new Label("LEGEND:", skin)).left().row();
+                contentTable.add(new Label("Typs of news created last on location:", skin)).left().row();
+                Table legendTable=new Table();
+                Image bombaL = new Image(bomb);
+                //bombaL.setWidth(50f);
+                //bombaL.setHeight(50f);
+                legendTable.add(bombaL).left().size(30f,30f).pad(0).space(0);
+                legendTable.add(new Label("- War news", skin)).left().pad(0).space(0).row();
+                Image wetherL = new Image(weather);
+                //wetherL.setWidth(50f);
+                //wetherL.setHeight(50f);
+                legendTable.add(wetherL).left().size(30f,30f).pad(0).space(0);
+                legendTable.add(new Label("- Wether/environment news", skin)).left().pad(0).space(0).row();
+                Image sportL = new Image(spor);
+                //sportL.setWidth(50f);
+                //sportL.setHeight(50f);
+                legendTable.add(sportL).left().size(30f,30f).pad(0).space(0);
+                legendTable.add(new Label("- Sport news", skin)).left().pad(0).space(0).row();
+                Image basicL = new Image(mark);
+                //basicL.setWidth(50f);
+                //basicL.setHeight(50f);
+                legendTable.add(basicL).left().size(30f,30f).pad(0).space(0);
+                legendTable.add(new Label("- Oather news", skin)).left().pad(0).space(0).row();
+                TextButton backbtnL =new TextButton("Back to map", skin);
+                backbtnL.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        contentTable.clear();
+                        risiMarkerje=true;
+                        contentTable.add(new Label("Tukaj bodo novice:",skin));
+                    }
+                });
+                contentTable.add(legendTable).left().row();
+                contentTable.add(backbtnL).left().row();
+
+
             }
         });
-
+        animButton.left();
         TextButton quitButton = new TextButton("Quit", skin);
         quitButton.addListener(new ClickListener() {
             @Override
@@ -401,7 +799,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 Gdx.app.exit();
             }
         });
-
+        quitButton.left();
         Table buttonTable = new Table();
         buttonTable.defaults().padLeft(30).padRight(30);
 
@@ -409,12 +807,40 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         buttonTable.add(animButton).padBottom(15).fillX().row();
         buttonTable.add(quitButton).fillX();
 
+        contentTable = new Table();
+        contentTable.defaults().pad(10);
+        //Image image = new Image(clickImage);
+        //contentTable.add(image).left().row();
+        TextureRegionDrawable drawable = new TextureRegionDrawable(backgroundTexture);
+        contentTable.add(new Label("Tukaj bodo novice:",skin));
+        contentTable.background(drawable);
+        buttonTable.background(drawable);
 
-        table.add(buttonTable);
+        // Add a lot of information to the content table
+
+        /*for (int i = 0; i < 50; i++) {
+            final String labelText = "Information " + i;
+            Label label = new Label(labelText, skin);
+            label.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    // Display the text of the clicked label
+                    Gdx.app.log("LabelClick", "Label clicked! Text: " + labelText);
+                }
+            });
+            contentTable.add(label).row();
+        }*/
+
+        // Create a ScrollPane and set its widget to the content table
+        //scrollPane = new ScrollPane(contentTable);
+
+        table.add(buttonTable).row();
+        table.add(contentTable);
         table.left();
         table.top();
         table.setFillParent(true);
         table.pack();
+        table.setDebug(true);
 
         return table;
     }
