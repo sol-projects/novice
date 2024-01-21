@@ -1,33 +1,37 @@
 package com.prvavaja.noviceprojekt
 
+import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.prvavaja.noviceprojekt.databinding.ActivityGenarateBinding
-import com.prvavaja.noviceprojekt.databinding.ActivityMainBinding
-import org.osmdroid.config.Configuration
+import com.prvavaja.noviceprojekt.databinding.ActivityGenerateDataBinding
 import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.SensorManager
-import android.widget.Toast
-import io.github.serpro69.kfaker.Faker
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.api.IMapController
-import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.MapEventsOverlay
-import kotlinx.serialization.json.Json
-import java.util.Random
 import android.hardware.Sensor
 import android.os.Handler
 import android.os.Looper
 import android.hardware.SensorEventListener
 import android.hardware.SensorEvent
+import android.location.Location
 import androidx.annotation.RequiresApi
 import android.os.Build
-import android.widget.Switch
+import android.util.Log
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmInstant
+import kotlinx.coroutines.runBlocking
+import java.io.OutputStream
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.StandardCharsets
 
-class GenarateActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityGenarateBinding //ADD THIS LINE
+class GenerateDataActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityGenerateDataBinding
     private lateinit var mapController: IMapController
     private var clickedLocation: GeoPoint? = null
     private var isLocationSelected: Boolean = false
@@ -35,19 +39,21 @@ class GenarateActivity : AppCompatActivity() {
     lateinit var handler2: Handler
     lateinit var handler3: Handler
     lateinit var handler4: Handler
+    lateinit var myApplication: MyAplication
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        myApplication = application as MyAplication
         //Configuration.getInstance().load(applicationContext,this.getPreferences(Context.MODE_PRIVATE))
-        binding = ActivityGenarateBinding.inflate(layoutInflater) //ADD THIS LINE
+        binding = ActivityGenerateDataBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setContentView(R.layout.activity_genarate)
         val switch1=binding.temperatureSwitchSimulated
         val switch2=binding.temperatureSwitchSensor
         val switch3=binding.humidSwitchSimulated
         val switch4=binding.humidSwitchSensor
-        //val mySwitch=binding.temperatureSwitchSimulated
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         handler1 = Handler(Looper.getMainLooper())
         handler2 = Handler(Looper.getMainLooper())
         handler3 = Handler(Looper.getMainLooper())
@@ -63,27 +69,46 @@ class GenarateActivity : AppCompatActivity() {
             }
         }*/
 
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        realLastLocation.coordinates = Pair(location.longitude, location.latitude)
+                    } else {
+                    }
+                }
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_CODE_LOCATION_PERMISSION
+            )
+
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        realLastLocation.coordinates = Pair(location.longitude, location.latitude)
+                    } else {
+                    }
+                }
+        }
 
         if (hasAmbientTemperatureSensor()) {
             println("ima ambient senzor")
-            // The device has the ambient temperature sensor
-            // You can proceed with using the sensor
         } else {
             println("nima ambient senzor")
-            // The device does not have the ambient temperature sensor
-            // Handle the case where the sensor is not available on the device
         }
         if (hasHumiditySensor()) {
             println("ima vlaznostni senzor")
-            // The device has the ambient temperature sensor
-            // You can proceed with using the sensor
         } else {
             println("nima vlaznostni senzor")
-            // The device does not have the ambient temperature sensor
-            // Handle the case where the sensor is not available on the device
         }
-        var temperatura:Number=0
-        var vlaznost:Number=0
+        var temperatura = 0.0F
+        var vlaznost = 0.0F
         //lateinit var simulatedTempHandler: Handler
         //simulatedTempHandler = Handler(Looper.getMainLooper())
 
@@ -96,13 +121,13 @@ class GenarateActivity : AppCompatActivity() {
                     //Simulirana temperatura
                     val tempFrom = binding.cardTemperaturaSIntervalEdittextFrom.text.toString().toInt()
                     val tempTo = binding.cardTemperaturaSIntervalEdittextTo.text.toString().toInt()
-                    val interval = binding.cardTimeSimDisplaySeconds2.text.toString().toLong() * 1000
+                    val interval = binding.cardTemperaturaSIntervalEdittextInterval.text.toString().toLong() * 1000
                     val simulatedTemp = (tempFrom..tempTo).random()
 
                     //Simulirana lokacija
                     //val lokacija = binding.adressInput.text.toString()
 
-                    println("Temperatura: " + simulatedTemp)
+                    println("Temperatura: $simulatedTemp")
                     //println("Lokacija: " + lokacija)
 
                     //createurrentTempInDataBase(simulatedTemp, lokacija)
@@ -128,11 +153,11 @@ class GenarateActivity : AppCompatActivity() {
         var sensorEvent = object: SensorEventListener{
             override fun onSensorChanged(sensorEvent: SensorEvent?) {
                 val values = sensorEvent?.values
-                if (values != null) {
-                    //temperature.text  = values.get(0).toString()
-                    var temp = values.get(0)
+                if (values != null && values[0] > -1.0E29) {
+                    var temp = values[0]
                     println(temp)
                     temperatura=temp
+                    writeTempToServer(temperatura)
                 }
             }
             override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
@@ -142,8 +167,24 @@ class GenarateActivity : AppCompatActivity() {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun run() {
                     runOnUiThread {
-                        val cas = binding.cardTimeSensorDisplaySeconds2.text.toString().toInt()
+                        val cas = binding.cardTimeSensorDisplaySecondsInterval.text.toString().toInt()
                         println("Temperatura iz senozrja: $temperatura")
+                        runBlocking {
+                            myApplication.realm.write {
+                                var article = NewsArticleRealm()
+                                article.authors = realmListOf("senzor")
+                                article.date = RealmInstant.now()
+                                article.categories = realmListOf("senzor-temperatura")
+                                article.content = temperatura.toString()
+                                article.title = "Temperatura iz senzorja"
+                                article.location = LocationRealm()
+                                article.location!!.type = realLastLocation.type
+                                println(realLastLocation.coordinates)
+                                article.location!!.coordinates = realmListOf(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
+                                copyToRealm(article)
+                            }
+                        }
+
                         handler2.postDelayed(this, cas * 1000L)
                     }
                 }
@@ -162,20 +203,17 @@ class GenarateActivity : AppCompatActivity() {
         }
 
         switch3.setOnCheckedChangeListener { _, isChecked ->
-
             val updateSimulatedTemp = object : Runnable {
                 override fun run() {
-
-                    //Simulirana temperatura
                     val humidFrom = binding.cardHumidSIntervalEdittextFrom.text.toString().toInt()
                     val humidTo = binding.cardHumidSIntervalEdittextTo.text.toString().toInt()
-                    val cas = binding.cardHumidTimeSimDisplaySeconds2.text.toString().toLong() * 1000
+                    val cas = binding.cardHumidTimeSimDisplaySecondsEdit.text.toString().toLong() * 1000
                     val simulatedHumid = (humidFrom..humidTo).random()
 
                     //Simulirana lokacija
                     //val lokacija = binding.adressInput.text.toString()
 
-                    println("Vlaznost: " + simulatedHumid)
+                    println("Vlaznost: $simulatedHumid")
                     //println("Lokacija: " + lokacija)
 
                     //createurrentTempInDataBase(simulatedTemp, lokacija)
@@ -206,6 +244,7 @@ class GenarateActivity : AppCompatActivity() {
                     var temp = values.get(0)
                     println(temp)
                     vlaznost=temp
+                    writeHumidityToServer(vlaznost)
                 }
             }
             override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
@@ -215,8 +254,9 @@ class GenarateActivity : AppCompatActivity() {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun run() {
                     runOnUiThread {
-                        val cas = binding.cardHumidTimeSensorDisplaySeconds2.text.toString().toInt()
+                        val cas = binding.cardTimeSensorDisplaySecondsInterval.text.toString().toInt()
                         println("Humid iz senozrja: $vlaznost")
+                        writeHumidityToServer(vlaznost)
                         handler2.postDelayed(this, cas * 1000L)
                     }
                 }
@@ -293,7 +333,7 @@ class GenarateActivity : AppCompatActivity() {
                 finish()
             }
             else{
-                Toast.makeText(this@GenarateActivity, "You did not select a location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@GenerateDataActivity, "You did not select a location", Toast.LENGTH_SHORT).show()
             }
         }*/
 
@@ -308,6 +348,23 @@ class GenarateActivity : AppCompatActivity() {
         return sensorList.isNotEmpty()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_CODE_LOCATION_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    finish()
+                }
+            }
+        }
+    }
+
     private fun hasHumiditySensor(): Boolean {
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
@@ -316,5 +373,42 @@ class GenarateActivity : AppCompatActivity() {
 
         // Check if the list is not empty, indicating the presence of the humidity sensor
         return sensorList.isNotEmpty()
+    }
+
+    companion object {
+        private const val REQUEST_CODE_LOCATION_PERMISSION = 1001
+        var realLastLocation: com.prvavaja.noviceprojekt.Location = Location("Point", Pair(0.0, 0.0))
+    }
+
+    private fun writeTempToServer(temp: Float) {
+        myApplication.realm.writeBlocking {
+            var article = NewsArticleRealm()
+            article.authors = realmListOf("senzor")
+            article.date = RealmInstant.now()
+            article.categories = realmListOf("senzor-temperatura")
+            article.content = temp.toString()
+            article.title = "Temperatura iz senzorja"
+            article.location = LocationRealm()
+            article.location!!.type = realLastLocation.type
+            println(realLastLocation.coordinates)
+            article.location!!.coordinates = realmListOf(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
+            copyToRealm(article)
+        }
+    }
+
+    private fun writeHumidityToServer(humidity: Float) {
+        myApplication.realm.writeBlocking {
+            var article = NewsArticleRealm()
+            article.authors = realmListOf("senzor")
+            article.date = RealmInstant.now()
+            article.categories = realmListOf("senzor-vlažnost")
+            article.content = humidity.toString()
+            article.title = "Vlažnost iz senzorja"
+            article.location = LocationRealm()
+            article.location!!.type = realLastLocation.type
+            println(realLastLocation.coordinates)
+            article.location!!.coordinates = realmListOf(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
+            copyToRealm(article)
+        }
     }
 }

@@ -43,8 +43,8 @@ class NewsArticle(var title: String,
     }
 }
 data class Location(
-    val type: String,
-    val coordinates: Pair<Double, Double>
+    var type: String,
+    var coordinates: Pair<Double, Double>
 )
 
 open class NewsArticleRealm : RealmObject {

@@ -2,13 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".MyAplication"
@@ -20,12 +25,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
+        <service android:name="org.eclipse.paho.android.service.MqttService">
+        </service>
         <activity
-            android:name=".MasageActivity"
+            android:name=".MessageActivity"
             android:exported="false" />
         <activity
-            android:name=".GenarateActivity"
+            android:name=".GenerateDataActivity"
             android:exported="false" />
         <activity
             android:name=".DisplayActivity"
@@ -34,7 +42,7 @@
             android:name=".CameraActivty"
             android:exported="false" />
         <activity
-            android:name=".SetingsActivity"
+            android:name=".SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,31 +1,52 @@
 package com.prvavaja.noviceprojekt
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.prvavaja.noviceprojekt.databinding.ActivityGenarateBinding
-import com.prvavaja.noviceprojekt.databinding.ActivityMainBinding
-import com.prvavaja.noviceprojekt.databinding.ActivityMasageBinding
+import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.prvavaja.noviceprojekt.databinding.ActivityMessageBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.MapEventsOverlay
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
+import java.io.InputStream
+import java.io.OutputStreamWriter
+import java.net.URL
+import java.nio.charset.StandardCharsets
+import java.security.KeyManagementException
+import java.security.KeyStore
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.util.Random
+import java.util.concurrent.Executors
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
-class MasageActivity : AppCompatActivity() {
-    private lateinit var binding:  ActivityMasageBinding//ADD THIS LINE
+class MessageActivity : AppCompatActivity() {
+    private lateinit var binding:  ActivityMessageBinding//ADD THIS LINE
     private lateinit var mapController: IMapController
     private var clickedLocation: GeoPoint? = null
     private var isLocationSelected: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_masage)
-        binding = ActivityMasageBinding.inflate(layoutInflater) //ADD THIS LINE
+        binding = ActivityMessageBinding.inflate(layoutInflater) //ADD THIS LINE
         setContentView(binding.root)
 
         Configuration.getInstance().load(applicationContext,this.getPreferences(Context.MODE_PRIVATE))
@@ -98,18 +119,17 @@ class MasageActivity : AppCompatActivity() {
                 val currentDate = java.util.Date()
                 val authors = listOf(author_content)
                 val selectedItem = spiner.selectedItem.toString()
-                val catagori_masage="novice/"+selectedItem//to sem naredil po tistem primeru v navodilih:  weather/temperature
+                val catagori_masage= "novice/$selectedItem"
                 val categories = listOf(catagori_masage)
                 val locationX = textX.text.toString().toDouble()
                 val locationY = textY.text.toString().toDouble()
                 val randomId = random.nextInt(100).toString()
 
-                // Create a Location object
                 val location =
                     Location(type = "Point", coordinates = Pair(locationX, locationY))
                 var message11 = NewsArticle(
                     title_content,
-                    "https://message.com",
+                    "",
                     currentDate,
                     authors,
                     contnen_content,
@@ -119,12 +139,67 @@ class MasageActivity : AppCompatActivity() {
                     1
                 )
                 println(message11.toString())
+                writeMessageToBlockchain(message11.toString())
                 finish()
             }
             else{
-                Toast.makeText(this@MasageActivity, "You did not select a location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MessageActivity, "You did not select a location", Toast.LENGTH_SHORT).show()
             }
         }
 
+    }
+
+    private fun createOkHttpsClient(): OkHttpClient {
+        val certificateStream: InputStream = this.assets.open("drawable/cert.pem")
+        val certificate: X509Certificate = CertificateFactory.getInstance("X.509").generateCertificate(certificateStream) as X509Certificate
+
+        val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+        val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+
+        keyStore.load(null, null)
+        keyStore.setCertificateEntry("customCA", certificate)
+
+        trustManagerFactory.init(keyStore)
+
+        val trustManagers = trustManagerFactory.trustManagers
+
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, trustManagers, null)
+
+        return OkHttpClient.Builder()
+            .sslSocketFactory(sslContext.socketFactory, trustManagers[0] as X509TrustManager)
+            .hostnameVerifier { _, _ -> true }
+            .build()
+    }
+
+    private fun writeMessageToBlockchain(data: String) {
+        val url = "http://10.0.2.2:49321/message"
+        val client = OkHttpClient.Builder()
+            .build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val mediaType = "application/json".toMediaType()
+                val requestBody = data.toRequestBody(mediaType)
+
+                val request = Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build()
+
+                val response = client.newCall(request).execute()
+
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    Log.d("blockchain", "Request successful. Response body: $responseBody")
+                } else {
+                    Log.d("blockchain", "Request unsuccessful. Response code: ${response.code}")
+                    val errorBody = response.body?.string()
+                    Log.d("blockchain", "Error message: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("blockchain", "Exception during request", e)
+            }
+        }
     }
 }

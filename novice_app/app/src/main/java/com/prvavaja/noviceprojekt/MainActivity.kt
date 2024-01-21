@@ -4,8 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.prvavaja.noviceprojekt.databinding.ActivityMainBinding
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
@@ -29,21 +27,16 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
 
         //setContentView(R.layout.activity_main)
 
-
-
-
-
-        binding.btnSetings.setOnClickListener {  val intent = Intent(this, SetingsActivity::class.java)
+        binding.btnSetings.setOnClickListener {  val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent) }
         binding.buttonCamera.setOnClickListener {  val intent = Intent(this, CameraActivty::class.java)
             startActivity(intent) }
-        binding.btnMessage.setOnClickListener {  val intent = Intent(this, MasageActivity::class.java)
+        binding.btnMessage.setOnClickListener {  val intent = Intent(this, MessageActivity::class.java)
             startActivity(intent) }
-        //DODAL SEM GUMB
-        binding.buttonSenzors.setOnClickListener {  val intent = Intent(this, GenarateActivity::class.java)
+        binding.buttonSenzors.setOnClickListener {  val intent = Intent(this, GenerateDataActivity::class.java)
             startActivity(intent) }
-        ///////////
-        /*runBlocking {
+
+        runBlocking {
             try {
                 myApplication.realm_app = io.realm.kotlin.mongodb.App.create("application-0-qcgjd")
                 myApplication.user = myApplication.realm_app.login(Credentials.anonymous())
@@ -60,8 +53,6 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
                 }
 
                 myApplication.realm.subscriptions.waitForSynchronization() // ce dobis Null Exception, je tu problem
-                myApplication.realm.query<NewsArticleRealm>().find().map { fromRealmNewsArticle(it)}.forEach { list1.addItem(it) }
-
             } catch(e: Exception) { // Realm je malo nestabilen pa vcasih vrze cudne exceptione, zato belezim za vse
                 val sw = StringWriter()
                 e.printStackTrace(PrintWriter(sw))
@@ -73,7 +64,7 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
                 }
                 return@runBlocking
             }
-        }*/
+        }
     }
     override fun onItemClick(novica: NewsArticle) {
         val intent = Intent(this, DisplayActivity::class.java)
@@ -83,7 +74,6 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
         val formattedAuthors = novica.authors.joinToString("\", \"", "[\"", "\"]")
         val formattedCategories = novica.categories.joinToString("\", \"", "[\"", "\"]")
         val coordinates = "[${novica.location.coordinates.first}, ${novica.location.coordinates.second}]"
-        // Add extra data to the intent to pass the UUID of the clicked Sadje object
         intent.putExtra("id", novica._id)
         intent.putExtra("title",novica.title)
         intent.putExtra("url", novica.url)
@@ -93,8 +83,6 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
         intent.putExtra("cordinates",coordinates)
         intent.putExtra("content",novica.content)
         intent.putExtra("__v",novica.__v)
-        // Start the MainActivity using the created intent
-        //startActivity(intent)
         startActivity(intent)
     }
 
