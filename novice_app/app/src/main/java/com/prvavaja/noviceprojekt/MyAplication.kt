@@ -11,6 +11,8 @@ class MyAplication:  Application() {
     lateinit var realm: Realm
     lateinit var realm_app: App
     lateinit var user: User
+    var maxtemperature: Int=0
+    var checkformaxTemp: Boolean=false
     override fun onCreate() {
         super.onCreate()
         Log.d("MyApplication", "Application onCreate called")

@@ -128,6 +128,16 @@ class GenerateDataActivity : AppCompatActivity() {
                     //val lokacija = binding.adressInput.text.toString()
 
                     println("Temperatura: $simulatedTemp")
+                    //Tu se preverja preseg temperature
+                    if(myApplication.checkformaxTemp) {
+                        if (simulatedTemp > myApplication.maxtemperature) {
+                            val currentDatez = java.util.Date()
+                            val authors = listOf("bot")
+                            val categoriesz = listOf("novice/temperature record")
+                            //var emergancyMesage=NewsArticle("Temperature record","",currentDatez,authors,"Temperatura has pased the treshold: $simulatedTemp",categoriesz,)
+                            println("Temperatura je presegla mejo")
+                        }
+                    }
                     //println("Lokacija: " + lokacija)
 
                     //createurrentTempInDataBase(simulatedTemp, lokacija)

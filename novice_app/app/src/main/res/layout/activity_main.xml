@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/phone_bacground"
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -45,13 +46,25 @@
     </androidx.appcompat.widget.Toolbar>
 
 
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/news2"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSenzors"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+    </ImageView>
+
     <Button
         android:id="@+id/buttonCamera"
-        android:layout_width="86dp"
-        android:layout_height="86dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-
-        android:background="@drawable/outline_photo_camera_24"
+        android:text="Camera"
+        android:drawableEnd="@drawable/camera_dravable_buton"
         app:layout_constraintBottom_toTopOf="@+id/btnMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
@@ -59,12 +72,12 @@
 
     <Button
         android:id="@+id/btnMessage"
-        android:layout_width="86dp"
-        android:layout_height="86dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-
+        android:text="Messages"
         android:layout_marginBottom="216dp"
-        android:background="@drawable/baseline_post_add_24"
+        android:drawableEnd="@drawable/mesages_dravable_bution"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -74,10 +87,11 @@
         android:id="@+id/buttonSenzors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
+        android:drawableEnd="@drawable/sensors_drawable_buton"
         android:text="Sensors"
         app:layout_constraintBottom_toTopOf="@+id/buttonCamera"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 

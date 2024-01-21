@@ -7,18 +7,31 @@ import com.prvavaja.noviceprojekt.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
+    private lateinit var myApplication:MyAplication
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_setings)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root) //ADD THIS LINE
+        myApplication = application as MyAplication
 
         val numberPicker=binding.numberPickerSetings
-        numberPicker.maxValue=10
-        numberPicker.minValue=0
-        numberPicker.value = 1
+        numberPicker.maxValue=40
+        numberPicker.minValue=30
+        numberPicker.value = 32
 
-        binding.btnSetingsBack.setOnClickListener {  val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent) }
+        binding.btnSetingsBack.setOnClickListener {
+            finish()
+        }
+        binding.buttonSetingsActivate.setOnClickListener(){
+            myApplication.maxtemperature=numberPicker.value
+            myApplication.checkformaxTemp=true
+
+        }
+        binding.buttonSetingsDeactivate.setOnClickListener(){
+            myApplication.maxtemperature=0
+            myApplication.checkformaxTemp=false
+
+        }
     }
 }

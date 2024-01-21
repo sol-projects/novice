@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/phone_bacground"
     tools:context=".GenerateDataActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -32,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="70dp"
-            android:text="Senzors"
+            android:text="Sensors"
             android:textColor="@android:color/white"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -46,7 +47,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView1"
         android:layout_width="380dp"
-        android:layout_height="149dp"
+        android:layout_height="159dp"
         android:layout_marginTop="12dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
@@ -60,7 +61,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/orangecardbacground"
+            >
+
 
             <TextView
                 android:id="@+id/cardTemSimTitle1"
@@ -106,7 +110,6 @@
                 android:id="@+id/cardTimeSimDisplay2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text=" seconds."
                 android:textColor="#57385c"
@@ -120,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:text="From "
                 android:textColor="#57385c"
                 android:textSize="25sp"
@@ -132,7 +135,7 @@
                 android:id="@+id/cardTemperaturaSIntervalEdittextFrom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:inputType="number"
                 android:text="10"
                 app:layout_constraintStart_toEndOf="@+id/cardTemperaturaSInterval1"
@@ -183,7 +186,7 @@
                 android:layout_width="112dp"
                 android:layout_height="28dp"
 
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:text="Disabled"
                 android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -211,7 +214,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/orangecardbacground">
 
             <TextView
                 android:id="@+id/cardTemSensorTitle1"
@@ -271,7 +275,7 @@
                 android:layout_width="112dp"
                 android:layout_height="28dp"
 
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:text="Disabled"
                 android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -288,7 +292,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
         android:layout_width="380dp"
-        android:layout_height="149dp"
+        android:layout_height="159dp"
         android:layout_marginTop="12dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
@@ -302,7 +306,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/orangecardbacground">
 
             <TextView
                 android:id="@+id/cardHumidSimTitle1"
@@ -360,8 +365,8 @@
                 android:id="@+id/cardHumidSInterval1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
                 android:text="From "
                 android:textColor="#57385c"
                 android:textSize="25sp"
@@ -398,7 +403,7 @@
                 android:id="@+id/cardHumidSIntervalEdittextTo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="16dp"
                 android:inputType="number"
                 android:text="20"
                 app:layout_constraintStart_toEndOf="@+id/cardHumidSinterval2"
@@ -424,7 +429,7 @@
                 android:layout_width="112dp"
                 android:layout_height="28dp"
 
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:text="Disabled"
                 android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -452,7 +457,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/orangecardbacground">
 
             <TextView
                 android:id="@+id/cardHumidSensorTitle1"
@@ -512,7 +518,7 @@
                 android:layout_width="112dp"
                 android:layout_height="28dp"
 
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:text="Disabled"
                 android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -41,6 +41,9 @@ class CameraActivty : AppCompatActivity() {
         myApplication = application as MyAplication
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+        binding.btnDisplayBackCamera.setOnClickListener(){
+            finish()
+        }
 
         binding.takePhotoButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
