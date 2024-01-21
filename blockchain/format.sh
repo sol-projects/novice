@@ -8,3 +8,5 @@ clang-format -i --files=./clang-format hash.cpp
 clang-format -i --files=./clang-format Peer.cpp
 clang-format -i --files=./clang-format Peer.hpp
 clang-format -i --files=./clang-format main.cpp
+clang-format -i --files=./clang-format service.hpp
+clang-format -i --files=./clang-format service.cpp

@@ -41,6 +41,7 @@ private:
     asio::ip::tcp::acceptor acceptor;
     asio::ip::tcp::socket socket;
     std::string message;
+
 };
 
 class Gui : QWidget
@@ -91,4 +92,7 @@ private:
     static inline std::string m_signalWrite = "";
     std::vector<char> m_read;
     OptionFlags m_options;
+    std::condition_variable m_sensor_data_cv;
+    std::mutex m_sensor_data_mutex;
+    std::string m_sensor_data;
 };

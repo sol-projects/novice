@@ -22,6 +22,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <mpi.h>
+#include "service.hpp"
 
 namespace
 {
@@ -34,6 +35,7 @@ namespace
     std::vector<QLabel*> m_labels;
     std::atomic<bool> sendSignal = false;
     std::atomic<bool> resetWrite = false;
+
 
     void outputToGui(const std::string& string)
     {
@@ -284,13 +286,36 @@ void Client::write(const std::string& data)
 
 void Client::mine()
 {
+    service::listen();
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Adjust the sleep duration as needed
     std::thread t([this]() {
+        service::get_message([this](auto message) {
+            std::cout << "Receiving new message." << std::endl;
+            std::unique_lock<std::mutex> lock(m_sensor_data_mutex);
+            m_sensor_data = message;
+            std::cout << message << std::endl;
+            lock.unlock();
+
+            m_sensor_data_cv.notify_one();
+        });
+
+
         for (;;)
         {
             resetWrite = false;
+
+            {
+                std::unique_lock<std::mutex> lock(m_sensor_data_mutex);
+                std::cout << "Waiting for messages." << std::endl;
+                m_sensor_data_cv.wait(lock, [this]() { return !m_sensor_data.empty(); });
+                std::cout << "New message, will start mining." << std::endl;
+            }
+
             m_blockchain_update_mutex.lock();
-            m_blockchain = blockchain::new_block_pow(m_blockchain, resetWrite, m_options, m_world_rank, m_world_size);
+            m_blockchain = blockchain::new_block_pow(m_blockchain, m_sensor_data, resetWrite, m_options, m_world_rank, m_world_size);
             m_blockchain_update_mutex.unlock();
+            
+            m_sensor_data.clear();
 
             if(resetWrite)
             {
@@ -309,6 +334,8 @@ void Client::mine()
                 outputToGui("Mined block. Diff: " + std::to_string(m_blockchain.back().difficulty) + " Hash of last 5: " + std::string(m_blockchain.back().hash.end() - 5, m_blockchain.back().hash.end()));
             }
         }
+
+        service::stop();
     });
 
     t.join();

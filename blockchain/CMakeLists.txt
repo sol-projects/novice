@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
     block.cpp
     blockchain.cpp
     hash.cpp
+    service.cpp
 )
 
 FetchContent_Declare(
@@ -39,10 +40,15 @@ FetchContent_MakeAvailable(cargs)
 target_link_libraries(${PROJECT_NAME} PUBLIC cargs)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${asio_SOURCE_DIR}/asio/include)
 
+FetchContent_Declare(httplib SYSTEM
+    GIT_REPOSITORY https://github.com/yhirose/cpp-httplib
+    GIT_SHALLOW TRUE)
+FetchContent_MakeAvailable(httplib)
+
 find_package(Threads)
 find_package(OpenSSL REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto Threads::Threads Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto Threads::Threads Qt6::Widgets httplib)
 
 find_package(MPI REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC MPI::MPI_CXX)

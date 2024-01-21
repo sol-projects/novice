@@ -18,7 +18,7 @@ struct Block
 
     static Block genesis();
     static Block new_from_previous(const Block& previous_block);
-    static Block new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options, int mpi_rank, int mpi_world_size);
+    static Block new_from_previous_pow(const Block& previous_block, const std::string& data, std::atomic<bool>& stop, int difficulty, const OptionFlags& options, int mpi_rank, int mpi_world_size);
     static Block deserialize(const std::vector<uint8_t>& buffer);
 
     std::vector<uint8_t> serialize() const;

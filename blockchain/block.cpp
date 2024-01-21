@@ -109,7 +109,7 @@ Block Block::from_string(const std::string& string)
     return block;
 }
 
-Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool>& stop, int difficulty, const OptionFlags& options, int mpi_rank, int mpi_world_size)
+Block Block::new_from_previous_pow(const Block& previous_block, const std::string& data, std::atomic<bool>& stop, int difficulty, const OptionFlags& options, int mpi_rank, int mpi_world_size)
 {
     //MPI_Barrier(MPI_COMM_WORLD);
     constexpr int mpi_block_found = 1;
@@ -118,6 +118,7 @@ Block Block::new_from_previous_pow(const Block& previous_block, std::atomic<bool
     bool main_mpi_process = (mpi_rank == 0);
 
     auto new_block = new_from_previous(previous_block);
+    new_block.data = data;
 
     std::vector<uint8_t> serialized;
     if(main_mpi_process)

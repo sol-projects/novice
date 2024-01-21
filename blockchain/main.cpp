@@ -49,7 +49,7 @@ OptionFlags parse(int argc, char* argv[])
                 Block previous_block = b.at(0);
                 auto start_time = std::chrono::high_resolution_clock::now();
                 for(int i = 0; i < 100; i++) {
-                    auto block = Block::new_from_previous_pow(previous_block, stop, 5, options, 0, 1);
+                    auto block = Block::new_from_previous_pow(previous_block, "", stop, 5, options, 0, 1);
                     b.push_back(block);
                     previous_block = block;
                 }
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
         std::atomic<bool> stop = false;
         for(;;)
         {
-            Block::new_from_previous_pow(Block::genesis(), stop, 0, options, world_rank, world_size);
+            Block::new_from_previous_pow(Block::genesis(), "", stop, 0, options, world_rank, world_size);
         }
     }
 
