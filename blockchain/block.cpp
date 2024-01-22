@@ -2,6 +2,7 @@
 #include "hash.hpp"
 #include "options.hpp"
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <ctime>
 #include <iomanip>
@@ -59,7 +60,7 @@ Block Block::new_from_previous(const Block& previous_block)
 
 bool Block::validation(const Block& previous_block) const
 {
-    return previous_hash == previous_block.hash && hash::block(*this) == hash && id == (previous_block.id + 1);
+    return previous_hash == previous_block.hash && hash == hash::block(*this) &&  id == (previous_block.id + 1);
 }
 
 std::string Block::to_string() const
@@ -84,36 +85,48 @@ Block Block::from_string(const std::string& string)
     Block block {};
     std::istringstream iss(string);
 
-    std::string id;
-    std::getline(iss, id);
-    block.id = std::stoi(id);
+    std::string line;
+    int field_counter = 0;
 
-    std::string time;
-    std::getline(iss, time);
-    block.timestamp = std::chrono::system_clock::from_time_t(std::stoull(time));
-
-    std::getline(iss, block.data);
-
-    std::getline(iss, block.previous_hash);
-
-    std::getline(iss, block.hash);
-
-    std::string difficulty;
-    std::getline(iss, difficulty);
-    block.difficulty = std::stoi(difficulty);
-
-    std::string nonce;
-    std::getline(iss, nonce);
-    block.nonce = std::stoull(nonce);
-
+    while (std::getline(iss, line)) {
+        if (line.find('{') != std::string::npos) {
+            std::string json_content = line + '\n';
+            while (line.find('}') == std::string::npos && std::getline(iss, line)) {
+                json_content += line + '\n';
+            }
+            json_content.push_back('}');
+            block.data = json_content;
+        } else {
+            switch (field_counter) {
+                case 0:
+                    block.id = std::stoi(line);
+                    break;
+                case 1:
+                    block.timestamp = std::chrono::system_clock::from_time_t(std::stoull(line));
+                    break;
+                case 3:
+                    block.previous_hash = line;
+                    break;
+                case 4:
+                    block.hash = line;
+                    break;
+                case 5:
+                    block.difficulty = std::stoi(line);
+                    break;
+                case 6:
+                    block.nonce = std::stoull(line);
+                    break;
+            }
+            field_counter++;
+        }
+    }
     return block;
 }
 
 Block Block::new_from_previous_pow(const Block& previous_block, const std::string& data, std::atomic<bool>& stop, int difficulty, const OptionFlags& options, int mpi_rank, int mpi_world_size)
 {
-    //MPI_Barrier(MPI_COMM_WORLD);
+    auto start_time = std::chrono::steady_clock::now();
     constexpr int mpi_block_found = 1;
-    constexpr int mpi_terminate_pow = 2;
 
     bool main_mpi_process = (mpi_rank == 0);
 
@@ -145,6 +158,7 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
     serialized.clear();
     serialized_size = 0;
 
+    std::mutex totalNumHashesMutex;
     new_block = Block::deserialize(serialized);
 
     std::cout << "MPI process " << mpi_rank << " searching block with prev hash (last 5): " << std::string(std::end(new_block.previous_hash) - 5, std::end(new_block.previous_hash)) << std::endl;
@@ -163,24 +177,30 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
 
     if (main_mpi_process)
     {
-        serialized.resize(serialized_size + 32768);
-        err = MPI_Irecv(serialized.data(), serialized_size + 32768, MPI_CHAR, MPI_ANY_SOURCE, mpi_block_found, MPI_COMM_WORLD, &recv_request);
+        serialized.resize(serialized_size + 3000);
+        err = MPI_Irecv(serialized.data(), serialized_size + 3000, MPI_CHAR, MPI_ANY_SOURCE, mpi_block_found, MPI_COMM_WORLD, &recv_request);
         check(err, "irecv");
     }
 
+    std::mutex nonceFoundMutex;
+    std::atomic<std::size_t> total_num_hashes = 0;
+    int main_thread = 0;
     for (int i = 0; i < options.threads; ++i)
     {
         threads.emplace_back([&, i, nonce_increment]()
         {
+            std::size_t num_hashes = 0;
+            std::lock_guard<std::mutex> lock(nonceFoundMutex);
             auto block = new_block;
             std::size_t nonce_start = mpi_nonce_start + i * nonce_increment;
             std::size_t nonce_end = mpi_nonce_start + (i + 1) * nonce_increment;
             for (std::size_t nonce = nonce_start; nonce < nonce_end; ++nonce)
             {
                 bool n = nonce_found;
-                err = MPI_Bcast(&n, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
-                check(err, "stuck at nonce_found check");
-
+                if(main_thread) {
+                    err = MPI_Bcast(&n, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
+                    check(err, "stuck at nonce_found check");
+                }
                 nonce_found.store(n);
 
                 if(stop)
@@ -198,12 +218,17 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
 
                 if (nonce_found.load())
                 {
+                    std::lock_guard<std::mutex> lock(totalNumHashesMutex);
+                    total_num_hashes += num_hashes;
                     return;
                 }
-
+                //static const auto timePoint = std::chrono::system_clock::from_time_t(0);
+                //static const auto timestamp = std::chrono::system_clock::to_time_t(timePoint);
+                block.timestamp = std::chrono::system_clock::now();
                 block.nonce = nonce;
                 block.difficulty = difficulty;
                 block.hash = hash::block(block);
+                num_hashes++;
                 if (std::all_of(std::begin(block.hash),
                         std::begin(block.hash) + block.difficulty,
                         [](auto c) { return c == '0'; }))
@@ -264,8 +289,14 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
         std::cout << "Main MPI process is returning block with hash: " << new_block.hash << "for prev block hash (last 5): " << std::string(std::end(new_block.previous_hash) - 5, std::end(new_block.previous_hash)) << std::endl;
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
+    auto end_time = std::chrono::steady_clock::now();
     std::cout << "Process finished: " << mpi_rank << "\n";
+    std::cout << "Total hashes: " << total_num_hashes << "\n";
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+    std::cout << "Time took: " << duration.count() << " milliseconds" << std::endl;
+    std::cout << "Hashes/ms: " << (total_num_hashes+1)/(duration.count()+1) << std::endl;
+    MPI_Barrier(MPI_COMM_WORLD);
+
     return new_block;
 }
 

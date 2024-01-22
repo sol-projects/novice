@@ -18,9 +18,25 @@ Blockchain blockchain::empty() {
 bool blockchain::validate(const Blockchain& blockchain)
 {
     using namespace std::chrono_literals;
-    return std::adjacent_find(std::begin(blockchain), std::end(blockchain), [](const auto& current, const auto& previous) {
-        return current.validation(previous) && std::chrono::duration_cast<std::chrono::seconds>(current.timestamp - previous.timestamp) <= 60s;
-    }) == std::end(blockchain);
+    for (auto it = std::next(std::begin(blockchain)); it != std::end(blockchain);
+         ++it)
+    {
+        if (!(it->validation(*std::prev(it))))
+        {
+            std::cout << "Invalid validation" << std::endl;
+            return false;
+        }
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(
+                (*it).timestamp - (*std::prev(it)).timestamp)
+            > 60s)
+        {
+            std::cout << "Invalid timestamp" << std::endl;
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::string blockchain::to_string(const Blockchain& blockchain)
@@ -102,9 +118,16 @@ Blockchain blockchain::from_string(const std::string& blockchain_)
 
     std::string block;
     int n = Block::num_fields;
+    int brace_count = 0;
     for (char c : blockchain_)
     {
-        if (c == '\n')
+        if (c == '{') {
+            brace_count++;
+        } else if (c == '}') {
+            brace_count--;
+        }
+
+        if (c == '\n' && brace_count == 0)
         {
             block += c;
             n--;
@@ -121,5 +144,10 @@ Blockchain blockchain::from_string(const std::string& blockchain_)
         }
     }
 
+    if (!block.empty()) {
+        blockchain.push_back(Block::from_string(block));
+    }
+
     return blockchain;
 }
+

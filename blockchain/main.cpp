@@ -14,7 +14,7 @@
 #include <mpi.h>
 #include "block.hpp"
 
-OptionFlags parse(int argc, char* argv[])
+OptionFlags parse(int argc, char* argv[], int world_size, int world_rank)
 {
     OptionFlags options {};
 
@@ -43,14 +43,19 @@ OptionFlags parse(int argc, char* argv[])
                     }
                 }
 
+                options.threads = 2;
                 std::cout << "Running benchmarks..." << std::endl;
                 auto b = blockchain::init();
                 std::atomic<bool> stop = false;
                 Block previous_block = b.at(0);
+                auto timePoint = std::chrono::system_clock::from_time_t(0);
+                auto timestamp = std::chrono::system_clock::to_time_t(timePoint);
                 auto start_time = std::chrono::high_resolution_clock::now();
-                for(int i = 0; i < 100; i++) {
-                    auto block = Block::new_from_previous_pow(previous_block, "", stop, 5, options, 0, 1);
-                    b.push_back(block);
+                b.at(0).timestamp = std::chrono::system_clock::from_time_t(timestamp);
+                b.at(0).hash = "";
+                for(int i = 0; i < 3; i++) {
+                    auto block = Block::new_from_previous_pow(previous_block, "", stop, 6, options, world_rank, world_size);
+                    block.timestamp = std::chrono::system_clock::from_time_t(timestamp);
                     previous_block = block;
                 }
                 auto end_time = std::chrono::high_resolution_clock::now();
@@ -59,6 +64,8 @@ OptionFlags parse(int argc, char* argv[])
                 }
                 auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
                 std::cout << "Benchmark completed: elapsed time: " << duration.count() << " ms" << std::endl;
+
+                MPI_Finalize();
                 std::exit(0);
                 break;
                       }
@@ -73,7 +80,6 @@ OptionFlags parse(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-    auto options = parse(argc, argv);
     constexpr int port = 2310;
     const std::string ip = asio::ip::address_v4::any().to_string();
 
@@ -90,6 +96,7 @@ int main(int argc, char* argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
+    auto options = parse(argc, argv, world_size, world_rank);
     if(world_rank == 0) {
         std::cout << "Starting main MPI process with GUI." << std::endl;
         auto app = new QApplication(argc, argv);
@@ -98,9 +105,8 @@ int main(int argc, char* argv[])
         std::thread t2([&]() {
             asio::io_context ioContext;
             std::unique_ptr<Server> server;
-            if (!available(ip, port))
+            if (available(ip, port))
             {
-                std::cout << "new node" << std::endl;
                 server = std::make_unique<Server>(ioContext, port, world_rank, world_size);
                 ioContext.run();
             }
