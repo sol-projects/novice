@@ -172,33 +172,35 @@ class MessageActivity : AppCompatActivity() {
             .build()
     }
 
-    private fun writeMessageToBlockchain(data: String) {
-        val url = "http://10.0.2.2:49321/message"
-        val client = OkHttpClient.Builder()
-            .build()
+    companion object {
+        fun writeMessageToBlockchain(data: String) {
+            val url = "http://10.0.2.2:49321/message"
+            val client = OkHttpClient.Builder()
+                .build()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val mediaType = "application/json".toMediaType()
-                val requestBody = data.toRequestBody(mediaType)
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val mediaType = "application/json".toMediaType()
+                    val requestBody = data.toRequestBody(mediaType)
 
-                val request = Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build()
+                    val request = Request.Builder()
+                        .url(url)
+                        .post(requestBody)
+                        .build()
 
-                val response = client.newCall(request).execute()
+                    val response = client.newCall(request).execute()
 
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
-                    Log.d("blockchain", "Request successful. Response body: $responseBody")
-                } else {
-                    Log.d("blockchain", "Request unsuccessful. Response code: ${response.code}")
-                    val errorBody = response.body?.string()
-                    Log.d("blockchain", "Error message: $errorBody")
+                    if (response.isSuccessful) {
+                        val responseBody = response.body?.string()
+                        Log.d("blockchain", "Request successful. Response body: $responseBody")
+                    } else {
+                        Log.d("blockchain", "Request unsuccessful. Response code: ${response.code}")
+                        val errorBody = response.body?.string()
+                        Log.d("blockchain", "Error message: $errorBody")
+                    }
+                } catch (e: Exception) {
+                    Log.e("blockchain", "Exception during request", e)
                 }
-            } catch (e: Exception) {
-                Log.e("blockchain", "Exception during request", e)
             }
         }
     }

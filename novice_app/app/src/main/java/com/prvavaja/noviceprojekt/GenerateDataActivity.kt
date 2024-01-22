@@ -24,11 +24,19 @@ import com.google.android.gms.location.LocationServices
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.runBlocking
+import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import org.mongodb.kbson.ObjectId
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.util.Date
+import java.util.UUID
 
 class GenerateDataActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGenerateDataBinding
@@ -133,9 +141,10 @@ class GenerateDataActivity : AppCompatActivity() {
                         if (simulatedTemp > myApplication.maxtemperature) {
                             val currentDatez = java.util.Date()
                             val authors = listOf("bot")
-                            val categoriesz = listOf("novice/temperature record")
+                            val categoriesz = listOf("novice/temperature-record")
                             //var emergancyMesage=NewsArticle("Temperature record","",currentDatez,authors,"Temperatura has pased the treshold: $simulatedTemp",categoriesz,)
                             println("Temperatura je presegla mejo")
+                            MessageActivity.writeMessageToBlockchain("Zaznana nadpovprečna temperatura ${simulatedTemp}. v ${realLastLocation.coordinates.first}, ${realLastLocation.coordinates.second}")
                         }
                     }
                     //println("Lokacija: " + lokacija)
@@ -147,11 +156,11 @@ class GenerateDataActivity : AppCompatActivity() {
             }
 
             if (isChecked) {
-                switch1.text ="Running"
+                switch1.text = getString(R.string.running)
                 handler1.post(updateSimulatedTemp)
             }
             else{
-                switch1.text ="Disabled"
+                switch1.text = getString(R.string.disabled)
                 handler1.removeMessages(0);
             }
 
@@ -167,7 +176,6 @@ class GenerateDataActivity : AppCompatActivity() {
                     var temp = values[0]
                     println(temp)
                     temperatura=temp
-                    writeTempToServer(temperatura)
                 }
             }
             override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
@@ -179,7 +187,8 @@ class GenerateDataActivity : AppCompatActivity() {
                     runOnUiThread {
                         val cas = binding.cardTimeSensorDisplaySecondsInterval.text.toString().toInt()
                         println("Temperatura iz senozrja: $temperatura")
-                        runBlocking {
+                        writeToServer(temperatura, true)
+                        /*runBlocking {
                             myApplication.realm.write {
                                 var article = NewsArticleRealm()
                                 article.authors = realmListOf("senzor")
@@ -193,7 +202,7 @@ class GenerateDataActivity : AppCompatActivity() {
                                 article.location!!.coordinates = realmListOf(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
                                 copyToRealm(article)
                             }
-                        }
+                        }*/
 
                         handler2.postDelayed(this, cas * 1000L)
                     }
@@ -254,7 +263,6 @@ class GenerateDataActivity : AppCompatActivity() {
                     var temp = values.get(0)
                     println(temp)
                     vlaznost=temp
-                    writeHumidityToServer(vlaznost)
                 }
             }
             override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
@@ -266,7 +274,7 @@ class GenerateDataActivity : AppCompatActivity() {
                     runOnUiThread {
                         val cas = binding.cardTimeSensorDisplaySecondsInterval.text.toString().toInt()
                         println("Humid iz senozrja: $vlaznost")
-                        writeHumidityToServer(vlaznost)
+                        writeToServer(vlaznost, false)
                         handler2.postDelayed(this, cas * 1000L)
                     }
                 }
@@ -390,7 +398,7 @@ class GenerateDataActivity : AppCompatActivity() {
         var realLastLocation: com.prvavaja.noviceprojekt.Location = Location("Point", Pair(0.0, 0.0))
     }
 
-    private fun writeTempToServer(temp: Float) {
+    /*private fun writeTempToServer(temp: Float) {
         myApplication.realm.writeBlocking {
             var article = NewsArticleRealm()
             article.authors = realmListOf("senzor")
@@ -404,10 +412,45 @@ class GenerateDataActivity : AppCompatActivity() {
             article.location!!.coordinates = realmListOf(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
             copyToRealm(article)
         }
-    }
+    }*/
 
-    private fun writeHumidityToServer(humidity: Float) {
-        myApplication.realm.writeBlocking {
+    private fun writeToServer(data: Float, temperature: Boolean) {
+        print("Writing to server.")
+        try {
+        val qos = 2
+        val clientId = UUID.randomUUID().toString()
+        val client = MqttClient("tcp://10.0.2.2:1883", clientId, MemoryPersistence())
+        val connOpts = MqttConnectOptions()
+        connOpts.isCleanSession = true
+        client.connect(connOpts)
+
+        var article = NewsArticle()
+        article.authors = listOf("senzor")
+        article.date = Date()
+        if(temperature) {
+            article.categories = listOf("senzor-temperatura")
+            article.content = data.toString()
+            article.title = "Temperatura iz senzorja"
+        } else {
+            article.categories = listOf("senzor-vlaznost")
+            article.content = data.toString()
+            article.title = "Vlažnost iz senzorja"
+        }
+
+        article._id = ObjectId().toString()
+        article.location!!.type = realLastLocation.type
+        println(realLastLocation.coordinates)
+        article.location!!.coordinates = Pair(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
+
+
+        val message = MqttMessage(article.toString().toByteArray())
+        message.qos = qos
+        print("Publishing to MQTT.")
+        client.publish("news/add", message)
+        } catch (e: MqttException) {
+            Log.e("exc", "MQTT Exception: ${e.message}", e)
+        }
+        /*myApplication.realm.writeBlocking {
             var article = NewsArticleRealm()
             article.authors = realmListOf("senzor")
             article.date = RealmInstant.now()
@@ -419,6 +462,6 @@ class GenerateDataActivity : AppCompatActivity() {
             println(realLastLocation.coordinates)
             article.location!!.coordinates = realmListOf(realLastLocation.coordinates.first, realLastLocation.coordinates.second)
             copyToRealm(article)
-        }
+        }*/
     }
 }

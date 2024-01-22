@@ -180,6 +180,7 @@ export async function add(req: Request, res: Response) {
   const existingNews = await News.findOne({
     title: value.title,
     content: value.content,
+    date: value.date
   });
 
   if (!existingNews) {

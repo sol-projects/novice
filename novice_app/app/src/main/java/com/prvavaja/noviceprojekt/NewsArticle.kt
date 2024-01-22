@@ -12,14 +12,14 @@ import kotlinx.serialization.json.Json
 import org.mongodb.kbson.ObjectId
 import java.util.Date
 
-class NewsArticle(var title: String,
-                  var url: String,
-                  var date: java.util.Date,
-                  val authors: List<String>,
-                  var content: String,
-                  val categories: List<String>,
-                  val location: Location,
-                  val _id: String = "0",
+class NewsArticle(var title: String = "",
+                  var url: String = "",
+                  var date: java.util.Date = Date(),
+                  var authors: List<String> = listOf(),
+                  var content: String = "",
+                  var categories: List<String> = listOf(),
+                  var location: Location = Location(type = "Point", coordinates = Pair(0.0, 0.0)),
+                  var _id: String = "0",
                   val __v: Int = 0) {
     override fun toString(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

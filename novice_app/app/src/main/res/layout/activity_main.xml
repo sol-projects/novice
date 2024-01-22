@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:drawableEnd="@drawable/sensors_drawable_buton"
-        android:text="Sensors"
+        android:text="@string/sensors"
         app:layout_constraintBottom_toTopOf="@+id/buttonCamera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -159,6 +160,32 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 iterator.remove();
             }
         }
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            while (true) {
+                try {
+                    List<INews> newNews = sendGet();
+
+                    Iterator<INews> it = newNews.iterator();
+                    while (it.hasNext()) {
+                        INews currentNews = it.next();
+                        double firstCoordinate = currentNews.getLocation().getCoordinates().getFirst();
+                        double secondCoordinate = currentNews.getLocation().getCoordinates().getSecond();
+
+                        if (firstCoordinate == 0.0 || secondCoordinate == 0.0) {
+                            it.remove();
+                        }
+                    }
+
+                    news.addAll(newNews);
+
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         backgroundTexture= new Texture(Gdx.files.internal("bacground.jpg"));
         //clickImage= new Texture(Gdx.files.internal("bomb.png"));
         code = GeolangKt.load();
@@ -283,15 +310,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 }
             }
         }
-        // lang
-        if(showLangExample){
-            Renderer renderer = new Renderer();
-            try {
-                renderer.render(new FileInputStream(new File("program.txt")), new Context(shapeRenderer, camera, beginTile));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
     public static boolean hasCommonElement(List<String> list1, List<String> list2) {//NAJE CE SE NAHAJA STRING V LISTU
         for (String str : list1) {
@@ -308,10 +326,8 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         List<String> warCategories = new ArrayList<>(Arrays.asList("vojna", "napad", "bombandiranje", "tank"));
         if (hasCommonElement(catagories, weatherCategories)) {
             rezultat=1;
-            // Do something related to weather
         } else if (hasCommonElement(catagories, sportCategories)) {
             rezultat=2;
-            // Do something related to sports
         } else if(hasCommonElement(catagories, warCategories)){
             rezultat=3;
         }
@@ -368,7 +384,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 image.setPosition(imagePosition.x - 25, imagePosition.y - 25);
 
 
-// Add the image to the stage
         if(!newsByLocation.containsKey(imagePosition)) {
             stage.addActor(image);
             newsByLocation.put(imagePosition,rezltatkatagorij);
@@ -423,18 +438,19 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         geojson_points_shader.setUniformMatrix("u_projTrans", camera.combined);
         geojson_points_mesh.render(geojson_points_shader, GL20.GL_POINTS);*/
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.BLUE);
-        for (int i = 0; i < code_points.size(); i++) {
-            Vector2 marker = MapRasterTiles.getPixelPosition(
-                    code_points.get(i).lat,
-                    code_points.get(i).lng,
-                    beginTile.x, beginTile.y);
+        if(showLangExample) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.BLUE);
+            for (int i = 0; i < code_points.size(); i++) {
+                Vector2 marker = MapRasterTiles.getPixelPosition(
+                        code_points.get(i).lat,
+                        code_points.get(i).lng,
+                        beginTile.x, beginTile.y);
 
-
-            shapeRenderer.circle(marker.x, marker.y, 1);
+                shapeRenderer.circle(marker.x, marker.y, 1);
+            }
+            shapeRenderer.end();
         }
-        shapeRenderer.end();
 
 
         // boat positions
@@ -470,7 +486,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         System.out.println("Tap: ");
         Vector3 worldCoordinates = camera.unproject(new Vector3(x, y, 0));
 
-        // Call the handleClick method with world coordinates
         handleClick(worldCoordinates.x, worldCoordinates.y);
 
         return true;
@@ -484,11 +499,9 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
     public void handleClick(float clickX, float clickY) {//UREJANJE PRITISKA NA MAPO TUKAJ SE USTVARI PRIKAZ NOVIC
          ArrayList<INews> thisPointnews=new ArrayList<>();;
 
-        // Check if the click is within the radius of any circle
         for (Vector2 circleLocation : circleLocations) {
             float distance = new Vector2(clickX, clickY).dst(circleLocation);
 
-            // If the click is within the radius of the circle
             if (distance <= 20) {
                 risiMarkerje=false;
                 for (int i = 0; i < news.size(); i++) {
@@ -532,7 +545,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                     label.addListener(new ClickListener() {//OB PRITISKU NA NOVICO SE POKAZE PRIKAZ NOVICE
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                            // Display the text of the clicked label
                             contentTable.clear();
                             int rezltatkatprikaz=katagorijeMarkerjev(thisPointnews.get(index).getCategories());
                             if(rezltatkatprikaz==1) {
@@ -555,7 +567,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                             //newContent.add(new Label(thisPointnews.get(index).getUrl(), skin)).left().row();
                             newContent.add(new Label("DATE:",skin)).left().row();
                             newContent.add(new Label(thisPointnews.get(index).getDate().toString(), skin)).left().row();
-                            newContent.add(new Label("AUTHORD:",skin)).left().row();
+                            newContent.add(new Label("AUTHORS:",skin)).left().row();
                             newContent.add(new Label(thisPointnews.get(index).getAuthors().toString(), skin)).left().row();
                             newContent.add(new Label("CONTENT:",skin)).left().row();
                             int length=thisPointnews.get(index).getContent().length();
@@ -622,7 +634,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 //scrollPane.setActor(newContent);
                 //scrollPane.layout();
 
-                // Perform any actions you want here
             }
         }
     }
@@ -739,7 +750,17 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         langButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //showLangExample = !showLangExample;
+                showLangExample = !showLangExample;
+
+                if(showLangExample) {
+                    code = GeolangKt.load();
+                    System.out.println(code);
+
+                    String geojson = GeolangKt.get_geojson_from_interpreter(code);
+                    System.out.println(geojson);
+
+                    code_points = GeolangKt.get_points_from_geojson(geojson);
+                }
                 //rain();
             }
         });
@@ -754,7 +775,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 //stage.addActor(boatAnimation.create());
                 //Table newContent = new Table();
                 contentTable.add(new Label("LEGEND:", skin)).left().row();
-                contentTable.add(new Label("Typs of news created last on location:", skin)).left().row();
+                contentTable.add(new Label("Types of news created last on location:", skin)).left().row();
                 Table legendTable=new Table();
                 Image bombaL = new Image(bomb);
                 //bombaL.setWidth(50f);
@@ -765,7 +786,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 //wetherL.setWidth(50f);
                 //wetherL.setHeight(50f);
                 legendTable.add(wetherL).left().size(30f,30f).pad(0).space(0);
-                legendTable.add(new Label("- Wether/environment news", skin)).left().pad(0).space(0).row();
+                legendTable.add(new Label("- Weather/Environment news", skin)).left().pad(0).space(0).row();
                 Image sportL = new Image(spor);
                 //sportL.setWidth(50f);
                 //sportL.setHeight(50f);
@@ -775,7 +796,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
                 //basicL.setWidth(50f);
                 //basicL.setHeight(50f);
                 legendTable.add(basicL).left().size(30f,30f).pad(0).space(0);
-                legendTable.add(new Label("- Oather news", skin)).left().pad(0).space(0).row();
+                legendTable.add(new Label("- Other news", skin)).left().pad(0).space(0).row();
                 TextButton backbtnL =new TextButton("Back to map", skin);
                 backbtnL.addListener(new ClickListener() {
                     @Override
@@ -812,7 +833,7 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         //Image image = new Image(clickImage);
         //contentTable.add(image).left().row();
         TextureRegionDrawable drawable = new TextureRegionDrawable(backgroundTexture);
-        contentTable.add(new Label("Tukaj bodo novice:",skin));
+        contentTable.add(new Label("Novice",skin));
         contentTable.background(drawable);
         buttonTable.background(drawable);
 

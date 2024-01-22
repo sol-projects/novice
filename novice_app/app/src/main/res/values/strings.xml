@@ -16,6 +16,12 @@
     <string name="displayY">HERE WILL BE Y:</string>
     <string name="masege">MESSAGE:</string>
     <string name="loremipsun">But I must explain to you how all this mistaken idea of denouncing of a pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but occasionally circumstances occur in which toil and pain can procure him some great pleasure.</string>
+    <string name="running">Running</string>
+    <string name="disabled">Disabled</string>
+    <string name="temp_limit_setting_text">Temperature warning limit</string>
+    <string name="deactivate_temp_limit_text">Deactivate</string>
+    <string name="activate_temp_limit_text">Activate</string>
+    <string name="sensors">Sensors</string>
 
     <string-array name="menu_items">
         <item>Accident</item>

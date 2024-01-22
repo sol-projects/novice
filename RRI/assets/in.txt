@@ -1,10 +1,10 @@
 let articles = fetch
 let loc: [f32] = [0.0, 0.0]
 for article in articles {
-   loc = article.location
-   group {
-       circle "novica" loc 0.05
-   }
+    loc = article.location
+    group {
+        circle "novica" loc 0.05
+    }
 }
 
 
