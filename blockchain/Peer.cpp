@@ -1,6 +1,7 @@
 #include "Peer.hpp"
 #include "blockchain.hpp"
 #include "openssl/des.h"
+#include "service.hpp"
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
@@ -16,13 +17,13 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <mpi.h>
 #include <netdb.h>
 #include <openssl/rc4.h>
 #include <random>
+#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <mpi.h>
-#include "service.hpp"
 
 namespace
 {
@@ -35,7 +36,6 @@ namespace
     std::vector<QLabel*> m_labels;
     std::atomic<bool> sendSignal = false;
     std::atomic<bool> resetWrite = false;
-
 
     void outputToGui(const std::string& string)
     {
@@ -95,7 +95,7 @@ void TcpConnection::read()
             }
             else
             {
-                std::erase_if(connections, [&](auto connection){ return connection.get() == this; });
+                std::erase_if(connections, [&](auto connection) { return connection.get() == this; });
                 std::cerr << code.message() << " Bytes transferred: " << length
                           << std::endl;
                 std::cerr << "client disconnected" << std::endl;
@@ -119,7 +119,7 @@ void Server::startAccepting()
         if (!code)
         {
             auto connection = std::make_shared<TcpConnection>(std::move(socket));
-            std::cout << "new connection" << std::endl;
+            std::cout << "New client connected." << std::endl;
             connection->read();
             connections.push_back(std::move(connection));
         }
@@ -134,7 +134,7 @@ void Server::startAccepting()
 
 void Server::broadcastFromAllServersToAllClients(const std::string& msg)
 {
-    std::cout << "SERVER broadcasting to " << connections.size() << " clients."
+    std::cout << "Server broadcasting to " << connections.size() << " clients."
               << std::endl;
     for (auto connection : connections)
     {
@@ -169,17 +169,13 @@ bool available(const std::string& ip, int port)
     if (result < 0)
     {
         close(sockfd);
-        return false;
-    }
-    else
-    {
-        close(sockfd);
+        std::cout << "Address " + ip + ":" + std::to_string(port) << " is available for use." << std::endl;
         return true;
     }
 
     close(sockfd);
-    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &true_, sizeof(int));
-    return true;
+    std::cout << "Address " + ip + ":" + std::to_string(port) << " is unavailable for use." << std::endl;
+    return false;
 }
 
 bool Gui::eventFilter(QObject* obj, QEvent* event)
@@ -286,10 +282,11 @@ void Client::write(const std::string& data)
 
 void Client::mine()
 {
-    service::listen();
-        std::this_thread::sleep_for(std::chrono::seconds(1)); // Adjust the sleep duration as needed
-    std::thread t([this]() {
-        service::get_message([this](auto message) {
+    service::start();
+    bool is_message_publisher;
+    bool first_run = true;
+    std::thread t([this, &is_message_publisher, &first_run]() {
+        is_message_publisher = service::get_message_and_status([this](auto message) {
             std::cout << "Receiving new message." << std::endl;
             std::unique_lock<std::mutex> lock(m_sensor_data_mutex);
             m_sensor_data = message;
@@ -299,39 +296,51 @@ void Client::mine()
             m_sensor_data_cv.notify_one();
         });
 
-
         for (;;)
         {
             resetWrite = false;
+
+            if (!is_message_publisher && !first_run)
+            {
+                service::get_message_and_status([this](auto message) {
+                    std::cout << "Receiving new message." << std::endl;
+                    std::unique_lock<std::mutex> lock(m_sensor_data_mutex);
+                    m_sensor_data = message;
+                    std::cout << message << std::endl;
+                    lock.unlock();
+                    m_sensor_data_cv.notify_one();
+                });
+            }
+
+            first_run = false;
 
             {
                 std::unique_lock<std::mutex> lock(m_sensor_data_mutex);
                 std::cout << "Waiting for messages." << std::endl;
                 m_sensor_data_cv.wait(lock, [this]() { return !m_sensor_data.empty(); });
                 std::cout << "New message, will start mining." << std::endl;
+                lock.unlock();
             }
 
             m_blockchain_update_mutex.lock();
             m_blockchain = blockchain::new_block_pow(m_blockchain, m_sensor_data, resetWrite, m_options, m_world_rank, m_world_size);
             m_blockchain_update_mutex.unlock();
-            
+
             m_sensor_data.clear();
 
-            if(resetWrite)
+            if (resetWrite)
             {
                 std::cout << "Resetting to last valid." << std::endl;
-                m_blockchain_update_mutex.lock();
-                while(!blockchain::validate(m_blockchain))
+                while (!blockchain::validate(m_blockchain))
                 {
                     m_blockchain.erase(std::end(m_blockchain) - 1);
                 }
-                m_blockchain_update_mutex.unlock();
-
             }
             else if (blockchain::validate(m_blockchain))
             {
                 write(blockchain::to_string(m_blockchain));
                 outputToGui("Mined block. Diff: " + std::to_string(m_blockchain.back().difficulty) + " Hash of last 5: " + std::string(m_blockchain.back().hash.end() - 5, m_blockchain.back().hash.end()));
+                outputToGui(m_blockchain.back().data);
             }
         }
 
@@ -349,33 +358,38 @@ void Client::read()
             if (!code)
             {
                 auto received = std::string(m_read.data());
-                std::cout << "Client received information." << std::endl;
+                std::cout << "Client received information: " << received << std::endl;
                 if (received.starts_with("Client connected.") || bytesTransferred == 0)
                 {
+                    std::cout << "Client looping back to read because of receiving: " << received << std::endl;
                     read();
                     return;
                 }
 
                 auto newBlockchain = blockchain::from_string(received);
+                std::cout << blockchain::to_string(newBlockchain) << std::endl;
                 std::cout << "Reading new blockchain, deciding what to do..." << std::endl;
                 if (blockchain::validate(newBlockchain))
                 {
-                    m_blockchain_update_mutex.lock();
-                    std::cout << "Checking if possible to update local blockchain." << std::endl;
+                    std::cout << "Checking if its possible to update local blockchain." << std::endl;
                     if (blockchain::difficulty(newBlockchain) >= blockchain::difficulty(m_blockchain))
                     {
                         std::cout << "Updating local blockchain with up to date blocks." << std::endl;
-                        m_blockchain = newBlockchain;
                         resetWrite = true;
+                        {
+                            std::lock_guard<std::mutex> guard(m_blockchain_update_mutex);
+                            m_blockchain = newBlockchain;
+                            blockchain::to_string(m_blockchain);
+                        }
                         outputToGui(
                             "Successfully validated new blocks. Local chain modified. Last 5 of hash: " + std::string(m_blockchain.back().hash.end() - 5, m_blockchain.back().hash.end()));
+                        outputToGui(m_blockchain.back().data);
                     }
                     else
                     {
                         std::cout << "Not updating local blockchain due to lower difficulty." << std::endl;
                         outputToGui("Ignored new blocks due to lower difficulty. Last 5 of hash: " + std::string(m_blockchain.back().hash.end() - 5, m_blockchain.back().hash.end()));
                     }
-                    m_blockchain_update_mutex.unlock();
                     ioContext.post([this]() { read(); });
                 }
                 else
@@ -396,4 +410,8 @@ void Client::read()
                 read();
             }
         });
+}
+
+Client::~Client()
+{
 }

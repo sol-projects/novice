@@ -1,9 +1,8 @@
 #pragma once
 #include "options.hpp"
+#include <atomic>
 #include <chrono>
 #include <string>
-#include <atomic>
-#include "options.hpp"
 
 struct Block
 {
