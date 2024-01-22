@@ -4,21 +4,21 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <cstring>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <mpi.h>
 #include <string>
 #include <thread>
-#include <mpi.h>
-#include <cstring>
-
 
 namespace
 {
     void check(int error_code, const std::string& msg)
     {
-        if (error_code != MPI_SUCCESS) {
+        if (error_code != MPI_SUCCESS)
+        {
             char error_string[MPI_MAX_ERROR_STRING];
             int length_of_error_string;
             MPI_Error_string(error_code, error_string, &length_of_error_string);
@@ -60,7 +60,7 @@ Block Block::new_from_previous(const Block& previous_block)
 
 bool Block::validation(const Block& previous_block) const
 {
-    return previous_hash == previous_block.hash && hash == hash::block(*this) &&  id == (previous_block.id + 1);
+    return previous_hash == previous_block.hash && hash == hash::block(*this) && id == (previous_block.id + 1);
 }
 
 std::string Block::to_string() const
@@ -88,16 +88,22 @@ Block Block::from_string(const std::string& string)
     std::string line;
     int field_counter = 0;
 
-    while (std::getline(iss, line)) {
-        if (line.find('{') != std::string::npos) {
+    while (std::getline(iss, line))
+    {
+        if (line.find('{') != std::string::npos)
+        {
             std::string json_content = line + '\n';
-            while (line.find('}') == std::string::npos && std::getline(iss, line)) {
+            while (line.find('}') == std::string::npos && std::getline(iss, line))
+            {
                 json_content += line + '\n';
             }
             json_content.push_back('}');
             block.data = json_content;
-        } else {
-            switch (field_counter) {
+        }
+        else
+        {
+            switch (field_counter)
+            {
                 case 0:
                     block.id = std::stoi(line);
                     break;
@@ -134,19 +140,21 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
     new_block.data = data;
 
     std::vector<uint8_t> serialized;
-    if(main_mpi_process)
+    if (main_mpi_process)
     {
         serialized = new_block.serialize();
     }
 
     int serialized_size;
-    if (main_mpi_process) {
+    if (main_mpi_process)
+    {
         serialized_size = serialized.size();
     }
     int err = MPI_Bcast(&serialized_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
     check(err, "serialized size");
 
-    if (!main_mpi_process) {
+    if (!main_mpi_process)
+    {
         serialized.resize(serialized_size);
     }
     err = MPI_Bcast(serialized.data(), serialized_size, MPI_CHAR, 0, MPI_COMM_WORLD);
@@ -187,8 +195,7 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
     int main_thread = 0;
     for (int i = 0; i < options.threads; ++i)
     {
-        threads.emplace_back([&, i, nonce_increment]()
-        {
+        threads.emplace_back([&, i, nonce_increment]() {
             std::size_t num_hashes = 0;
             std::lock_guard<std::mutex> lock(nonceFoundMutex);
             auto block = new_block;
@@ -197,13 +204,14 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
             for (std::size_t nonce = nonce_start; nonce < nonce_end; ++nonce)
             {
                 bool n = nonce_found;
-                if(main_thread) {
+                if (main_thread)
+                {
                     err = MPI_Bcast(&n, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
                     check(err, "stuck at nonce_found check");
                 }
                 nonce_found.store(n);
 
-                if(stop)
+                if (stop)
                 {
                     if (!main_mpi_process)
                     {
@@ -222,8 +230,8 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
                     total_num_hashes += num_hashes;
                     return;
                 }
-                //static const auto timePoint = std::chrono::system_clock::from_time_t(0);
-                //static const auto timestamp = std::chrono::system_clock::to_time_t(timePoint);
+                // static const auto timePoint = std::chrono::system_clock::from_time_t(0);
+                // static const auto timestamp = std::chrono::system_clock::to_time_t(timePoint);
                 block.timestamp = std::chrono::system_clock::now();
                 block.nonce = nonce;
                 block.difficulty = difficulty;
@@ -247,7 +255,6 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
                     {
                         new_block = block;
                     }
-
                 }
 
                 if (main_mpi_process)
@@ -266,7 +273,7 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
                             std::cout << "Main MPI process receiving block" << std::endl;
                             block_received = true;
                             new_block = Block::deserialize(serialized);
-                            std::cout << "Main MPI process received block with hash: " << new_block.hash << "for prev block hash (last 5): " << std::string(std::end(new_block.previous_hash) - 5, std::end(new_block.previous_hash))  << std::endl;
+                            std::cout << "Main MPI process received block with hash: " << new_block.hash << "for prev block hash (last 5): " << std::string(std::end(new_block.previous_hash) - 5, std::end(new_block.previous_hash)) << std::endl;
                             nonce_found.store(true);
                         }
                         else
@@ -284,8 +291,8 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
         thread.join();
     }
 
-
-    if(main_mpi_process) {
+    if (main_mpi_process)
+    {
         std::cout << "Main MPI process is returning block with hash: " << new_block.hash << "for prev block hash (last 5): " << std::string(std::end(new_block.previous_hash) - 5, std::end(new_block.previous_hash)) << std::endl;
     }
 
@@ -294,7 +301,7 @@ Block Block::new_from_previous_pow(const Block& previous_block, const std::strin
     std::cout << "Total hashes: " << total_num_hashes << "\n";
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
     std::cout << "Time took: " << duration.count() << " milliseconds" << std::endl;
-    std::cout << "Hashes/ms: " << (total_num_hashes+1)/(duration.count()+1) << std::endl;
+    std::cout << "Hashes/ms: " << (total_num_hashes + 1) / (duration.count() + 1) << std::endl;
     MPI_Barrier(MPI_COMM_WORLD);
 
     return new_block;
@@ -347,9 +354,7 @@ Block Block::deserialize(const std::vector<uint8_t>& buffer)
     std::memcpy(&timestamp_count, buffer.data() + sizeof(id), sizeof(timestamp_count));
     block.timestamp = std::chrono::time_point<std::chrono::system_clock>(
         std::chrono::duration_cast<std::chrono::system_clock::duration>(
-            std::chrono::nanoseconds(timestamp_count)
-        )
-    );
+            std::chrono::nanoseconds(timestamp_count)));
 
     offset += sizeof(timestamp_count);
 

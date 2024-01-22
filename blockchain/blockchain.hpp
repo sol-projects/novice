@@ -1,9 +1,9 @@
 #pragma once
 #include "block.hpp"
+#include "options.hpp"
+#include <atomic>
 #include <string>
 #include <vector>
-#include <atomic>
-#include "options.hpp"
 
 using Blockchain = std::vector<Block>;
 

@@ -1,6 +1,7 @@
 #include "Peer.hpp"
 #include "blockchain.hpp"
 #include "openssl/des.h"
+#include "service.hpp"
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
@@ -16,14 +17,13 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <mpi.h>
 #include <netdb.h>
 #include <openssl/rc4.h>
 #include <random>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <mpi.h>
-#include "service.hpp"
 
 namespace
 {
@@ -36,7 +36,6 @@ namespace
     std::vector<QLabel*> m_labels;
     std::atomic<bool> sendSignal = false;
     std::atomic<bool> resetWrite = false;
-
 
     void outputToGui(const std::string& string)
     {
@@ -96,7 +95,7 @@ void TcpConnection::read()
             }
             else
             {
-                std::erase_if(connections, [&](auto connection){ return connection.get() == this; });
+                std::erase_if(connections, [&](auto connection) { return connection.get() == this; });
                 std::cerr << code.message() << " Bytes transferred: " << length
                           << std::endl;
                 std::cerr << "client disconnected" << std::endl;
@@ -173,7 +172,7 @@ bool available(const std::string& ip, int port)
         std::cout << "Address " + ip + ":" + std::to_string(port) << " is available for use." << std::endl;
         return true;
     }
-        
+
     close(sockfd);
     std::cout << "Address " + ip + ":" + std::to_string(port) << " is unavailable for use." << std::endl;
     return false;
@@ -301,7 +300,8 @@ void Client::mine()
         {
             resetWrite = false;
 
-            if(!is_message_publisher && !first_run) {
+            if (!is_message_publisher && !first_run)
+            {
                 service::get_message_and_status([this](auto message) {
                     std::cout << "Receiving new message." << std::endl;
                     std::unique_lock<std::mutex> lock(m_sensor_data_mutex);
@@ -328,10 +328,10 @@ void Client::mine()
 
             m_sensor_data.clear();
 
-            if(resetWrite)
+            if (resetWrite)
             {
                 std::cout << "Resetting to last valid." << std::endl;
-                while(!blockchain::validate(m_blockchain))
+                while (!blockchain::validate(m_blockchain))
                 {
                     m_blockchain.erase(std::end(m_blockchain) - 1);
                 }
@@ -412,6 +412,6 @@ void Client::read()
         });
 }
 
-Client::~Client() {
-
+Client::~Client()
+{
 }

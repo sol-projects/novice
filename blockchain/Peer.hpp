@@ -1,4 +1,5 @@
 #pragma once
+#include "options.hpp"
 #include <QGraphicsView>
 #include <QMainWindow>
 #include <QtWidgets>
@@ -7,7 +8,6 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include "options.hpp"
 
 constexpr int buffer = 12000;
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>
@@ -41,7 +41,6 @@ private:
     asio::ip::tcp::acceptor acceptor;
     asio::ip::tcp::socket socket;
     std::string message;
-
 };
 
 class Gui : QWidget

@@ -8,10 +8,11 @@
 
 Blockchain blockchain::init()
 {
-    return {Block::genesis()};
+    return { Block::genesis() };
 }
 
-Blockchain blockchain::empty() {
+Blockchain blockchain::empty()
+{
     return {};
 }
 
@@ -75,13 +76,13 @@ Blockchain blockchain::new_block_pow(const Blockchain& blockchain, const std::st
     int blocks_below_expected_time = 0;
     int blocks_above_expected_time = 0;
 
-    if(blockchain.size() >= 10)
+    if (blockchain.size() >= 10)
     {
-        for(auto i = blockchain.size() - 9; i < blockchain.size(); i++)
+        for (auto i = blockchain.size() - 9; i < blockchain.size(); i++)
         {
             const auto time_expected = 10s;
             auto time_taken = std::chrono::duration_cast<std::chrono::microseconds>(
-            blockchain.at(i).timestamp - blockchain.at(i - 1).timestamp);
+                blockchain.at(i).timestamp - blockchain.at(i - 1).timestamp);
 
             if (time_taken < time_expected / 2)
             {
@@ -121,9 +122,12 @@ Blockchain blockchain::from_string(const std::string& blockchain_)
     int brace_count = 0;
     for (char c : blockchain_)
     {
-        if (c == '{') {
+        if (c == '{')
+        {
             brace_count++;
-        } else if (c == '}') {
+        }
+        else if (c == '}')
+        {
             brace_count--;
         }
 
@@ -144,10 +148,10 @@ Blockchain blockchain::from_string(const std::string& blockchain_)
         }
     }
 
-    if (!block.empty()) {
+    if (!block.empty())
+    {
         blockchain.push_back(Block::from_string(block));
     }
 
     return blockchain;
 }
-
