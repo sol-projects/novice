@@ -63,7 +63,7 @@
         android:text="@string/displayY"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.141"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewMapXMessage" />
 

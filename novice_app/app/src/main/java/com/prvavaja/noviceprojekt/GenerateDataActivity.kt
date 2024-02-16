@@ -132,7 +132,6 @@ class GenerateDataActivity : AppCompatActivity() {
                     val interval = binding.cardTemperaturaSIntervalEdittextInterval.text.toString().toLong() * 1000
                     val simulatedTemp = (tempFrom..tempTo).random()
 
-                    //Simulirana lokacija
                     //val lokacija = binding.adressInput.text.toString()
 
                     println("Temperatura: $simulatedTemp")
@@ -359,10 +358,8 @@ class GenerateDataActivity : AppCompatActivity() {
     private fun hasAmbientTemperatureSensor(): Boolean {
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-        // Get the list of sensors
         val sensorList: List<Sensor> = sensorManager.getSensorList(Sensor.TYPE_AMBIENT_TEMPERATURE)
 
-        // Check if the list is not empty, indicating the presence of the ambient temperature sensor
         return sensorList.isNotEmpty()
     }
 
@@ -386,10 +383,8 @@ class GenerateDataActivity : AppCompatActivity() {
     private fun hasHumiditySensor(): Boolean {
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-        // Get the list of sensors for TYPE_RELATIVE_HUMIDITY
         val sensorList: List<Sensor> = sensorManager.getSensorList(Sensor.TYPE_RELATIVE_HUMIDITY)
 
-        // Check if the list is not empty, indicating the presence of the humidity sensor
         return sensorList.isNotEmpty()
     }
 

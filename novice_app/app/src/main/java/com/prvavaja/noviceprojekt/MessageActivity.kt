@@ -70,10 +70,8 @@ class MessageActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_item
         )
 
-        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        // Apply the adapter to the spinner
         spiner.adapter = adapter
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
@@ -82,19 +80,17 @@ class MessageActivity : AppCompatActivity() {
         //mapView.zoomToBoundingBox(sloveniaBoundingBox, true)
         val mapController = mapView.controller
         mapController.setZoom(8.7)
-        val defaultLocation = GeoPoint(46.0767495796062, 14.853535025063707) // Adjust coordinates as needed
+        val defaultLocation = GeoPoint(46.0767495796062, 14.853535025063707)
         mapController.setCenter(defaultLocation)
 
         val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-                // Handle the click event
                 p?.let {
                     clickedLocation = p
                     println("Clicked Location: ${p.latitude}, ${p.longitude}")
                     textX.text=(p.latitude).toString()
                     textY.text=(p.longitude).toString()
                     isLocationSelected=true
-                    // Save the location in your variable or perform any other actions
                 }
                 return true
             }

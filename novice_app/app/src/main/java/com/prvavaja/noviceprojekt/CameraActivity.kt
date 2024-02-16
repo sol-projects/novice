@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class CameraActivty : AppCompatActivity() {
+class CameraActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCameraActivtyBinding
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null

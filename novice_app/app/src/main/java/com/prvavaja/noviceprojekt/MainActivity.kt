@@ -16,12 +16,12 @@ import java.io.StringWriter
 import java.text.SimpleDateFormat
 
 class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
-    private lateinit var binding: ActivityMainBinding //ADD THIS LINE
+    private lateinit var binding: ActivityMainBinding
     private lateinit var myApplication:MyAplication
     private lateinit var adapter: MyAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater) //ADD THIS LINE
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         myApplication = application as MyAplication
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnItemClickListener {
 
         binding.btnSetings.setOnClickListener {  val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent) }
-        binding.buttonCamera.setOnClickListener {  val intent = Intent(this, CameraActivty::class.java)
+        binding.buttonCamera.setOnClickListener {  val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent) }
         binding.btnMessage.setOnClickListener {  val intent = Intent(this, MessageActivity::class.java)
             startActivity(intent) }

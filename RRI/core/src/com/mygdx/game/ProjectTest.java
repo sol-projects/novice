@@ -116,19 +116,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
     private boolean risiMarkerje=true;
     Array<Image> raindrops;
 
-
-    // boat animation
-    Geolocation[] boatCoordinates = {
-            new Geolocation(46.5602f, 15.625186f),
-            new Geolocation(46.5580f, 15.632482f),
-            new Geolocation(46.5560f, 15.639112f),
-            new Geolocation(46.5555f, 15.647974f),
-            new Geolocation(46.5553f, 15.657566f)
-    };
-    BoatAnimation boatAnimation;
-
-
-    // center geolocation
     private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.119944,14.815333);
 
     private ArrayList<INews> news;
@@ -255,7 +242,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         Gdx.input.setInputProcessor(new InputMultiplexer(hudStage, new GestureDetector(this)));
 
         // boat
-        boatAnimation = new BoatAnimation(boatCoordinates, beginTile, 5);
         stage = new Stage(viewport, spriteBatch);
         //stage.addActor(boatAnimation.create());
         geojson_points_mesh = GeolangKt.create_point_mesh(shapeRenderer, code_points, beginTile);
@@ -647,27 +633,21 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         float spacing = 20f;
         float duration=5f;
         raindropImage.setSize(20f,20f);
-        // Create raindrops and add them to the stage
         for (int row = 0; row < 10; row++) {
             for (int i = 0; i < numRaindrops; i++) {
                 Image raindrop = new Image(raindropImage.getDrawable());
 
-                // Set initial position
                 //initialX = i * (raindropImage.getWidth() + spacing);
 
-                // Create a new Image using the raindrop texture
                 float randomX = MathUtils.random(screenWidth);
                 raindrop.setSize(20f, 20f);
-                // Set the initial position of the raindrop
                 raindrop.setPosition(randomX, initialY);
 
-                // Create a sequence of actions for each raindrop
                 raindrop.addAction(Actions.sequence(
                         Actions.moveTo(randomX, 0, duration),
                         Actions.removeActor()
                 ));
 
-                // Add raindrop to the stage and array
                 hudStage.addActor(raindrop);
                 raindrops.add(raindrop);
                 containerTable.addActor(raindrop);
@@ -837,8 +817,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         contentTable.background(drawable);
         buttonTable.background(drawable);
 
-        // Add a lot of information to the content table
-
         /*for (int i = 0; i < 50; i++) {
             final String labelText = "Information " + i;
             Label label = new Label(labelText, skin);
@@ -852,7 +830,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
             contentTable.add(label).row();
         }*/
 
-        // Create a ScrollPane and set its widget to the content table
         //scrollPane = new ScrollPane(contentTable);
 
         table.add(buttonTable).row();
@@ -861,7 +838,6 @@ public class ProjectTest extends ApplicationAdapter implements GestureDetector.G
         table.top();
         table.setFillParent(true);
         table.pack();
-        table.setDebug(true);
 
         return table;
     }

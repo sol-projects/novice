@@ -6,11 +6,10 @@ import com.prvavaja.noviceprojekt.databinding.ActivityDisplayBinding
 import com.prvavaja.noviceprojekt.databinding.ActivityMainBinding
 
 class DisplayActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityDisplayBinding //ADD THIS LINE
+    private lateinit var binding: ActivityDisplayBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//DOBIM PODATKE OD IZBRANE NOVICE IN JIH DISPLEJAM
-        binding = ActivityDisplayBinding.inflate(layoutInflater) //ADD THIS LINE
+        binding = ActivityDisplayBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //setContentView(R.layout.activity_display)
         val titleTextView = binding.newsTitle
@@ -25,7 +24,6 @@ class DisplayActivity : AppCompatActivity() {
         val newsId = intent.getStringExtra("id")
         println(newsId)
         if (newsId != null) {
-            //val clickedSadje =findSadjeByUuid(sadjeUuid) // Retrieve Sadje object using the UUID
             titleTextView.setText(intent.getStringExtra("title"))
             urlTextView.setText(intent.getStringExtra("url"))
             dateTextView.setText(intent.getStringExtra("date"))
@@ -33,8 +31,6 @@ class DisplayActivity : AppCompatActivity() {
             categoriesTextView.setText(intent.getStringExtra("categories"))
             locationTextView.setText(intent.getStringExtra("cordinates"))
             contentTextView.setText(intent.getStringExtra("content"))
-
-            //populateEditTextFields(clickedSadje)
         }
         binding.btnDisplayBack.setOnClickListener {
             finish()

@@ -39,7 +39,6 @@ class MyAdapter (private var newsList: List<NewsArticle>) : RecyclerView.Adapter
         holder.textViewAuthors.text ="AUTHORS: ${formattedAuthors}"
         holder.textViewLocations.text ="LOCATION: ${coordinates}"
 
-        // Set click listener
         holder.itemView.setOnClickListener {
             onItemClickListener?.onItemClick(news)
         }
@@ -47,7 +46,6 @@ class MyAdapter (private var newsList: List<NewsArticle>) : RecyclerView.Adapter
             onItemLongClickListener?.onItemLongClick(news)
             true // Consume the long click event
         }
-        // Bind other data to TextViews
     }
 
     override fun getItemCount(): Int {

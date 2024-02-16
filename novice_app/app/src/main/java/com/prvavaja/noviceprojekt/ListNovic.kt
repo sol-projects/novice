@@ -12,12 +12,10 @@ class ListNovic {
             items[index] = updatedNovica
         }
     }
-    // Remove a news from the list
     fun removeItem(novica: NewsArticle) {
         items.remove(novica)
     }
 
-    // Get the list of items in the shopping cart
     fun getItems(): List<NewsArticle> {
         val sortedItems = items
         for (item in sortedItems) {
