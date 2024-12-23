@@ -240,7 +240,7 @@ class GenerateDataActivity : AppCompatActivity() {
                 }
             }
 
-            if (isChecked) {switch4
+            if (isChecked) {
                 switch3.text ="Running"
                 handler3.post(updateSimulatedTemp)
             }
