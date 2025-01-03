@@ -3,13 +3,13 @@ import random
 import shutil
 from PIL import Image
 
+#you can chage img size here:: 
+#TODO make size global
+
 def resize_and_save(src_path, dst_path, size=(50, 50)):
-    """
-    Open an image from src_path, resize it to 50×50, and save to dst_path.
-    """
     with Image.open(src_path) as img:
         img = img.resize(size, Image.Resampling.LANCZOS)
-        img.save(dst_path, format="JPEG")  # always save as .jpg
+        img.save(dst_path, format="JPEG")
 
 def prepare_data():
     source_root = "data/raw"
@@ -24,7 +24,7 @@ def prepare_data():
         if f.lower().endswith((".jpg", ".jpeg", ".png"))
     ]
     random.shuffle(car_files)
-    car_files = car_files[:1500]  # pick up to 1500
+    car_files = car_files[:1500]
     
     for i, filename in enumerate(car_files):
         src_path = os.path.join(cars_src_dir, filename)
@@ -84,7 +84,6 @@ def prepare_data():
     csv_dst = os.path.join(ev_dst_dir, "train.csv")
     if os.path.exists(csv_src):
         shutil.copy(csv_src, csv_dst)
-        print(f"Copied train.csv to: {csv_dst}")
     else:
         print("train.csv not found in raw directory, skipping copy.")
 
