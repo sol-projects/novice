@@ -4,13 +4,9 @@ desktop-app/.gradle/7.5.1/checksums/sha1-checksums.bin
 *.bin
 *.lock
 *.klib
-*.xml
 desktop-app/.idea/workspace.xml
 *.probe
 *.bin
 *.lock
 desktop-app/.gradle/7.5.1/fileHashes/resourceHashesCache.bin
 *.bin
-
-!novinar_app/app/src/main/res
-!novinar_app/app/src/main/AndroidManifest.xml
