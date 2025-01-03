@@ -9,10 +9,9 @@ import com.example.novinar.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //val navView: BottomNavigationView = findViewById(R.id.nav_view)
+
         val navView = binding.navView
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_post -> PostNewsFragment()
                 R.id.navigation_view -> ViewNewsFragment()
                 R.id.navigation_map -> MapFragment()
+                R.id.navigation_sensor -> SensorDataFragment() // Nova možnost za senzorje
                 else -> ViewNewsFragment()
             }
             supportFragmentManager.beginTransaction()
