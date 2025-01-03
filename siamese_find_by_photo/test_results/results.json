@@ -1,0 +1,560 @@
+[
+    {
+        "query_path": "test_data/cars/1.jpg",
+        "query_label": 0,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cars/1.jpg",
+                "ref_label": 1,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/910.jpg",
+                "ref_label": 2,
+                "distance": 0.37899377942085266
+            },
+            {
+                "ref_path": "data/cats/155.jpg",
+                "ref_label": 2,
+                "distance": 0.4248194098472595
+            },
+            {
+                "ref_path": "data/dogs/440.jpg",
+                "ref_label": 3,
+                "distance": 0.47004786133766174
+            },
+            {
+                "ref_path": "data/dogs/416.jpg",
+                "ref_label": 3,
+                "distance": 0.4754892885684967
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cars/2.jpg",
+        "query_label": 0,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cars/2.jpg",
+                "ref_label": 1,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/909.jpg",
+                "ref_label": 2,
+                "distance": 0.31771472096443176
+            },
+            {
+                "ref_path": "data/cars/830.jpg",
+                "ref_label": 1,
+                "distance": 0.33223095536231995
+            },
+            {
+                "ref_path": "data/cars/1035.jpg",
+                "ref_label": 1,
+                "distance": 0.33274179697036743
+            },
+            {
+                "ref_path": "data/cars/477.jpg",
+                "ref_label": 1,
+                "distance": 0.338463693857193
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cars/5.jpg",
+        "query_label": 0,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cars/5.jpg",
+                "ref_label": 1,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/277.jpg",
+                "ref_label": 3,
+                "distance": 0.34469276666641235
+            },
+            {
+                "ref_path": "data/dogs/320.jpg",
+                "ref_label": 3,
+                "distance": 0.36110517382621765
+            },
+            {
+                "ref_path": "data/dogs/849.jpg",
+                "ref_label": 3,
+                "distance": 0.37031590938568115
+            },
+            {
+                "ref_path": "data/cars/396.jpg",
+                "ref_label": 1,
+                "distance": 0.3713783323764801
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cars/0.jpg",
+        "query_label": 0,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cars/0.jpg",
+                "ref_label": 1,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cars/101.jpg",
+                "ref_label": 1,
+                "distance": 0.5318999886512756
+            },
+            {
+                "ref_path": "data/cars/1332.jpg",
+                "ref_label": 1,
+                "distance": 0.5429319739341736
+            },
+            {
+                "ref_path": "data/cars/288.jpg",
+                "ref_label": 1,
+                "distance": 0.5588300228118896
+            },
+            {
+                "ref_path": "data/cars/979.jpg",
+                "ref_label": 1,
+                "distance": 0.57563316822052
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cars/4.jpg",
+        "query_label": 0,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cars/4.jpg",
+                "ref_label": 1,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cars/1374.jpg",
+                "ref_label": 1,
+                "distance": 0.3651352524757385
+            },
+            {
+                "ref_path": "data/cars/1494.jpg",
+                "ref_label": 1,
+                "distance": 0.4708554446697235
+            },
+            {
+                "ref_path": "data/cars/670.jpg",
+                "ref_label": 1,
+                "distance": 0.4869391918182373
+            },
+            {
+                "ref_path": "data/cars/1426.jpg",
+                "ref_label": 1,
+                "distance": 0.5230518579483032
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cars/3.jpg",
+        "query_label": 0,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cars/3.jpg",
+                "ref_label": 1,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cars/1360.jpg",
+                "ref_label": 1,
+                "distance": 0.36941850185394287
+            },
+            {
+                "ref_path": "data/cars/593.jpg",
+                "ref_label": 1,
+                "distance": 0.3882693946361542
+            },
+            {
+                "ref_path": "data/cars/741.jpg",
+                "ref_label": 1,
+                "distance": 0.39107802510261536
+            },
+            {
+                "ref_path": "data/cars/1320.jpg",
+                "ref_label": 1,
+                "distance": 0.4126032590866089
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cats/1.jpg",
+        "query_label": 1,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cats/1.jpg",
+                "ref_label": 2,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/667.jpg",
+                "ref_label": 2,
+                "distance": 0.33376964926719666
+            },
+            {
+                "ref_path": "data/cars/795.jpg",
+                "ref_label": 1,
+                "distance": 0.4145144820213318
+            },
+            {
+                "ref_path": "data/cats/95.jpg",
+                "ref_label": 2,
+                "distance": 0.4372785687446594
+            },
+            {
+                "ref_path": "data/cats/656.jpg",
+                "ref_label": 2,
+                "distance": 0.4372785687446594
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cats/2.jpg",
+        "query_label": 1,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cats/2.jpg",
+                "ref_label": 2,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/502.jpg",
+                "ref_label": 2,
+                "distance": 0.38072097301483154
+            },
+            {
+                "ref_path": "data/dogs/845.jpg",
+                "ref_label": 3,
+                "distance": 0.3970373272895813
+            },
+            {
+                "ref_path": "data/cats/27.jpg",
+                "ref_label": 2,
+                "distance": 0.4040343165397644
+            },
+            {
+                "ref_path": "data/cars/903.jpg",
+                "ref_label": 1,
+                "distance": 0.48304611444473267
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cats/5.jpg",
+        "query_label": 1,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cats/5.jpg",
+                "ref_label": 2,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/263.jpg",
+                "ref_label": 3,
+                "distance": 0.2608223855495453
+            },
+            {
+                "ref_path": "data/cats/116.jpg",
+                "ref_label": 2,
+                "distance": 0.27371716499328613
+            },
+            {
+                "ref_path": "data/cats/639.jpg",
+                "ref_label": 2,
+                "distance": 0.303871214389801
+            },
+            {
+                "ref_path": "data/cats/400.jpg",
+                "ref_label": 2,
+                "distance": 0.3234047293663025
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cats/0.jpg",
+        "query_label": 1,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cats/0.jpg",
+                "ref_label": 2,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/536.jpg",
+                "ref_label": 3,
+                "distance": 0.2209068238735199
+            },
+            {
+                "ref_path": "data/cats/460.jpg",
+                "ref_label": 2,
+                "distance": 0.23310592770576477
+            },
+            {
+                "ref_path": "data/cats/738.jpg",
+                "ref_label": 2,
+                "distance": 0.31154975295066833
+            },
+            {
+                "ref_path": "data/cats/716.jpg",
+                "ref_label": 2,
+                "distance": 0.33719438314437866
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cats/4.jpg",
+        "query_label": 1,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cats/4.jpg",
+                "ref_label": 2,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/654.jpg",
+                "ref_label": 2,
+                "distance": 0.2592039406299591
+            },
+            {
+                "ref_path": "data/dogs/529.jpg",
+                "ref_label": 3,
+                "distance": 0.30227991938591003
+            },
+            {
+                "ref_path": "data/cats/97.jpg",
+                "ref_label": 2,
+                "distance": 0.3088035583496094
+            },
+            {
+                "ref_path": "data/dogs/358.jpg",
+                "ref_label": 3,
+                "distance": 0.32113829255104065
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/cats/3.jpg",
+        "query_label": 1,
+        "top_k_matches": [
+            {
+                "ref_path": "data/cats/3.jpg",
+                "ref_label": 2,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/1007.jpg",
+                "ref_label": 2,
+                "distance": 0.216109499335289
+            },
+            {
+                "ref_path": "data/dogs/321.jpg",
+                "ref_label": 3,
+                "distance": 0.22806555032730103
+            },
+            {
+                "ref_path": "data/dogs/862.jpg",
+                "ref_label": 3,
+                "distance": 0.2470504343509674
+            },
+            {
+                "ref_path": "data/dogs/23.jpg",
+                "ref_label": 3,
+                "distance": 0.25486859679222107
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/dogs/1.jpg",
+        "query_label": 2,
+        "top_k_matches": [
+            {
+                "ref_path": "data/dogs/1.jpg",
+                "ref_label": 3,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/cats/363.jpg",
+                "ref_label": 2,
+                "distance": 0.3168906271457672
+            },
+            {
+                "ref_path": "data/cats/726.jpg",
+                "ref_label": 2,
+                "distance": 0.32190078496932983
+            },
+            {
+                "ref_path": "data/cars/29.jpg",
+                "ref_label": 1,
+                "distance": 0.34001225233078003
+            },
+            {
+                "ref_path": "data/cats/618.jpg",
+                "ref_label": 2,
+                "distance": 0.34021443128585815
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/dogs/2.jpg",
+        "query_label": 2,
+        "top_k_matches": [
+            {
+                "ref_path": "data/dogs/2.jpg",
+                "ref_label": 3,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/136.jpg",
+                "ref_label": 3,
+                "distance": 0.18146908283233643
+            },
+            {
+                "ref_path": "data/dogs/255.jpg",
+                "ref_label": 3,
+                "distance": 0.2187090516090393
+            },
+            {
+                "ref_path": "data/dogs/261.jpg",
+                "ref_label": 3,
+                "distance": 0.2709573209285736
+            },
+            {
+                "ref_path": "data/dogs/700.jpg",
+                "ref_label": 3,
+                "distance": 0.27495819330215454
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/dogs/5.jpg",
+        "query_label": 2,
+        "top_k_matches": [
+            {
+                "ref_path": "data/dogs/5.jpg",
+                "ref_label": 3,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/218.jpg",
+                "ref_label": 3,
+                "distance": 0.21584390103816986
+            },
+            {
+                "ref_path": "data/cats/293.jpg",
+                "ref_label": 2,
+                "distance": 0.23590002954006195
+            },
+            {
+                "ref_path": "data/cats/610.jpg",
+                "ref_label": 2,
+                "distance": 0.2402845025062561
+            },
+            {
+                "ref_path": "data/cats/375.jpg",
+                "ref_label": 2,
+                "distance": 0.2526809275150299
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/dogs/0.jpg",
+        "query_label": 2,
+        "top_k_matches": [
+            {
+                "ref_path": "data/dogs/0.jpg",
+                "ref_label": 3,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/328.jpg",
+                "ref_label": 3,
+                "distance": 0.11832013726234436
+            },
+            {
+                "ref_path": "data/cats/603.jpg",
+                "ref_label": 2,
+                "distance": 0.13137927651405334
+            },
+            {
+                "ref_path": "data/cats/1007.jpg",
+                "ref_label": 2,
+                "distance": 0.2014598697423935
+            },
+            {
+                "ref_path": "data/cats/516.jpg",
+                "ref_label": 2,
+                "distance": 0.23471572995185852
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/dogs/4.jpg",
+        "query_label": 2,
+        "top_k_matches": [
+            {
+                "ref_path": "data/dogs/4.jpg",
+                "ref_label": 3,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/400.jpg",
+                "ref_label": 3,
+                "distance": 0.31858283281326294
+            },
+            {
+                "ref_path": "data/cars/909.jpg",
+                "ref_label": 1,
+                "distance": 0.38834577798843384
+            },
+            {
+                "ref_path": "data/cats/840.jpg",
+                "ref_label": 2,
+                "distance": 0.3915089964866638
+            },
+            {
+                "ref_path": "data/dogs/540.jpg",
+                "ref_label": 3,
+                "distance": 0.4025370180606842
+            }
+        ]
+    },
+    {
+        "query_path": "test_data/dogs/3.jpg",
+        "query_label": 2,
+        "top_k_matches": [
+            {
+                "ref_path": "data/dogs/3.jpg",
+                "ref_label": 3,
+                "distance": 7.999999979801942e-06
+            },
+            {
+                "ref_path": "data/dogs/645.jpg",
+                "ref_label": 3,
+                "distance": 0.3127545118331909
+            },
+            {
+                "ref_path": "data/dogs/893.jpg",
+                "ref_label": 3,
+                "distance": 0.31623101234436035
+            },
+            {
+                "ref_path": "data/dogs/152.jpg",
+                "ref_label": 3,
+                "distance": 0.3345714509487152
+            },
+            {
+                "ref_path": "data/dogs/619.jpg",
+                "ref_label": 3,
+                "distance": 0.3560922145843506
+            }
+        ]
+    }
+]
