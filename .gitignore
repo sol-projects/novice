@@ -11,3 +11,5 @@ desktop-app/.idea/workspace.xml
 desktop-app/.gradle/7.5.1/fileHashes/resourceHashesCache.bin
 *.bin
 venv
+best_model.keras
+multi_class_model.keras
