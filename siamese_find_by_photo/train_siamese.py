@@ -119,13 +119,7 @@ def train_siamese_network(
     num_epochs=5,
     margin=2.0
 ):
-# All images are saved at 50x50. If you have a faster PC, consider preparing images at a larger size, 
-# as excessive compression and decompression dont make sense.
 
-        transforms.Resize((50, 50)),
-        transforms.ToTensor(),
-    ])
-    
     dataset = SiameseDataset(root_dir=data_dir, transform=transform)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2)
     

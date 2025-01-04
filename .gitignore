@@ -10,3 +10,4 @@ desktop-app/.idea/workspace.xml
 *.lock
 desktop-app/.gradle/7.5.1/fileHashes/resourceHashesCache.bin
 *.bin
+venv
