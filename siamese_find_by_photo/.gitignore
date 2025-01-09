@@ -1,5 +1,5 @@
-data/raw/**
-
+raw_data/**
+test_data/**
 data/cats/*
 !data/cats/1.jpg
 !data/cats/2.jpg
