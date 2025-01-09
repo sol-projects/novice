@@ -5,12 +5,11 @@ plugins {
 
 android {
     namespace = "com.example.novinar"
-    compileSdk = 34
-
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.example.novinar"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -39,8 +38,11 @@ android {
 }
 
 dependencies {
+    implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
 
-    implementation(libs.androidx.core.ktx)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
@@ -53,6 +55,10 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.15")
     implementation("com.github.MKergall:osmbonuspack:6.9.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation(libs.androidx.core)
+    implementation ("androidx.core:core:1.14.0")
+    implementation ("androidx.core:core-ktx:1.14.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

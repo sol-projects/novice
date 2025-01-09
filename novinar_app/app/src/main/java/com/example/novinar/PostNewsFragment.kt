@@ -1,10 +1,5 @@
 package com.example.novinar
 
-import android.Manifest
-import android.app.PendingIntent
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,56 +7,55 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.example.novinar.api.ApiService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class PostNewsFragment : Fragment() {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var userLocation: Location? = null
-    private var editIndex: Int? = null
+    private lateinit var apiService: ApiService
+    private var isEditing: Boolean = false
+    private var editingNewsId: String? = null
+
+    companion object {
+        fun newInstance(apiService: ApiService): PostNewsFragment {
+            val fragment = PostNewsFragment()
+            fragment.apiService = apiService // Set the API service instance
+            return fragment
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_post_news, container, false)
+
         val titleInput: EditText = view.findViewById(R.id.editTextTitle)
         val contentInput: EditText = view.findViewById(R.id.editTextContent)
         val postButton: Button = view.findViewById(R.id.buttonPost)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        fetchUserLocation()
-
+        // Check if the fragment is in editing mode
         arguments?.let {
-            editIndex = it.getInt("news_index", -1)
-            titleInput.setText(it.getString("news_title", ""))
-            contentInput.setText(it.getString("news_content", ""))
+            isEditing = it.getBoolean("isEditing", false)
+            editingNewsId = it.getString("newsId", null)
+            titleInput.setText(it.getString("title", ""))
+            contentInput.setText(it.getString("content", ""))
         }
+
+        postButton.text = if (isEditing) "Update News" else "Post News"
 
         postButton.setOnClickListener {
             val title = titleInput.text.toString()
             val content = contentInput.text.toString()
-            val location = userLocation
 
             if (title.isNotEmpty() && content.isNotEmpty()) {
-                if (editIndex != null && editIndex != -1) {
-                    NewsRepository.editNews(
-                        editIndex!!,
-                        News(title, content, location?.latitude ?: 0.0, location?.longitude ?: 0.0)
-                    )
-                    Toast.makeText(context, "News updated successfully!", Toast.LENGTH_SHORT).show()
+                if (isEditing) {
+                    updateNews(editingNewsId, title, content)
                 } else {
-                    NewsRepository.addNews(
-                        News(title, content, location?.latitude ?: 0.0, location?.longitude ?: 0.0)
-                    )
-                    Toast.makeText(context, "News posted successfully!", Toast.LENGTH_SHORT).show()
+                    postNews(title, content)
                 }
-
-                requireActivity().supportFragmentManager.popBackStack()
-                sendNotification(title, content)
-                redirectToViewNewsFragment()
             } else {
                 Toast.makeText(context, "Please fill out all fields", Toast.LENGTH_SHORT).show()
             }
@@ -70,50 +64,61 @@ class PostNewsFragment : Fragment() {
         return view
     }
 
-    private fun fetchUserLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1001
-            )
+    private fun postNews(title: String, content: String) {
+        val news = News(
+            _id = null,
+            title = title,
+            content = content,
+            latitude = 0.0,
+            longitude = 0.0,
+            timestamp = "null"
+        )
+
+        apiService.addNews(news).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "News posted successfully!", Toast.LENGTH_SHORT).show()
+                    requireActivity().supportFragmentManager.popBackStack()
+                } else {
+                    Toast.makeText(context, "Failed to post news", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateNews(id: String?, title: String, content: String) {
+        if (id == null) {
+            Toast.makeText(context, "Invalid news ID", Toast.LENGTH_SHORT).show()
             return
         }
 
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                userLocation = location
-            } else {
-                Toast.makeText(context, "Unable to retrieve location", Toast.LENGTH_SHORT).show()
+        val updatedNews = News(
+            _id = id,
+            title = title,
+            content = content,
+            latitude = 0.0,
+            longitude = 0.0,
+            timestamp = "null"
+        )
+
+        apiService.editNews(id, updatedNews).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "News updated successfully!", Toast.LENGTH_SHORT).show()
+                    requireActivity().supportFragmentManager.popBackStack()
+                } else {
+                    Toast.makeText(context, "Failed to update news", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
-    }
 
-    private fun sendNotification(title: String, content: String) {
-        val intent = Intent(requireContext(), MainActivity::class.java).apply {
-            putExtra("fragment", "ViewNewsFragment")
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            requireContext(),
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        NotificationHelper.sendNotification(
-            requireContext(),
-            "New Article Posted",
-            "Title: $title\nContent: $content",
-            pendingIntent
-        )
-    }
-
-    private fun redirectToViewNewsFragment() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, ViewNewsFragment())
-            .commit()
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
+

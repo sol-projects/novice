@@ -3,8 +3,8 @@ from model import build_model, train_model
 from test import evaluate_model, predict_image
 
 # Paths and categories
-data_dir = r'C:\Users\legen\OneDrive\Dokumenti\GitHub\novice\sistem-za-razpoznavo-sport (open for cringe +20 status effect)\slike'
-test_dir = r'C:\Users\legen\OneDrive\Dokumenti\GitHub\novice\sistem-za-razpoznavo-sport (open for cringe +20 status effect)\test'
+data_dir = r'.\slike'
+test_dir = r'.\test'
 categories = ['accidents', 'apple', 'apple_red', 'pear']  # Include all categories
 
 # 1. Load and preprocess training data

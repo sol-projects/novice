@@ -2,18 +2,18 @@ package com.example.novinar
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import android.view.MotionEvent
 
 class MapFragment : Fragment() {
 
@@ -58,7 +58,7 @@ class MapFragment : Fragment() {
             val marker = Marker(mapView)
             marker.position = GeoPoint(news.latitude, news.longitude)
             marker.title = news.title
-            marker.snippet = news.content
+            marker.snippet = "${news.content}\nPosted at: ${news.timestamp}" // Include timestamp
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
             marker.setOnMarkerClickListener { m, _ ->
@@ -82,10 +82,12 @@ class MapFragment : Fragment() {
                 if (distance < 50) {
                     clusterItems.add(
                         News(
-                            item.title,
-                            item.snippet ?: "",
-                            item.position.latitude,
-                            item.position.longitude
+                            _id = null, // ID is not used in this context
+                            title = item.title,
+                            content = item.snippet?.split("\n")?.get(0) ?: "",
+                            latitude = item.position.latitude,
+                            longitude = item.position.longitude,
+                            timestamp = item.snippet?.split("\n")?.get(1)?.replace("Posted at: ", "") ?: ""
                         )
                     )
                 }
@@ -103,7 +105,7 @@ class MapFragment : Fragment() {
         val recyclerView: RecyclerView = bottomSheetView.findViewById(R.id.clusterRecyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = NewsAdapter(newsList, onEdit = {}, onDelete = {})
+        recyclerView.adapter = NewsAdapter(newsList, onEdit = {}, onDelete = {}) // Add edit/delete logic if needed
 
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(bottomSheetView)
@@ -121,5 +123,3 @@ class MapFragment : Fragment() {
         mapView.onPause()
     }
 }
-
-
