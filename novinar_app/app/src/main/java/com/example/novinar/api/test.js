@@ -5,7 +5,7 @@ const app = express();
 const port = 3000;
 
 // MongoDB connection URI
-const mongoUri = "";
+const mongoUri = "mongodb+srv://ognjen:ognjen123@cluster0.allnp.mongodb.net/novinar?retryWrites=true&w=majority";
 
 // Initialize MongoClient
 const client = new MongoClient(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -15,7 +15,7 @@ app.use(express.json());
 (async function startServer() {
     try {
         console.log("Connecting to MongoDB...");
-        await client.connect(); // Explicitly await connection
+        await client.connect(); 
         console.log("Connected to MongoDB successfully!");
 
         const db = client.db("novinar");
