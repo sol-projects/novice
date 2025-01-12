@@ -4,7 +4,7 @@ import { INews } from '../../model/News';
 async function _mbinfo(n: number = 5) {
   const news: INews[] = [];
 
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   await page.goto('https://mariborinfo.com/lokalno');

@@ -10,12 +10,12 @@ import * as Db from './db/db';
 import * as Socket from './socket/socket';
 const cors = require('cors');
 
-dotenv.config();
+dotenv.config(); 
 
 const app: Express = express();
 app.use(cors({ credentials: true }));
 app.use(express.json());
-app.use('/news', router);
+app.use('/news', router); 
 
 if(process.env.TESTS_FLAG !== 'true') {
     if (!process.env.DB_NAME) {

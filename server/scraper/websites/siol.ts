@@ -5,7 +5,7 @@ import * as Db from '../../db/db';
 async function _siol(n: number) {
   const news: INews[] = [];
 
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   const date = new Date();

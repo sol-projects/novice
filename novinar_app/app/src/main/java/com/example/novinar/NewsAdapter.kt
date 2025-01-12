@@ -3,14 +3,14 @@ package com.example.novinar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class NewsAdapter(
     private var newsList: List<News>,
     private val onEdit: (News) -> Unit,
-    private val onDelete: (News) -> Unit
+    private val onDelete: (News) -> Unit,
+    private val onLongClick: (News) -> Unit
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,18 +31,24 @@ class NewsAdapter(
         holder.titleTextView.text = news.title
         holder.contentTextView.text = news.content
 
-        // Set up edit button action
+        // Edit button action
         holder.editButton.setOnClickListener { onEdit(news) }
 
-        // Set up delete button action
+        // Delete button action
         holder.deleteButton.setOnClickListener { onDelete(news) }
+
+        // Long click action
+        holder.itemView.setOnLongClickListener {
+            onLongClick(news)
+            true
+        }
     }
 
     override fun getItemCount(): Int = newsList.size
 
-    // Update the list of news items and refresh the RecyclerView
     fun updateNews(newNewsList: List<News>) {
         newsList = newNewsList
         notifyDataSetChanged()
     }
 }
+

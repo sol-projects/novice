@@ -5,7 +5,7 @@ import * as Db from '../../db/db';
 async function ekipaSvet24(n: number) {
   const news: INews[] = [];
 
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   await page.goto('https://ekipa.svet24.si/');

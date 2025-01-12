@@ -18,4 +18,19 @@
     <string name="button_edit_news">Edit News</string>
     <string name="toast_news_saved">News saved successfully!</string>
 
+        <string-array name="categories">
+            <item>Politics</item>
+            <item>Business</item>
+            <item>Technology</item>
+            <item>Sports</item>
+            <item>Entertainment</item>
+            <item>Health</item>
+            <item>Science</item>
+            <item>World</item>
+            <item>Lifestyle</item>
+            <item>Environment</item>
+        </string-array>
+
 </resources>
+
+

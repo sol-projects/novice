@@ -5,7 +5,7 @@ import * as Db from '../../db/db';
 async function n1infoSlovenija(n: number = 5) {
   const news: INews[] = [];
 
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   await page.goto('https://n1info.si/novice/slovenija');

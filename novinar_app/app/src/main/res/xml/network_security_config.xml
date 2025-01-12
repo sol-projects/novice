@@ -4,10 +4,7 @@
         <domain includeSubdomains="TODO">192.168.0.25</domain> <!-- Your server's IP -->
     </domain-config>
     <domain-config cleartextTrafficPermitted="true" includeSubdomains="true">
-        <domain>localhost</domain> <!-- Optional for localhost -->
-    </domain-config>
-    <domain-config cleartextTrafficPermitted="true" includeSubdomains="true">
-        <domain includeSubdomains="TODO">127.0.0.1</domain> <!-- Your server's IP -->
+        <domain includeSubdomains="TODO">localhost</domain> <!-- Optional for localhost -->
     </domain-config>
     <domain-config cleartextTrafficPermitted="true" includeSubdomains="true">
         <domain includeSubdomains="TODO">172.28.192.1</domain> <!-- Your server's IP -->
