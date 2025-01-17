@@ -4,4 +4,6 @@
     <color name="primary_text">#212121</color>    <!-- Dark Text -->
     <color name="secondary_text">#757575</color>  <!-- Subtle Dark Text -->
     <color name="accent_color">#FF5722</color>    <!-- Highlight Color -->
+    <color name="bottom_nav_item_color">#FFFFFF</color> <!-- Icon and text color -->
+
 </resources>

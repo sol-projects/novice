@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Location
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -16,6 +17,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.novinar.api.ApiService
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -35,6 +38,9 @@ class PostNewsFragment : Fragment() {
     private var capturedImageBitmap: Bitmap? = null
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_PERMISSIONS = 100
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var currentLatitude: Double = 0.0
+    private var currentLongitude: Double = 0.0
 
     companion object {
         fun newInstance(apiService: ApiService): PostNewsFragment {
@@ -90,7 +96,26 @@ class PostNewsFragment : Fragment() {
             }
         }
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        fetchUserLocation()
+
         return view
+    }
+    private fun fetchUserLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    currentLatitude = location.latitude
+                    currentLongitude = location.longitude
+                } else {
+                    Toast.makeText(requireContext(), "Unable to fetch location", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun checkAndRequestPermissions() {
@@ -159,31 +184,25 @@ class PostNewsFragment : Fragment() {
         }
     }
 
+
     private fun postNewsToServer(title: String, content: String, category: String, imageFile: File?) {
         val titlePart = RequestBody.create("text/plain".toMediaTypeOrNull(), title)
         val contentPart = RequestBody.create("text/plain".toMediaTypeOrNull(), content)
         val categoryPart = RequestBody.create("text/plain".toMediaTypeOrNull(), category)
+        val latitudePart = RequestBody.create("text/plain".toMediaTypeOrNull(), currentLatitude.toString())
+        val longitudePart = RequestBody.create("text/plain".toMediaTypeOrNull(), currentLongitude.toString())
 
         val imagePart = if (imageFile != null) {
-            // Send the actual image file if provided
             MultipartBody.Part.createFormData(
                 "image", imageFile.name, RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageFile)
             )
         } else {
-            // Send a placeholder string as the image
             MultipartBody.Part.createFormData(
                 "image", "placeholder.txt", RequestBody.create("text/plain".toMediaTypeOrNull(), "no_image")
             )
         }
-        val nekaj =  15.50
-        val nekajj = 10.50
-        val longit = RequestBody.create("text/plain".toMediaTypeOrNull(), nekajj.toString())
-        val latit = RequestBody.create("text/plain".toMediaTypeOrNull(), nekaj.toString())
 
-
-
-        // Call the API
-        val call = apiService.addNews(titlePart, contentPart, categoryPart,latit,longit,imagePart)
+        val call = apiService.addNews(titlePart, contentPart, categoryPart, latitudePart, longitudePart, imagePart)
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
