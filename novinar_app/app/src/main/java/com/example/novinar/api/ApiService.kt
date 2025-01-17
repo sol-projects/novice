@@ -1,3 +1,5 @@
+package com.example.novinar.api
+
 import com.example.novinar.News
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -5,8 +7,9 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
+
     @Multipart
-    @POST("addNews")
+    @POST("/addNews")
     fun addNews(
         @Part("title") title: RequestBody,
         @Part("content") content: RequestBody,

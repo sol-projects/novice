@@ -10,7 +10,7 @@ const port = 3000;
 const mongoUri = "mongodb+srv://ognjen:ognjen123@cluster0.allnp.mongodb.net/novinar?retryWrites=true&w=majority";
 
 // Initialize MongoClient
-const client = new MongoClient(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true,    tlsAllowInvalidCertificates: true});
 
 // Multer setup for file uploads
 const upload = multer({ dest: "uploads/" });

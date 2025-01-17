@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true" includeSubdomains="true">
-        <domain includeSubdomains="TODO">192.168.0.25</domain> <!-- Your server's IP -->
+        <domain includeSubdomains="TODO">192.168.94.82</domain> <!-- Your server's IP -->
     </domain-config>
     <domain-config cleartextTrafficPermitted="true" includeSubdomains="true">
         <domain includeSubdomains="TODO">localhost</domain> <!-- Optional for localhost -->

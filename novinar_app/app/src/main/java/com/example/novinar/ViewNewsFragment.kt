@@ -5,14 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novinar.api.ApiService
-import com.example.novinar.api.RetrofitClient
-import com.example.novinar.api.RetrofitClient.apiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,7 +45,7 @@ class ViewNewsFragment : Fragment() {
                         putBoolean("isEditing", true)
                         putString("newsId", news._id)
                         putString("title", news.title)
-                        putString("content", news.content)
+                        //putString("content", news.content)
                     }
                 }
                 parentFragmentManager.beginTransaction()

@@ -1,6 +1,9 @@
 package com.example.novinar
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,17 +37,33 @@ class DetailViewFragment : Fragment() {
         val timestampTextView: TextView = view.findViewById(R.id.textViewTimestamp)
         val imageView: ImageView = view.findViewById(R.id.imageView)
 
+        // Retrieve the news object from arguments
         arguments?.getParcelable<News>(NEWS_KEY)?.let { news ->
+            // Populate the UI with news details
             titleTextView.text = news.title
-            contentTextView.text = news.content
-            categoryTextView.text = news.category
-            timestampTextView.text = news.timestamp
-            // Set image if available
+            contentTextView.text = news.content ?: "No content available"
+            categoryTextView.text = news.category ?: "No category"
+            timestampTextView.text = news.timestamp ?: "No timestamp"
+
+            // Decode and display the image if available
             news.image?.let { imageBase64 ->
-                val imageBytes = android.util.Base64.decode(imageBase64.split(",")[1], android.util.Base64.DEFAULT)
-                val bitmap = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                imageView.setImageBitmap(bitmap)
+                try {
+                    val base64Image = if (imageBase64.contains(",")) {
+                        imageBase64.split(",")[1]
+                    } else {
+                        imageBase64
+                    }
+                    val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
+                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    imageView.setImageBitmap(bitmap)
+                } catch (e: Exception) {
+                    Log.e("DetailViewFragment", "Error decoding image: ${e.localizedMessage}")
+                    imageView.setImageResource(R.drawable.placeholder_image) // Fallback image
+                }
+            } ?: run {
+                imageView.setImageResource(R.drawable.placeholder_image) // Fallback image
             }
+
         }
 
         return view

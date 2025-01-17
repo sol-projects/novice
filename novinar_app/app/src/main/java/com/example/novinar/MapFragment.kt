@@ -43,7 +43,7 @@ class MapFragment : Fragment() {
             val marker = Marker(mapView)
             marker.position = GeoPoint(news.latitude, news.longitude)
             marker.title = news.title
-            marker.snippet = news.content
+            //marker.snippet = news.content
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
             // Open DetailViewFragment on long click

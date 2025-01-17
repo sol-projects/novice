@@ -58,8 +58,10 @@ dependencies {
     implementation("com.github.MKergall:osmbonuspack:6.9.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.androidx.core)
-    implementation ("androidx.core:core:1.14.0")
     implementation ("androidx.core:core-ktx:1.14.0")
+
+    implementation ("androidx.core:core:1.14.0")
+
 
 
     testImplementation(libs.junit)

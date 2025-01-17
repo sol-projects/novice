@@ -3,6 +3,7 @@ package com.example.novinar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -29,7 +30,7 @@ class NewsAdapter(
         val news = newsList[position]
 
         holder.titleTextView.text = news.title
-        holder.contentTextView.text = news.content
+        //holder.contentTextView.text = news.content
 
         // Edit button action
         holder.editButton.setOnClickListener { onEdit(news) }
