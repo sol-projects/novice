@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_color">#121212</color> <!-- Dark Background -->
+    <color name="primary_text">#FFFFFF</color>    <!-- Light Text -->
+    <color name="secondary_text">#B3B3B3</color>  <!-- Subtle Light Text -->
+    <color name="accent_color">#FF7043</color>    <!-- Highlight Color -->
+</resources>

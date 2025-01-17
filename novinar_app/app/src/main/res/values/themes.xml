@@ -1,17 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Novinar" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand colors -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+    <style name="Theme.Novinar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/accent_color</item>
+        <item name="colorPrimaryVariant">@color/accent_color</item>
+        <item name="colorOnPrimary">@color/primary_text</item>
 
-        <!-- Secondary brand colors -->
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorOnSecondary">@color/colorOnSecondary</item>
-
-        <!-- Background and surface colors -->
+        <!-- Background Colors -->
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:colorBackground">@color/background_color</item>
     </style>
-
-    <!-- Public-facing theme -->
-    <style name="Theme.Novinar" parent="Base.Theme.Novinar" />
 </resources>

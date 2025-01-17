@@ -23,6 +23,11 @@ interface ApiService {
     @DELETE("deleteNews/{id}")
     fun deleteNews(@Path("id") id: String): Call<Void>
 
+
+
+
+
+
     @PUT("updateNews/{id}")
     fun updateNews(
         @Path("id") id: String,

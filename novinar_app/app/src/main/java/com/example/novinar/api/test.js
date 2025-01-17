@@ -79,47 +79,76 @@ app.use(express.json());
         });
 
         // Endpoint to add news
-        app.post('/addNews', upload.single('image'), async (req, res) => {
-            try {
-                const { title, content, category } = req.body;
-        
-                // Validate input fields
-                if (!title || !content || !category) {
-                    return res.status(400).send({ error: 'Title, content, and category are required.' });
-                }
-        
-                // Check if the file was uploaded
-                if (!req.file) {
-                    return res.status(400).send({ error: 'Image file is required.' });
-                }
-        
-                // Read image file and encode it to Base64
-                const imagePath = req.file.path;
-                const imageBase64 = fs.readFileSync(imagePath, 'base64');
-                const imageData = `data:${req.file.mimetype};base64,${imageBase64}`;
-        
-                // Create a news document
-                const news = {
-                    title,
-                    content,
-                    category,
-                    image: imageData, // Store the image as Base64
-                    timestamp: new Date(),
-                };
-        
-                // Insert news into MongoDB
-                const result = await collection.insertOne(news);
-        
-                // Clean up temporary file
-                fs.unlinkSync(imagePath);
-        
-                res.status(201).send(result);
-            } catch (error) {
-                console.error('Error adding news:', error);
-                res.status(500).send({ error: 'Failed to add news.' });
-            }
-        });
-        
+       // Endpoint to add news (image optional)
+app.post('/addNews', upload.single('image'), async (req, res) => {
+    try {
+        const { title, content, category } = req.body;
+
+        // Validate input fields
+        if (!title || !content || !category) {
+            return res.status(400).send({ error: 'Title, content, and category are required.' });
+        }
+
+        let imageData = null;
+
+        // If an image file is uploaded, process it
+        if (req.file) {
+            const imagePath = req.file.path;
+            const imageBase64 = fs.readFileSync(imagePath, 'base64');
+            imageData = `data:${req.file.mimetype};base64,${imageBase64}`;
+
+            // Clean up temporary file
+            fs.unlinkSync(imagePath);
+        }
+
+        // Create a news document
+        const news = {
+            title,
+            content,
+            category,
+            image: imageData, // Null if no image is provided
+            timestamp: new Date(),
+        };
+
+        // Insert news into MongoDB
+        const result = await collection.insertOne(news);
+
+        res.status(201).send(result);
+    } catch (error) {
+        console.error('Error adding news:', error);
+        res.status(500).send({ error: 'Failed to add news.' });
+    }
+});
+
+// Endpoint to add news without an image
+app.post('/addNewsWithoutImage', async (req, res) => {
+    try {
+        const { title, content, category } = req.body;
+
+        // Validate input fields
+        if (!title || !content || !category) {
+            return res.status(400).send({ error: 'Title, content, and category are required.' });
+        }
+
+        // Create a news document
+        const news = {
+            title,
+            content,
+            category,
+            image: null, // No image provided
+            timestamp: new Date(),
+        };
+
+        // Insert news into MongoDB
+        const result = await collection.insertOne(news);
+        res.status(201).send(result);
+    } catch (error) {
+        console.error('Error adding news without image:', error);
+        res.status(500).send({ error: 'Failed to add news.' });
+    }
+});
+
+
 
         // Endpoint to update news by ID
         app.put("/updateNews/:id", upload.single("image"), async (req, res) => {
