@@ -61,8 +61,7 @@ class PostNewsFragment : Fragment() {
 
         // Setup categories
         val categories = listOf("Politics", "Business", "Technology", "Sports", "Entertainment")
-        val adapter =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = adapter
 
@@ -87,11 +86,7 @@ class PostNewsFragment : Fragment() {
                 val imageFile = capturedImageBitmap?.let { bitmapToFile(it) }
                 postNewsToServer(title, content, category, imageFile)
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Title and content cannot be empty!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Title and content cannot be empty!", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -124,11 +119,7 @@ class PostNewsFragment : Fragment() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dispatchTakePictureIntent()
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Camera permission is required!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Camera permission is required!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -150,8 +141,7 @@ class PostNewsFragment : Fragment() {
                 capturedImageBitmap = bitmap
                 imageView.setImageBitmap(bitmap)
             } else {
-                Toast.makeText(requireContext(), "Failed to capture image!", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(requireContext(), "Failed to capture image!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -169,12 +159,7 @@ class PostNewsFragment : Fragment() {
         }
     }
 
-    private fun postNewsToServer(
-        title: String,
-        content: String,
-        category: String,
-        imageFile: File?
-    ) {
+    private fun postNewsToServer(title: String, content: String, category: String, imageFile: File?) {
         val titlePart = RequestBody.create("text/plain".toMediaTypeOrNull(), title)
         val contentPart = RequestBody.create("text/plain".toMediaTypeOrNull(), content)
         val categoryPart = RequestBody.create("text/plain".toMediaTypeOrNull(), category)
@@ -182,39 +167,35 @@ class PostNewsFragment : Fragment() {
         val imagePart = if (imageFile != null) {
             // Send the actual image file if provided
             MultipartBody.Part.createFormData(
-                "image",
-                imageFile.name,
-                RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageFile)
+                "image", imageFile.name, RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageFile)
             )
         } else {
             // Send a placeholder string as the image
             MultipartBody.Part.createFormData(
-                "image",
-                "placeholder.txt",
-                RequestBody.create("text/plain".toMediaTypeOrNull(), "no_image")
+                "image", "placeholder.txt", RequestBody.create("text/plain".toMediaTypeOrNull(), "no_image")
             )
         }
+        val nekaj =  15.50
+        val nekajj = 10.50
+        val longit = RequestBody.create("text/plain".toMediaTypeOrNull(), nekajj.toString())
+        val latit = RequestBody.create("text/plain".toMediaTypeOrNull(), nekaj.toString())
+
+
 
         // Call the API
-        val call = apiService.addNews(titlePart, contentPart, categoryPart, imagePart)
+        val call = apiService.addNews(titlePart, contentPart, categoryPart,latit,longit,imagePart)
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(
-                        requireContext(),
-                        "News posted successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "News posted successfully!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to post news!", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireContext(), "Failed to post news!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(requireContext(), "Error: ${t.localizedMessage}", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(requireContext(), "Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         })
     }

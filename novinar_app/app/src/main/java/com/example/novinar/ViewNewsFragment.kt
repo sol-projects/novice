@@ -38,25 +38,11 @@ class ViewNewsFragment : Fragment() {
 
         adapter = NewsAdapter(
             emptyList(),
-            onEdit = { news ->
-                // Navigate to PostNewsFragment for editing
-                val fragment = PostNewsFragment.newInstance(apiService).apply {
-                    arguments = Bundle().apply {
-                        putBoolean("isEditing", true)
-                        putString("newsId", news._id)
-                        putString("title", news.title)
-                        //putString("content", news.content)
-                    }
-                }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            },
             onDelete = { news ->
                 // Show confirmation dialog for deleting news
                 deleteNews(news)
             },
+
             onLongClick = { news ->
                 // Navigate to DetailViewFragment on long click
                 val fragment = DetailViewFragment.newInstance(news)
@@ -64,7 +50,7 @@ class ViewNewsFragment : Fragment() {
                     .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit()
-            }
+            },
         )
         recyclerView.adapter = adapter
 

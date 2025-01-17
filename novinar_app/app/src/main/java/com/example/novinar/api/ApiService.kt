@@ -14,19 +14,17 @@ interface ApiService {
         @Part("title") title: RequestBody,
         @Part("content") content: RequestBody,
         @Part("category") category: RequestBody,
+        @Part("latitude") latitude: RequestBody,
+        @Part("longitude") longitude: RequestBody,
         @Part image: MultipartBody.Part
     ): Call<Void>
+
 
     @GET("getNews")
     fun getNews(): Call<List<News>>
 
     @DELETE("deleteNews/{id}")
     fun deleteNews(@Path("id") id: String): Call<Void>
-
-
-
-
-
 
     @PUT("updateNews/{id}")
     fun updateNews(

@@ -9,6 +9,20 @@
         android:id="@+id/sensorDataTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sensor Data"
+        android:padding="8dp"
         android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/generateNewsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Generate and Post 100 News"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/deleteNewsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete Last 100 News"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

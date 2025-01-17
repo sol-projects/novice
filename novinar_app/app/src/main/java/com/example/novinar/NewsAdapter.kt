@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class NewsAdapter(
     private var newsList: List<News>,
-    private val onEdit: (News) -> Unit,
     private val onDelete: (News) -> Unit,
     private val onLongClick: (News) -> Unit
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
@@ -17,7 +16,6 @@ class NewsAdapter(
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val titleTextView: TextView = view.findViewById(R.id.textViewTitle)
         val contentTextView: TextView = view.findViewById(R.id.textViewContent)
-        val editButton: Button = view.findViewById(R.id.buttonEdit)
         val deleteButton: Button = view.findViewById(R.id.buttonDelete)
     }
 
@@ -32,8 +30,6 @@ class NewsAdapter(
         holder.titleTextView.text = news.title
         //holder.contentTextView.text = news.content
 
-        // Edit button action
-        holder.editButton.setOnClickListener { onEdit(news) }
 
         // Delete button action
         holder.deleteButton.setOnClickListener { onDelete(news) }
