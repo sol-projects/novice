@@ -10,7 +10,7 @@ data class News(
     val content: String,
     val category: String,
     val image: String?,
-    val latitude: String?,
-    val longitude: String?,
+    val latitude: Double?,
+    val longitude: Double?,
     val timestamp: String?
 ) : Parcelable
