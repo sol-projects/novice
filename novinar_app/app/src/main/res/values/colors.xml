@@ -5,5 +5,13 @@
     <color name="secondary_text">#757575</color>  <!-- Subtle Dark Text -->
     <color name="accent_color">#FF5722</color>    <!-- Highlight Color -->
     <color name="bottom_nav_item_color">#FFFFFF</color> <!-- Icon and text color -->
+    <color name="background_color1">#F5F5F5</color>
+    <color name="edittext_background">#FFFFFF</color>
+    <color name="edittext_stroke">#DDDDDD</color>
+    <color name="spinner_background">#FFFFFF</color>
+    <color name="spinner_stroke">#DDDDDD</color>
+    <color name="primary_text_color">#212121</color>
+    <color name="secondary_text_color">#757575</color>
+
 
 </resources>

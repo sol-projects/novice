@@ -1,24 +1,41 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/background_color">
 
-    <!-- Static Content Above -->
-    <TextView
+    <!-- Search Options Dropdown -->
+    <Spinner
+        android:id="@+id/searchOptionSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Static Content"
-        android:padding="16dp"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:background="@drawable/rounded_spinner"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp" />
 
-    <!-- RecyclerView -->
+    <!-- Search Bar -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search by title or category"
+        android:padding="16dp"
+        android:background="@drawable/rounded_edittext"
+        android:inputType="text"
+        android:layout_marginBottom="12dp"
+        android:drawableStart="@drawable/search"
+        android:drawablePadding="8dp"
+        android:textColor="@color/primary_text_color"
+        android:textColorHint="@color/secondary_text_color" />
+
+    <!-- News List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/newsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
+        android:paddingBottom="6dp"
         android:scrollbars="vertical" />
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.novinar
 
+import android.app.Dialog
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
@@ -56,6 +57,11 @@ class DetailViewFragment : Fragment() {
                     val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
                     val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     imageView.setImageBitmap(bitmap)
+
+                    // Add click listener to open the image in full screen
+                    imageView.setOnClickListener {
+                        showFullScreenImage(bitmap)
+                    }
                 } catch (e: Exception) {
                     Log.e("DetailViewFragment", "Error decoding image: ${e.localizedMessage}")
                     imageView.setImageResource(R.drawable.placeholder_image) // Fallback image
@@ -63,9 +69,19 @@ class DetailViewFragment : Fragment() {
             } ?: run {
                 imageView.setImageResource(R.drawable.placeholder_image) // Fallback image
             }
-
         }
 
         return view
+    }
+
+    private fun showFullScreenImage(bitmap: android.graphics.Bitmap) {
+        val dialog = Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.setContentView(R.layout.dialog_fullscreen_image)
+        val fullScreenImageView: ImageView = dialog.findViewById(R.id.fullScreenImageView)
+        fullScreenImageView.setImageBitmap(bitmap)
+        fullScreenImageView.setOnClickListener {
+            dialog.dismiss() // Close the dialog when the image is clicked
+        }
+        dialog.show()
     }
 }

@@ -108,11 +108,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (deniedPermissions.isNotEmpty()) {
-                Toast.makeText(
-                    this,
-                    "Some permissions were denied: ${deniedPermissions.joinToString(", ")}",
-                    Toast.LENGTH_LONG
-                ).show()
+
             } else {
                 Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show()
             }
