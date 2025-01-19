@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" nextobjectid="8">
+ <tileset firstgid="1" name="game" tilewidth="32" tileheight="32" tilecount="64">
+  <image source="../assets/game.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="Back" tilewidth="32" tileheight="32" tilecount="16">
+  <image source="../assets/Back.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="81" name="Environment" tilewidth="32" tileheight="32" tilecount="1600">
+  <image source="../assets/Environment.png" width="1280" height="1280"/>
+  <terraintypes>
+   <terrain name="New Terrain" tile="-1"/>
+  </terraintypes>
+ </tileset>
+ <tileset firstgid="1681" name="Pyramid" tilewidth="32" tileheight="32" tilecount="64">
+  <image source="../assets/Pyramid.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="1745" name="roads2W" tilewidth="32" tileheight="32" tilecount="96">
+  <image source="../assets/roads2W.png" width="512" height="192"/>
+ </tileset>
+ <layer name="road" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztz1ENwCAQBcH7Ov/uqINWBnhoAi9kRsFuFQAAANxndNXTpyv+85HFRxYfWXxk8ZHFRxYfWXxk8ZHlXQ/fBR8AALtNQR0ivQ==
+  </data>
+ </layer>
+ <objectgroup name="object">
+  <object id="2" name="start" x="222.667" y="639.333"/>
+ </objectgroup>
+ <objectgroup name="collisions">
+  <object id="4" x="390" y="600" width="562" height="616"/>
+ </objectgroup>
+</map>
