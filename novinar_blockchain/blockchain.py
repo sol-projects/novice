@@ -13,7 +13,7 @@ class Blockchain:
             data="Genesis Block",
             timestamp=int(time.time()),
             prev_hash="0",
-            difficulty=5,
+            difficulty=2,
             nonce=0,
             current_hash=""
         )

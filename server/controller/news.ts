@@ -4,6 +4,8 @@ import { INews, News } from '../model/News';
 import * as Socket from '../socket/socket';
 import { exec } from 'child_process';
 import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 async function run_query(res: Response, query: any) {
   try {
@@ -300,7 +302,7 @@ export async function findTextAreas(req: Request, res: Response) {
 
   const fs = require('fs');
   fs.writeFile(
-    '../newspaper_to_digital/input.png',
+    '../newspaper_to_digital/input.jpg',
     image.buffer,
     'binary',
     function (err: any) {
@@ -338,46 +340,56 @@ export async function findTextAreas(req: Request, res: Response) {
 }
 
 export async function findImageSimilarity(req: Request, res: Response) {
-  const files = req.files as Express.Multer.File[];
+  const image = req.file;
 
-  if (!files || files.length !== 2) {
-    return res.status(400).send('Two image files are required for comparison');
+  if (!image) {
+    return res.status(400).send('No image file provided');
   }
 
-  const fs = require('fs');
-  const path = require('path');
-  const tempImagePaths = files.map((file) => file.path);
+  const inputImagePath = path.join(__dirname, '../siamese_find_by_photo/input.png');
+  const dbPath = path.join(__dirname, '../siamese_network/data');
+  const pythonScriptPath = path.join(__dirname, '../siamese_network/inference_siamese.py');
 
- try {
-    const files = req.files as Express.Multer.File[];
-    if (!files || files.length !== 2) {
-      return res.status(400).send('Two image files are required for comparison');
-    }    const modelPath = path.resolve('../siamese_find_by_photo/checkpoints/siamese_network.pth');
-    const torch = require('torch');
-    const SiameseNetwork = require('./../siamese_find_by_photo/inference_siamese'); 
-    const model = new SiameseNetwork();
-    model.load_state_dict(torch.load(modelPath));
-    model.eval();
+  // Ensure the directory exists
+  fs.mkdir(path.dirname(inputImagePath), { recursive: true }, (dirErr) => {
+    if (dirErr) {
+      console.error('Error creating directory:', dirErr);
+      return res.status(500).send('Error creating directory for input image');
+    }
 
-    const getEmbedding = (imagePath: string) => {
-      const { Image } = require('image-js');
-      const img = Image.load(imagePath).resize({ width: 100, height: 100 });
-      const imgTensor = torch.tensor(img.toArray()).unsqueeze(0);
-      return model.forward_once(imgTensor);
-    };
+    // Write the input image
+    fs.writeFile(inputImagePath, image.buffer, 'binary', (err: NodeJS.ErrnoException | null) => {
+      if (err) {
+        console.error('Error writing input image:', err);
+        return res.status(500).send('Error saving the input image');
+      }
 
-    const embeddings = tempImagePaths.map((imgPath) => getEmbedding(imgPath));
-    const distance = torch.pairwise_distance(embeddings[0], embeddings[1]).item();
+      console.log('Input image saved:', inputImagePath);
 
-    tempImagePaths.forEach((filePath) => fs.unlinkSync(filePath));
+      const pythonCommand = `
+        source env/bin/activate &&
+        python ${pythonScriptPath} --query ${inputImagePath} --db ${dbPath}
+      `;
 
-    return res.json({ similarity: 1 - distance, distance });
-  } catch (error) {
-    console.error(error);
+      // Execute the Python script
+      exec(pythonCommand, { cwd: path.join(__dirname, '../siamese_find_by_photo') }, (error, stdout, stderr) => {
+        if (error) {
+          console.error('Error during Python script execution:', error);
+          return res.status(500).send('Error processing the image');
+        }
 
-    tempImagePaths.forEach((filePath) => fs.unlinkSync(filePath));
-    return res.status(500).send('Error processing the images');
-  }
+        console.log('Python script output:', stdout);
+
+        try {
+          const results = JSON.parse(stdout);
+          res.json(results);
+        } catch (parseError) {
+          console.error('Error parsing Python script output:', parseError);
+          res.status(500).send('Error parsing the script output');
+        }
+      });
+    });
+  });
 }
 
 export async function findSportTypes(req: Request, res: Response) {

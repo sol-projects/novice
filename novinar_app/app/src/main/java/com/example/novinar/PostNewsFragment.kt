@@ -29,6 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 class PostNewsFragment : Fragment() {
@@ -81,7 +82,7 @@ class PostNewsFragment : Fragment() {
 
             if (title.isNotBlank() && content.isNotBlank()) {
                 val imageFile = capturedImageBitmap?.let { bitmapToFile(it) }
-                postNewsToServer(title, content, listOf(category), imageFile)
+                postNewsToServer(title, content, listOf(category).toString(), imageFile)
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -244,10 +245,14 @@ class PostNewsFragment : Fragment() {
 
     private fun bitmapToFile(bitmap: Bitmap): File? {
         return try {
-            val file = File(requireContext().cacheDir, "captured_image.jpg")
-            val outputStream = ByteArrayOutputStream()
+            val uniqueFileName = "captured_image_${System.currentTimeMillis()}.jpg"
+            val file = File(requireContext().cacheDir, uniqueFileName)
+            file.createNewFile()
+            val outputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            file.outputStream().use { it.write(outputStream.toByteArray()) }
+            outputStream.flush()
+            outputStream.close()
+            Log.d("PostNewsFragment", "Image saved at: ${file.absolutePath}")
             file
         } catch (e: Exception) {
             Log.e("PostNewsFragment", "Error saving bitmap to file: ${e.localizedMessage}")
@@ -258,13 +263,20 @@ class PostNewsFragment : Fragment() {
     private fun postNewsToServer(
         title: String,
         content: String,
-        categories: List<String>,
+        category: String,
         imageFile: File?
     ) {
-        val jsonObject = JSONObject().apply {
+        val timestampAsAuthor = System.currentTimeMillis().toString()
+        val imagePath = imageFile?.absolutePath ?: ""
+
+        val newsData = JSONObject().apply {
             put("title", title)
             put("content", content)
-            put("categories", JSONArray(categories))
+            put("categories", JSONArray().apply { put(category) })
+            put(
+                "authors",
+                JSONArray().apply { put(timestampAsAuthor) })
+            put("url", imagePath)
             put("location", JSONObject().apply {
                 put("type", "Point")
                 put("coordinates", JSONArray().apply {
@@ -274,14 +286,18 @@ class PostNewsFragment : Fragment() {
             })
         }
 
-        val requestBody = RequestBody.create(
-            "application/json".toMediaTypeOrNull(),
-            jsonObject.toString()
-        )
+        Log.d("PostNewsFragment", "Request payload: $newsData")
+
+        val requestBody =
+            RequestBody.create("application/json".toMediaTypeOrNull(), newsData.toString())
 
         apiService.postNews(requestBody).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
+                    Log.d(
+                        "PostNewsFragment",
+                        "News posted successfully with author: $timestampAsAuthor"
+                    )
                     Toast.makeText(
                         requireContext(),
                         "News posted successfully!",
@@ -304,4 +320,5 @@ class PostNewsFragment : Fragment() {
             }
         })
     }
+
 }

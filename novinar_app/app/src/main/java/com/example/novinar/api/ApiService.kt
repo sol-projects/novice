@@ -28,6 +28,14 @@ interface ApiService {
     @DELETE("news/{id}")
     fun deleteNews(@Path("id") id: String): Call<Void>
 
+    @Multipart
+    @POST("news/upload")
+    fun uploadNewsWithPhoto(
+        @Part("title") title: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part photo: MultipartBody.Part
+    ): Call<News>
+
 
     @PUT("news/{id}")
     fun updateNews(

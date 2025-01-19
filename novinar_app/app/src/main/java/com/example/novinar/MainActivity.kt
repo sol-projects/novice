@@ -11,11 +11,10 @@ import com.example.novinar.api.RetrofitClient
 import com.example.novinar.databinding.ActivityMainBinding
 import android.Manifest
 
-
 class MainActivity : AppCompatActivity() {
     private val apiService = RetrofitClient.apiService
     private val REQUEST_SENSOR_PERMISSIONS = 101
-
+    private val REQUEST_STORAGE_PERMISSIONS = 102
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +42,8 @@ class MainActivity : AppCompatActivity() {
                 .commit()
             true
         }
-        checkAndRequestPermissions()
 
+        checkAndRequestPermissions()
     }
 
     private fun checkAndRequestPermissions() {
@@ -78,13 +77,27 @@ class MainActivity : AppCompatActivity() {
         ) {
             permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
 
         // Request permissions if not already granted
         if (permissions.isNotEmpty()) {
             ActivityCompat.requestPermissions(
                 this,
                 permissions.toTypedArray(),
-                REQUEST_SENSOR_PERMISSIONS
+                REQUEST_STORAGE_PERMISSIONS
             )
         }
     }
@@ -95,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_SENSOR_PERMISSIONS) {
+        if (requestCode == REQUEST_SENSOR_PERMISSIONS || requestCode == REQUEST_STORAGE_PERMISSIONS) {
             val deniedPermissions = mutableListOf<String>()
             for (i in permissions.indices) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
@@ -104,11 +117,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (deniedPermissions.isNotEmpty()) {
-
+                Toast.makeText(this, "Some permissions were denied.", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
-

@@ -1,6 +1,5 @@
 package com.example.novinar
 
-import android.app.Dialog
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import java.io.File
 
 class DetailViewFragment : Fragment() {
 
@@ -22,6 +22,19 @@ class DetailViewFragment : Fragment() {
             args.putParcelable(NEWS_KEY, news)
             fragment.arguments = args
             return fragment
+        }
+    }
+
+    private fun formatTimestamp(timestamp: String?): String {
+        return try {
+            val timeMillis = timestamp?.toLongOrNull() ?: return "Invalid timestamp"
+            val dateFormat =
+                java.text.SimpleDateFormat("dd MMM yyyy, HH:mm", java.util.Locale.getDefault())
+            val date = java.util.Date(timeMillis)
+            dateFormat.format(date)
+        } catch (e: Exception) {
+            Log.e("DetailViewFragment", "Error formatting timestamp: ${e.localizedMessage}")
+            "Invalid timestamp"
         }
     }
 
@@ -39,19 +52,20 @@ class DetailViewFragment : Fragment() {
 
         arguments?.getParcelable<News>(NEWS_KEY)?.let { news ->
             titleTextView.text = news.title
-            contentTextView.text = news.content ?: "No content available"
-            categoryTextView.text = news.categories?.joinToString(", ") ?: "No category"
-            timestampTextView.text = news.timestamp ?: "No timestamp"
+            contentTextView.text = news.content
 
-            news.location?.coordinates?.let {
-                Log.d("DetailViewFragment", "News Location: Lat = ${it[1]}, Long = ${it[0]}")
-            }
+            categoryTextView.text = news.categories?.joinToString(", ") ?: "No category provided"
 
-            news.url?.let { imageUrl ->
-                try {
+            val timestamp = news.authors?.firstOrNull()
+            timestampTextView.text = formatTimestamp(timestamp)
 
-                } catch (e: Exception) {
-                    Log.e("DetailViewFragment", "Error loading image: ${e.localizedMessage}")
+            news.url?.let { imagePath ->
+                val imageFile = File(imagePath)
+                if (imageFile.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+                    imageView.setImageBitmap(bitmap)
+                } else {
+                    Log.e("DetailViewFragment", "Image file not found: $imagePath")
                     imageView.setImageResource(R.drawable.placeholder_image)
                 }
             } ?: run {
@@ -61,4 +75,5 @@ class DetailViewFragment : Fragment() {
 
         return view
     }
+
 }

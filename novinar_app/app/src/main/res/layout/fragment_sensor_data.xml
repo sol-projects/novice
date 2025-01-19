@@ -9,7 +9,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:text="Sensor data will appear here." />
+
+    <EditText
+        android:id="@+id/countInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Number of Fake News"
+        android:inputType="number"
+        android:layout_marginTop="16dp"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/intervalInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Interval (in seconds)"
+        android:inputType="number"
+        android:layout_marginTop="16dp"
+        android:padding="8dp" />
+
+    <Button
+        android:id="@+id/startFakeNewsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Start Fake News Generation" />
+
+    <Button
+        android:id="@+id/stopFakeNewsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Stop Fake News Generation" />
 
     <Button
         android:id="@+id/generateNewsButton"

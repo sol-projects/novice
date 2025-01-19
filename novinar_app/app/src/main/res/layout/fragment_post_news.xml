@@ -52,7 +52,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="@color/accent_color"
             android:text="Capture Image"
             android:textColor="@android:color/white" />
 
@@ -61,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/secondary_text"
+            android:backgroundTint="@color/accent_color"
             android:text="Remove Image"
             android:textColor="@android:color/white" />
 
@@ -79,7 +78,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="@color/accent_color"
             android:text="Post to Blockchain"
             android:textColor="@android:color/white" />
 
@@ -87,7 +85,6 @@
             android:id="@+id/buttonPost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/accent_color"
             android:text="Post News"
             android:textColor="@android:color/white" />
     </LinearLayout>

@@ -23,3 +23,4 @@ data class News(
     val categories: List<String>?,
     val views: List<String>?
 ) : Parcelable
+

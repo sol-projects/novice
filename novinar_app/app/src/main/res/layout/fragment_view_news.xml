@@ -14,6 +14,15 @@
         android:padding="12dp" />
 
     <Button
+        android:id="@+id/captureImageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Capture Image"
+        android:layout_marginBottom="12dp"
+         />
+
+
+    <Button
         android:id="@+id/toggleSourceButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -19,11 +19,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+import android.os.Handler
+import android.os.Looper
+import android.widget.EditText
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 class SensorDataFragment : Fragment() {
 
-    private val apiService: ApiService by lazy {
-        RetrofitClient.apiService
-    }
+    private val apiService: ApiService by lazy { RetrofitClient.apiService }
+    private var fakeNewsHandler: Handler? = null
+    private var fakeNewsTask: Runnable? = null
+    private var isPostingFakeNews = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,28 +42,65 @@ class SensorDataFragment : Fragment() {
         val sensorDataTextView: TextView = view.findViewById(R.id.sensorDataTextView)
         val generateNewsButton: Button = view.findViewById(R.id.generateNewsButton)
         val deleteNewsButton: Button = view.findViewById(R.id.deleteNewsButton)
+        val intervalInput: EditText = view.findViewById(R.id.intervalInput)
+        val countInput: EditText = view.findViewById(R.id.countInput)
+        val startFakeNewsButton: Button = view.findViewById(R.id.startFakeNewsButton)
+        val stopFakeNewsButton: Button = view.findViewById(R.id.stopFakeNewsButton)
 
         val sensorData = SensorManager.getSensorData()
         val formattedData = sensorData.entries.joinToString("\n") { "${it.key}: ${it.value}" }
         sensorDataTextView.text = formattedData
 
-        generateNewsButton.setOnClickListener {
-            generateAndPostNews()
+        generateNewsButton.setOnClickListener { generateAndPostNews() }
+
+        deleteNewsButton.setOnClickListener { deleteLast100News() }
+
+        startFakeNewsButton.setOnClickListener {
+            val interval = intervalInput.text.toString().toLongOrNull() ?: 60L
+            val count = countInput.text.toString().toIntOrNull() ?: 100
+
+            if (!isPostingFakeNews) {
+                startPostingFakeNews(count, interval)
+                Toast.makeText(requireContext(), "Started posting fake news!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Fake news posting is already running!", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        deleteNewsButton.setOnClickListener {
-            deleteLast100News()
+        stopFakeNewsButton.setOnClickListener {
+            stopPostingFakeNews()
+            Toast.makeText(requireContext(), "Stopped posting fake news.", Toast.LENGTH_SHORT).show()
         }
 
         return view
     }
 
-    private fun generateAndPostNews() {
+    private fun startPostingFakeNews(count: Int, interval: Long) {
+        isPostingFakeNews = true
+        fakeNewsHandler = Handler(Looper.getMainLooper())
+        fakeNewsTask = object : Runnable {
+            override fun run() {
+                generateAndPostNews(count)
+                fakeNewsHandler?.postDelayed(this, TimeUnit.SECONDS.toMillis(interval))
+            }
+        }
+        fakeNewsHandler?.post(fakeNewsTask!!)
+    }
+
+    private fun stopPostingFakeNews() {
+        isPostingFakeNews = false
+        fakeNewsHandler?.removeCallbacks(fakeNewsTask!!)
+        fakeNewsHandler = null
+        fakeNewsTask = null
+    }
+
+    private fun generateAndPostNews(count: Int = 100) {
         val faker = Faker()
 
-        for (i in 1..100) {
-            val title = faker.book().title()
-            val content = faker.lorem().paragraph()
+        for (i in 1..count) {
+            val title = "Fake News ${faker.book().title()}"
+            val content = "Generated Content: ${faker.lorem().paragraph()}\n" +
+                    "Sensors: ${SensorManager.getSensorData()}"
             val category = faker.book().genre()
             val latitude = faker.address().latitude().toDoubleOrNull() ?: 0.0
             val longitude = faker.address().longitude().toDoubleOrNull() ?: 0.0
@@ -70,32 +116,43 @@ class SensorDataFragment : Fragment() {
         latitude: Double,
         longitude: Double
     ) {
-        val titlePart = RequestBody.create("text/plain".toMediaTypeOrNull(), title)
-        val contentPart = RequestBody.create("text/plain".toMediaTypeOrNull(), content)
-        val categoryPart = RequestBody.create("text/plain".toMediaTypeOrNull(), category)
+        val timestampAsAuthor = System.currentTimeMillis().toString()
 
-        val locationJson = "{\"type\": \"Point\", \"coordinates\": [$longitude, $latitude]}"
-        val locationPart = RequestBody.create("application/json".toMediaTypeOrNull(), locationJson)
-
-        val imagePart: MultipartBody.Part? = null
-
-        apiService.postNews(titlePart, contentPart, categoryPart, locationPart, imagePart)
-            .enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    if (response.isSuccessful) {
-                        Log.d("SensorDataFragment", "News posted successfully: $title")
-                    } else {
-                        Log.e(
-                            "SensorDataFragment",
-                            "Failed to post news: $title, Error: ${response.errorBody()?.string()}"
-                        )
-                    }
-                }
-
-                override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Log.e("SensorDataFragment", "Error posting news: ${t.localizedMessage}")
-                }
+        val newsData = JSONObject().apply {
+            put("title", title)
+            put("content", content)
+            put("categories", JSONArray().apply { put(category) })
+            put("authors", JSONArray().apply { put(timestampAsAuthor) })
+            put("url", "")
+            put("location", JSONObject().apply {
+                put("type", "Point")
+                put("coordinates", JSONArray().apply {
+                    put(longitude)
+                    put(latitude)
+                })
             })
+        }
+
+        Log.d("SensorDataFragment", "Fake News Payload: $newsData")
+
+        val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), newsData.toString())
+
+        apiService.postNews(requestBody).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("SensorDataFragment", "Fake News posted successfully: $title")
+                } else {
+                    Log.e(
+                        "SensorDataFragment",
+                        "Failed to post fake news: $title, Error: ${response.errorBody()?.string()}"
+                    )
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("SensorDataFragment", "Error posting fake news: ${t.localizedMessage}")
+            }
+        })
     }
 
 

@@ -1,29 +1,41 @@
+from flask import Flask, request, jsonify
 import os
-import argparse
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
-from torchvision import models
 from PIL import Image
-import matplotlib.pyplot as plt
 
+# Flask setup
+app = Flask(__name__)
 
+# Path to save user-uploaded images
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Load the model
 class SiameseNetwork(nn.Module):
-    def __init__(self, embedding_dim=128):
+    def __init__(self):
         super(SiameseNetwork, self).__init__()
-        
-        resnet = models.resnet18(pretrained=True)
-        resnet.fc = nn.Identity()
-        self.features = resnet
-
-        self.fc = nn.Sequential(
-            nn.Linear(512, 256),
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Linear(256, embedding_dim)
+            nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d((1, 1))
+        )
+        self.fc = nn.Sequential(
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64)
         )
         
     def forward_once(self, x):
         x = self.features(x)
+        x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
     
@@ -32,98 +44,70 @@ class SiameseNetwork(nn.Module):
         out2 = self.forward_once(x2)
         return out1, out2
 
-
+# Load the model
 def load_siamese_model(checkpoint_path="checkpoints/siamese_network.pth"):
-    model = SiameseNetwork(embedding_dim=128)
+    model = SiameseNetwork()
     model.load_state_dict(torch.load(checkpoint_path, map_location="cpu"))
     model.eval()
     return model
 
-
-
+# Helper functions
 def get_embedding(model, image_path, transform):
     img = Image.open(image_path).convert('RGB')
     img_tensor = transform(img).unsqueeze(0)
-    
     with torch.no_grad():
         emb = model.forward_once(img_tensor)
     return emb
 
-
 def compute_distance(emb1, emb2):
     return nn.functional.pairwise_distance(emb1, emb2).item()
 
+# Initialize the model and transformations
+MODEL_PATH = "checkpoints/siamese_network.pth"
+model = load_siamese_model(MODEL_PATH)
+transform = transforms.Compose([
+    transforms.Resize((50, 50)),
+    transforms.ToTensor()
+])
 
-def display_results(query_image_path, results, db_path):
-    query_img = Image.open(query_image_path).convert('RGB')
+@app.route('/compare', methods=['POST'])
+def compare_images():
+    if 'file' not in request.files:
+        return jsonify({"error": "Query image not provided"}), 400
 
-    num_matches = len(results)
-    fig, axes = plt.subplots(1, num_matches + 1, figsize=(15, 5))
-    axes[0].imshow(query_img)
-    axes[0].set_title("Query Image")
-    axes[0].axis('off')
-    
-    for i, (filename, dist) in enumerate(results):
-        match_img = Image.open(os.path.join(db_path, filename)).convert('RGB')
-        axes[i + 1].imshow(match_img)
-        axes[i + 1].set_title(f"Match {i+1}\nDist: {dist:.2f}")
-        axes[i + 1].axis('off')
+    query_file = request.files['file']
+    query_path = os.path.join(UPLOAD_FOLDER, "query.jpg")
+    query_file.save(query_path)
+    app.logger.info(f"Query image saved at {query_path}")
 
-    plt.tight_layout()
-    plt.show()
+    # Save news images
+    news_files = request.files.getlist("news_images")
+    news_image_paths = []
+    for news_file in news_files:
+        news_path = os.path.join(UPLOAD_FOLDER, news_file.filename)
+        news_file.save(news_path)
+        news_image_paths.append(news_path)
+        app.logger.info(f"Saved news image: {news_path}")
 
+    if not news_image_paths:
+        app.logger.warning("No news images provided for comparison")
+        return jsonify([])
 
-def main():
-    parser = argparse.ArgumentParser(description="Find top 5 similar images using a Siamese Network.")
-    parser.add_argument("--checkpoint", type=str, default="checkpoints/siamese_network.pth",
-                        help="Path to the trained Siamese model (.pth) file.")
-    parser.add_argument("--query", type=str, required=True,
-                        help="Path to the query image.")
-    parser.add_argument("--db", type=str, required=True,
-                        help="Path to the database folder with images.")
-    parser.add_argument("--img_size", type=int, default=224,
-                        help="Resize images to this size (default=224).")
-    
-    args = parser.parse_args()
-    
-    print("Loading model...")
-    model = load_siamese_model(args.checkpoint)
-    
-    transform = transforms.Compose([
-        transforms.Resize((args.img_size, args.img_size)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # Normalize using ImageNet stats
-    ])
-    
-    print("Computing query embedding...")
-    query_emb = get_embedding(model, args.query, transform)
-    
-    image_files = [
-        f for f in os.listdir(args.db)
-        if f.lower().endswith(('.jpg', '.jpeg', '.png'))
-    ]
-    if not image_files:
-        print("No valid images found in the database.")
-        return
-    
-    print("Comparing against database images...")
+    # Compare query image with each news image
+    query_emb = get_embedding(model, query_path, transform)
     results = []
-    for f in image_files:
-        db_path = os.path.join(args.db, f)
-        db_emb = get_embedding(model, db_path, transform)
-        
-        dist = compute_distance(query_emb, db_emb)
-        results.append((f, dist))
-    
-    results.sort(key=lambda x: x[1])
-    
-    top_results = results[:5]
-    print("Top 5 similar images:")
-    for filename, dist in top_results:
-        print(f"{filename}: distance={dist:.4f}")
-    
-    display_results(args.query, top_results, args.db)
+    for news_path in news_image_paths:
+        news_emb = get_embedding(model, news_path, transform)
+        distance = compute_distance(query_emb, news_emb)
+        results.append({"filename": os.path.basename(news_path), "distance": distance})
+
+    # Sort results by similarity (distance)
+    results = sorted(results, key=lambda x: x["distance"])
+    app.logger.info(f"Comparison results: {results}")
+
+    return jsonify(results)
+
 
 if __name__ == "__main__":
-    main()
+    app.run(host="0.0.0.0", port=6000)
 
