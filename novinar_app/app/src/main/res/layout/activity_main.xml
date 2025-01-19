@@ -18,5 +18,4 @@
         app:menu="@navigation/bottom_nav_menu" />
 
 
-
 </RelativeLayout>

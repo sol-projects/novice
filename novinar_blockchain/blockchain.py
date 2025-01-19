@@ -23,6 +23,45 @@ class Blockchain:
     def get_latest_block(self):
         return self.chain[-1]
 
+    def mine_block(self, data):
+        prev_block = self.get_latest_block()
+        index = prev_block.index + 1
+        difficulty = self.get_difficulty()
+        timestamp = int(time.time())
+
+        new_block = Block(
+            index=index,
+            data=data,
+            timestamp=timestamp,
+            prev_hash=prev_block.current_hash,
+            difficulty=difficulty,
+            nonce=0,
+            current_hash=""
+        )
+
+        while not new_block.current_hash.startswith("0" * difficulty):
+            new_block.nonce += 1
+            new_block.current_hash = new_block.calculate_hash()
+
+        if self.add_block(new_block):
+            print(f"Block mined and added: {vars(new_block)}")
+            return True
+        else:
+            print("Failed to add mined block.")
+            return False
+
+    def add_block(self, new_block):
+        prev_block = self.get_latest_block()
+        if self.is_valid_new_block(new_block, prev_block):
+            self.chain.append(new_block)
+            print(f"Block successfully added: {vars(new_block)}")
+            return True
+        else:
+            print("Invalid block:")
+            print(f"New Block: {vars(new_block)}")
+            print(f"Previous Block: {vars(prev_block)}")
+            return False
+
     def is_valid_new_block(self, new_block, prev_block):
         if new_block.index != prev_block.index + 1:
             return False
@@ -36,12 +75,6 @@ class Blockchain:
             return False
         if new_block.timestamp < prev_block.timestamp - 60:
             return False
-        return True
-
-    def is_chain_valid(self):
-        for i in range(1, len(self.chain)):
-            if not self.is_valid_new_block(self.chain[i], self.chain[i-1]):
-                return False
         return True
 
     def get_difficulty(self):
@@ -61,11 +94,4 @@ class Blockchain:
         elif actual_time > expected_time * 2:
             return max(1, old.difficulty - 1)
         return old.difficulty
-
-    def add_block(self, new_block):
-        prev_block = self.get_latest_block()
-        if self.is_valid_new_block(new_block, prev_block):
-            self.chain.append(new_block)
-            return True
-        return False
 

@@ -35,5 +35,6 @@ router.post('/login', JWT.login);
 router.post('/geolang', Controller.geolang);
 router.post('/find-text', upload.single('file'), Controller.findTextAreas);
 router.post('/find-sport', upload.single('file'), Controller.findSportTypes);
+router.post('/find-image-similarity', upload.single('files'), Controller.findImageSimilarity);
 
 export = router;

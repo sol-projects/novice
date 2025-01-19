@@ -21,6 +21,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapBinding? = null
@@ -61,21 +62,33 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             override fun onResponse(call: Call<List<News>>, response: Response<List<News>>) {
                 if (response.isSuccessful) {
                     val newsList = response.body()
+                    Log.d("MapFragment", "API Response: $newsList")
+
                     if (!newsList.isNullOrEmpty()) {
                         loadMarkers(newsList)
                     } else {
-                        Toast.makeText(requireContext(), "No news found.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "No news found.", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to load news.", Toast.LENGTH_SHORT).show()
+                    Log.e(
+                        "MapFragment",
+                        "Response failed. Code: ${response.code()}, Error: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                    Toast.makeText(requireContext(), "Failed to load news.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
 
             override fun onFailure(call: Call<List<News>>, t: Throwable) {
+                Log.e("MapFragment", "API call failed. Error: ${t.message}", t)
                 Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
 
     private fun loadMarkers(newsList: List<News>) {
         googleMap.clear()
@@ -83,11 +96,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         for (news in newsList) {
             try {
-                val latitude = news.latitude?: 0.0
-                val longitude = news.longitude?: 0.0
+                val coordinates = news.location?.coordinates
+
+                if (coordinates == null || coordinates.size < 2) {
+                    Log.d("MapFragment", "Skipping news with missing coordinates: ${news.title}")
+                    continue
+                }
+
+                val latitude = coordinates[1]
+                val longitude = coordinates[0]
+
+                Log.d(
+                    "MapFragment",
+                    "Processing news: ${news.title}, Lat: $latitude, Long: $longitude"
+                )
 
                 if (latitude == 0.0 && longitude == 0.0) {
-                    Log.d("MapFragment", "Skipping news with invalid location: ${news.title}")
+                    Log.d("MapFragment", "Skipping news with default location: ${news.title}")
                     continue
                 }
 
@@ -99,26 +124,37 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 )
                 marker?.let {
                     markerNewsMap[it] = news
-                    Log.d("MapFragment", "Added marker: ${news.title} at Lat = $latitude, Long = $longitude")
+                    Log.d(
+                        "MapFragment",
+                        "Added marker: ${news.title} at Lat = $latitude, Long = $longitude"
+                    )
                 }
             } catch (e: Exception) {
                 Log.e("MapFragment", "Error processing news: ${news.title}, Error: ${e.message}")
             }
         }
 
-        // Center the camera to the first valid marker
         if (markerNewsMap.isNotEmpty()) {
             val firstMarker = markerNewsMap.keys.first()
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstMarker.position, 10f))
         } else {
-            Log.d("MapFragment", "No valid markers to display.")
+            Log.d("MapFragment", "No valid locations to display on the map.")
+            Toast.makeText(
+                requireContext(),
+                "No valid locations to display on the map.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
+
 
     private fun openDetailView(news: News) {
         val detailFragment = DetailViewFragment.newInstance(news)
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, detailFragment) // Ensure this container ID matches your layout
+            .replace(
+                R.id.fragment_container,
+                detailFragment
+            )
             .addToBackStack(null)
             .commit()
     }

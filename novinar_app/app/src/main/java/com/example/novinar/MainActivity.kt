@@ -8,13 +8,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.novinar.api.RetrofitClient
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.novinar.databinding.ActivityMainBinding
 import android.Manifest
 
 
 class MainActivity : AppCompatActivity() {
-    private val apiService = RetrofitClient.apiService // Initialize the API service
+    private val apiService = RetrofitClient.apiService
     private val REQUEST_SENSOR_PERMISSIONS = 101
 
 
@@ -25,14 +24,12 @@ class MainActivity : AppCompatActivity() {
 
         val navView = binding.navView
 
-        // Load default fragment (ViewNewsFragment) on app startup
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, ViewNewsFragment.newInstance(apiService))
                 .commit()
         }
 
-        // Handle bottom navigation item selection
         navView.setOnItemSelectedListener { item ->
             val selectedFragment: Fragment = when (item.itemId) {
                 R.id.navigation_post -> PostNewsFragment.newInstance(apiService)
@@ -53,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     private fun checkAndRequestPermissions() {
         val permissions = mutableListOf<String>()
 
-        // Add all required sensor permissions
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.BODY_SENSORS

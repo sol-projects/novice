@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class NewsAdapter(
@@ -28,13 +29,14 @@ class NewsAdapter(
         val news = newsList[position]
 
         holder.titleTextView.text = news.title
-        //holder.contentTextView.text = news.content
 
+        holder.deleteButton.setOnClickListener {
+            news._id?.let { id ->
+                onDelete(news)
+            } ?: Toast.makeText(holder.itemView.context, "Invalid news ID", Toast.LENGTH_SHORT)
+                .show()
+        }
 
-        // Delete button action
-        holder.deleteButton.setOnClickListener { onDelete(news) }
-
-        // Long click action
         holder.itemView.setOnLongClickListener {
             onLongClick(news)
             true

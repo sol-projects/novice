@@ -47,7 +47,7 @@ dependencies {
     // MQTT Dependencies
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
-
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -75,9 +75,9 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
 
-    // Faker for Dummy Data
+    // Faker for Dummy Data ds
     implementation ("com.github.javafaker:javafaker:1.0.2")
-
+//
     // Testing
     testImplementation( libs.junit)
             androidTestImplementation (libs.androidx.junit)

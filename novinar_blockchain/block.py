@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 class Block:
     def __init__(self, index, data, timestamp, prev_hash, difficulty, nonce, current_hash):
@@ -13,7 +14,7 @@ class Block:
     def calculate_hash(self):
         content = (
             str(self.index)
-            + self.data
+            + json.dumps(self.data, sort_keys=True)
             + str(self.timestamp)
             + self.prev_hash
             + str(self.difficulty)

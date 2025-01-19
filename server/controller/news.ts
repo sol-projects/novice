@@ -337,6 +337,34 @@ export async function findTextAreas(req: Request, res: Response) {
   );
 }
 
+
+
+
+export async function findImageSimilarity(req: Request, res: Response) {
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length !== 2) {
+        return res.status(400).send('Two image files are required for comparison');
+    }
+
+    const [image1Path, image2Path] = files.map((file) => file.path);
+    const modelCheckpoint = path.resolve('../siamese_find_by_photo/checkpoints/siamese_network.pth');
+    const pythonScript = path.resolve('../siamese_find_by_photo/inference_siamese.py');
+
+    exec(
+        `python3 ${pythonScript} ${image1Path} ${image2Path} ${modelCheckpoint}`,
+        (error, stdout, stderr) => {
+            if (error) {
+                console.error('Error executing Python script:', stderr || error);
+                return res.status(500).send('Error processing images');
+            }
+
+            const distance = parseFloat(stdout.trim());
+            const similarity = 1 - distance; // Similarity is inversely related to distance
+            res.json({ similarity, distance });
+        }
+    );
+}
+
 export async function findSportTypes(req: Request, res: Response) {
   const image = req.file;
 

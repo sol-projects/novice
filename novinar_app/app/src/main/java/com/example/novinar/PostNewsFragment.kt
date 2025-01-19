@@ -17,36 +17,36 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.novinar.api.ApiService
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 
 class PostNewsFragment : Fragment() {
 
     private lateinit var apiService: ApiService
     private lateinit var imageView: ImageView
-    private lateinit var captureButton: Button
-    private lateinit var postButton: Button
-    private lateinit var removeImageButton: Button
     private var capturedImageBitmap: Bitmap? = null
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_PERMISSIONS = 100
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLatitude: Double = 0.0
     private var currentLongitude: Double = 0.0
+    private val blockchainServerUrl = "http://192.168.1.119:5000"
 
     companion object {
         fun newInstance(apiService: ApiService): PostNewsFragment {
-            return PostNewsFragment().apply {
-                this.apiService = apiService
-            }
+            val fragment = PostNewsFragment()
+            fragment.apiService = apiService
+            return fragment
         }
     }
 
@@ -56,33 +56,24 @@ class PostNewsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_post_news, container, false)
 
-        imageView = view.findViewById(R.id.imageViewCaptured)
-        captureButton = view.findViewById(R.id.buttonCaptureImage)
-        removeImageButton = view.findViewById(R.id.buttonRemoveImage)
-        postButton = view.findViewById(R.id.buttonPost)
-
         val titleInput: EditText = view.findViewById(R.id.editTextTitle)
         val contentInput: EditText = view.findViewById(R.id.editTextContent)
         val categorySpinner: Spinner = view.findViewById(R.id.spinnerCategory)
+        val postBlockchainButton: Button = view.findViewById(R.id.buttonPostBlockchain)
+        val postButton: Button = view.findViewById(R.id.buttonPost)
+        val captureButton: Button = view.findViewById(R.id.buttonCaptureImage)
+        imageView = view.findViewById(R.id.imageViewCaptured)
 
-        // Setup categories
         val categories = listOf("Politics", "Business", "Technology", "Sports", "Entertainment")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = adapter
 
-        // Capture image button
         captureButton.setOnClickListener {
             checkAndRequestPermissions()
         }
 
-        // Remove image button
-        removeImageButton.setOnClickListener {
-            capturedImageBitmap = null
-            imageView.setImageResource(R.drawable.placeholder_image) // Reset to placeholder
-        }
-
-        // Post news button
         postButton.setOnClickListener {
             val title = titleInput.text.toString()
             val content = contentInput.text.toString()
@@ -90,39 +81,133 @@ class PostNewsFragment : Fragment() {
 
             if (title.isNotBlank() && content.isNotBlank()) {
                 val imageFile = capturedImageBitmap?.let { bitmapToFile(it) }
-                postNewsToServer(title, content, category, imageFile)
+                postNewsToServer(title, content, listOf(category), imageFile)
             } else {
-                Toast.makeText(requireContext(), "Title and content cannot be empty!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Title and content cannot be empty!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        postBlockchainButton.setOnClickListener {
+            val title = titleInput.text.toString()
+            val content = contentInput.text.toString()
+            val category = categorySpinner.selectedItem.toString()
+
+            if (title.isNotBlank() && content.isNotBlank()) {
+                postToBlockchain(title, content, listOf(category))
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Title and content cannot be empty!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+
         fetchUserLocation()
 
         return view
     }
+
     private fun fetchUserLocation() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+            )
+            == PackageManager.PERMISSION_GRANTED
         ) {
+            val fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(requireContext())
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     currentLatitude = location.latitude
                     currentLongitude = location.longitude
+                    Log.d(
+                        "PostNewsFragment",
+                        "Location fetched: $currentLatitude, $currentLongitude"
+                    )
                 } else {
-                    Toast.makeText(requireContext(), "Unable to fetch location", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Unable to fetch location", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_PERMISSIONS
+            )
         }
     }
 
+    private fun postToBlockchain(title: String, content: String, categories: List<String>) {
+        val jsonObject = JSONObject().apply {
+            put("title", title)
+            put("content", content)
+            put("categories", JSONArray(categories))
+            put("location", JSONObject().apply {
+                put("type", "Point")
+                put("coordinates", JSONArray().apply {
+                    put(currentLongitude)
+                    put(currentLatitude)
+                })
+            })
+        }
+
+        val requestBody = RequestBody.create(
+            "application/json".toMediaTypeOrNull(),
+            jsonObject.toString()
+        )
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("$blockchainServerUrl/add_block")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                Log.e("PostNewsFragment", "Error posting to blockchain: ${e.localizedMessage}")
+                requireActivity().runOnUiThread {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                requireActivity().runOnUiThread {
+                    if (response.isSuccessful) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Posted to Blockchain successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Log.e(
+                            "PostNewsFragment",
+                            "Failed to post to blockchain. Code: ${response.code}"
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to post to blockchain: ${response.code}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        })
+    }
+
     private fun checkAndRequestPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
@@ -131,21 +216,6 @@ class PostNewsFragment : Fragment() {
             )
         } else {
             dispatchTakePictureIntent()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSIONS) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent()
-            } else {
-                Toast.makeText(requireContext(), "Camera permission is required!", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -166,7 +236,8 @@ class PostNewsFragment : Fragment() {
                 capturedImageBitmap = bitmap
                 imageView.setImageBitmap(bitmap)
             } else {
-                Toast.makeText(requireContext(), "Failed to capture image!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Failed to capture image!", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -184,37 +255,52 @@ class PostNewsFragment : Fragment() {
         }
     }
 
-
-    private fun postNewsToServer(title: String, content: String, category: String, imageFile: File?) {
-        val titlePart = RequestBody.create("text/plain".toMediaTypeOrNull(), title)
-        val contentPart = RequestBody.create("text/plain".toMediaTypeOrNull(), content)
-        val categoryPart = RequestBody.create("text/plain".toMediaTypeOrNull(), category)
-        val latitudePart = RequestBody.create("text/plain".toMediaTypeOrNull(), currentLatitude.toString())
-        val longitudePart = RequestBody.create("text/plain".toMediaTypeOrNull(), currentLongitude.toString())
-
-        val imagePart = if (imageFile != null) {
-            MultipartBody.Part.createFormData(
-                "image", imageFile.name, RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageFile)
-            )
-        } else {
-            MultipartBody.Part.createFormData(
-                "image", "placeholder.txt", RequestBody.create("text/plain".toMediaTypeOrNull(), "no_image")
-            )
+    private fun postNewsToServer(
+        title: String,
+        content: String,
+        categories: List<String>,
+        imageFile: File?
+    ) {
+        val jsonObject = JSONObject().apply {
+            put("title", title)
+            put("content", content)
+            put("categories", JSONArray(categories))
+            put("location", JSONObject().apply {
+                put("type", "Point")
+                put("coordinates", JSONArray().apply {
+                    put(currentLongitude)
+                    put(currentLatitude)
+                })
+            })
         }
 
-        val call = apiService.addNews(titlePart, contentPart, categoryPart, latitudePart, longitudePart, imagePart)
+        val requestBody = RequestBody.create(
+            "application/json".toMediaTypeOrNull(),
+            jsonObject.toString()
+        )
 
-        call.enqueue(object : Callback<Void> {
+        apiService.postNews(requestBody).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "News posted successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "News posted successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to post news!", Toast.LENGTH_SHORT).show()
+                    Log.e("PostNewsFragment", "Failed to post news. Code: ${response.code()}")
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to post news: ${response.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(requireContext(), "Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                Log.e("PostNewsFragment", "Error posting news: ${t.localizedMessage}")
+                Toast.makeText(requireContext(), "Error: ${t.localizedMessage}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }

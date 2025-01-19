@@ -9,13 +9,12 @@ class App : Application() {
         super.onCreate()
         instance = this
 
-        // Zaženi periodično posodabljanje senzorjev
         startSensorUpdates()
     }
 
     private fun startSensorUpdates() {
         val handler = Handler(Looper.getMainLooper())
-        val updateInterval = 10000L // 10 sekund
+        val updateInterval = 10000L // 10 sec
 
         handler.post(object : Runnable {
             override fun run() {

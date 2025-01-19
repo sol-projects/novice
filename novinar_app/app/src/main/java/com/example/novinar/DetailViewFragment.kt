@@ -3,7 +3,6 @@ package com.example.novinar
 import android.app.Dialog
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -38,50 +37,28 @@ class DetailViewFragment : Fragment() {
         val timestampTextView: TextView = view.findViewById(R.id.textViewTimestamp)
         val imageView: ImageView = view.findViewById(R.id.imageView)
 
-        // Retrieve the news object from arguments
         arguments?.getParcelable<News>(NEWS_KEY)?.let { news ->
-            // Populate the UI with news details
             titleTextView.text = news.title
             contentTextView.text = news.content ?: "No content available"
-            categoryTextView.text = news.category ?: "No category"
+            categoryTextView.text = news.categories?.joinToString(", ") ?: "No category"
             timestampTextView.text = news.timestamp ?: "No timestamp"
 
-            // Decode and display the image if available
-            news.image?.let { imageBase64 ->
-                try {
-                    val base64Image = if (imageBase64.contains(",")) {
-                        imageBase64.split(",")[1]
-                    } else {
-                        imageBase64
-                    }
-                    val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
-                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    imageView.setImageBitmap(bitmap)
+            news.location?.coordinates?.let {
+                Log.d("DetailViewFragment", "News Location: Lat = ${it[1]}, Long = ${it[0]}")
+            }
 
-                    // Add click listener to open the image in full screen
-                    imageView.setOnClickListener {
-                        showFullScreenImage(bitmap)
-                    }
+            news.url?.let { imageUrl ->
+                try {
+
                 } catch (e: Exception) {
-                    Log.e("DetailViewFragment", "Error decoding image: ${e.localizedMessage}")
-                    imageView.setImageResource(R.drawable.placeholder_image) // Fallback image
+                    Log.e("DetailViewFragment", "Error loading image: ${e.localizedMessage}")
+                    imageView.setImageResource(R.drawable.placeholder_image)
                 }
             } ?: run {
-                imageView.setImageResource(R.drawable.placeholder_image) // Fallback image
+                imageView.setImageResource(R.drawable.placeholder_image)
             }
         }
 
         return view
-    }
-
-    private fun showFullScreenImage(bitmap: android.graphics.Bitmap) {
-        val dialog = Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-        dialog.setContentView(R.layout.dialog_fullscreen_image)
-        val fullScreenImageView: ImageView = dialog.findViewById(R.id.fullScreenImageView)
-        fullScreenImageView.setImageBitmap(bitmap)
-        fullScreenImageView.setOnClickListener {
-            dialog.dismiss() // Close the dialog when the image is clicked
-        }
-        dialog.show()
     }
 }

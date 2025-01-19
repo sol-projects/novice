@@ -6,27 +6,30 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
+
 interface ApiService {
 
-    @Multipart
-    @POST("/addNews")
-    fun addNews(
-        @Part("title") title: RequestBody,
-        @Part("content") content: RequestBody,
-        @Part("category") category: RequestBody,
-        @Part("latitude") latitude: RequestBody,
-        @Part("longitude") longitude: RequestBody,
-        @Part image: MultipartBody.Part
-    ): Call<Void>
-
-
-    @GET("getNews")
+    @GET("news/")
     fun getNews(): Call<List<News>>
 
-    @DELETE("deleteNews/{id}")
+    @Multipart
+    @POST("news/")
+    fun postNews(
+        @Part("title") title: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part("categories") categories: RequestBody,
+        @Part("location") location: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Call<Void>
+
+    @POST("news/")
+    fun postNews(@Body requestBody: RequestBody): Call<Void>
+
+    @DELETE("news/{id}")
     fun deleteNews(@Path("id") id: String): Call<Void>
 
-    @PUT("updateNews/{id}")
+
+    @PUT("news/{id}")
     fun updateNews(
         @Path("id") id: String,
         @Body news: News

@@ -1,70 +1,65 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/background_color">
+    android:background="@color/background_color"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:paddingBottom="16dp">
 
-        <!-- News Image -->
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/placeholder_image"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/image_background" />
+            android:background="@drawable/image_background"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_image" />
 
-        <!-- News Title -->
         <TextView
             android:id="@+id/textViewTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            android:textColor="@color/primary_text"
-            android:text="News Title"
+            android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:layout_marginBottom="8dp" />
+            android:text="News Title"
+            android:textColor="@color/primary_text"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-        <!-- News Timestamp -->
         <TextView
             android:id="@+id/textViewTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/secondary_text"
-            android:gravity="center"
             android:layout_marginBottom="16dp"
-            android:text="Timestamp" />
+            android:gravity="center"
+            android:text="Timestamp"
+            android:textColor="@color/secondary_text"
+            android:textSize="12sp" />
 
-        <!-- News Content -->
         <TextView
             android:id="@+id/textViewContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/primary_text"
+            android:layout_marginBottom="16dp"
             android:lineSpacingExtra="4dp"
             android:text="News Content"
-            android:layout_marginBottom="16dp" />
+            android:textColor="@color/primary_text"
+            android:textSize="16sp" />
 
-        <!-- News Category -->
         <TextView
             android:id="@+id/textViewCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:textSize="14sp"
-            android:textColor="@color/accent_color"
             android:layout_gravity="end"
-            android:text="Category" />
+            android:text="Category"
+            android:textColor="@color/accent_color"
+            android:textSize="14sp"
+            android:textStyle="italic" />
 
     </LinearLayout>
 </ScrollView>

@@ -19,7 +19,8 @@ object SensorManager : SensorEventListener {
     private var pressureData = 0f
     private var temperatureData = 0f
 
-    private val sensorManager = App.context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val sensorManager =
+        App.context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
     init {
         registerSensors()
@@ -47,9 +48,11 @@ object SensorManager : SensorEventListener {
                 Sensor.TYPE_ACCELEROMETER -> {
                     accelerometerData = Triple(it.values[0], it.values[1], it.values[2])
                 }
+
                 Sensor.TYPE_PRESSURE -> {
                     pressureData = it.values[0]
                 }
+
                 Sensor.TYPE_AMBIENT_TEMPERATURE -> {
                     temperatureData = it.values[0]
                 }
@@ -58,42 +61,39 @@ object SensorManager : SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Not needed for this implementation
+        // TODO
     }
+
     private fun getPhoneTemperature(): Double {
-        // Use ambient temperature if available
         if (temperatureData != 0f) {
             return temperatureData.toDouble()
         }
 
-        // Fallback to battery temperature
-        val intent = App.context.registerReceiver(null, android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val intent = App.context.registerReceiver(
+            null,
+            android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        )
         val batteryTemp = intent?.getIntExtra("temperature", -1) ?: -1
         return if (batteryTemp != -1) batteryTemp / 10.0 else Double.NaN // Convert to Celsius
     }
 
     fun updateSensors() {
-        // Location
         val location = getLocation()
         sensorData["latitude"] = location?.latitude ?: "N/A"
         sensorData["longitude"] = location?.longitude ?: "N/A"
 
-        // Approximate location
         val address = location?.let { getApproximateLocation(it) }
         sensorData["town"] = address?.locality ?: "Unknown"
         sensorData["country"] = address?.countryName ?: "Unknown"
 
-        // Time
         val timestamp = SystemClock.elapsedRealtime()
         sensorData["timestamp"] = convertTimestampToDateTime(timestamp)
 
-        // Internal Temperature
         sensorData["Phone temp"] = getPhoneTemperature()
 
-        // Accelerometer
-        sensorData["accelerometer"] = "X: ${accelerometerData.first}, Y: ${accelerometerData.second}, Z: ${accelerometerData.third}"
+        sensorData["accelerometer"] =
+            "X: ${accelerometerData.first}, Y: ${accelerometerData.second}, Z: ${accelerometerData.third}"
 
-        // Pressure
         sensorData["pressure"] = pressureData
 
     }
@@ -103,7 +103,8 @@ object SensorManager : SensorEventListener {
     }
 
     private fun getLocation(): Location? {
-        val locationManager = App.context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager =
+            App.context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return try {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
