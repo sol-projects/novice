@@ -337,32 +337,47 @@ export async function findTextAreas(req: Request, res: Response) {
   );
 }
 
-
-
-
 export async function findImageSimilarity(req: Request, res: Response) {
+  const files = req.files as Express.Multer.File[];
+
+  if (!files || files.length !== 2) {
+    return res.status(400).send('Two image files are required for comparison');
+  }
+
+  const fs = require('fs');
+  const path = require('path');
+  const tempImagePaths = files.map((file) => file.path);
+
+ try {
     const files = req.files as Express.Multer.File[];
     if (!files || files.length !== 2) {
-        return res.status(400).send('Two image files are required for comparison');
-    }
+      return res.status(400).send('Two image files are required for comparison');
+    }    const modelPath = path.resolve('../siamese_find_by_photo/checkpoints/siamese_network.pth');
+    const torch = require('torch');
+    const SiameseNetwork = require('./../siamese_find_by_photo/inference_siamese'); 
+    const model = new SiameseNetwork();
+    model.load_state_dict(torch.load(modelPath));
+    model.eval();
 
-    const [image1Path, image2Path] = files.map((file) => file.path);
-    const modelCheckpoint = path.resolve('../siamese_find_by_photo/checkpoints/siamese_network.pth');
-    const pythonScript = path.resolve('../siamese_find_by_photo/inference_siamese.py');
+    const getEmbedding = (imagePath: string) => {
+      const { Image } = require('image-js');
+      const img = Image.load(imagePath).resize({ width: 100, height: 100 });
+      const imgTensor = torch.tensor(img.toArray()).unsqueeze(0);
+      return model.forward_once(imgTensor);
+    };
 
-    exec(
-        `python3 ${pythonScript} ${image1Path} ${image2Path} ${modelCheckpoint}`,
-        (error, stdout, stderr) => {
-            if (error) {
-                console.error('Error executing Python script:', stderr || error);
-                return res.status(500).send('Error processing images');
-            }
+    const embeddings = tempImagePaths.map((imgPath) => getEmbedding(imgPath));
+    const distance = torch.pairwise_distance(embeddings[0], embeddings[1]).item();
 
-            const distance = parseFloat(stdout.trim());
-            const similarity = 1 - distance; // Similarity is inversely related to distance
-            res.json({ similarity, distance });
-        }
-    );
+    tempImagePaths.forEach((filePath) => fs.unlinkSync(filePath));
+
+    return res.json({ similarity: 1 - distance, distance });
+  } catch (error) {
+    console.error(error);
+
+    tempImagePaths.forEach((filePath) => fs.unlinkSync(filePath));
+    return res.status(500).send('Error processing the images');
+  }
 }
 
 export async function findSportTypes(req: Request, res: Response) {
