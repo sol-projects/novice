@@ -2,9 +2,11 @@ package io.github.some_example_name.oop;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -16,31 +18,65 @@ public class MainOOP extends ApplicationAdapter {
 
     @Override
     public void create() {
-        // Initialize camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
         batch = new SpriteBatch();
+
+        // Initialize the tile provider
         tileProvider = new DynamicTileProvider();
 
-        // Center the camera on the map
-        float mapSizeInPixels = (1 << 3) * 256; // Map size for zoom level 3
-        camera.position.set(mapSizeInPixels / 2, mapSizeInPixels / 2, 0);
+        // Set initial camera position
+        camera.position.set(0, 0, 0);
+        camera.zoom = 1f; // Adjust zoom level as needed
+        camera.update();
     }
 
     @Override
     public void render() {
-        // Update the camera
-        camera.update();
+        handleInput();
 
         // Clear the screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Render tiles
+        // Update the camera
+        camera.update();
         batch.setProjectionMatrix(camera.combined);
+
+        // Render the tiles
         batch.begin();
-        tileProvider.render(batch, camera.position.x - viewport.getWorldWidth() / 2, camera.position.y - viewport.getWorldHeight() / 2, viewport.getWorldWidth(), viewport.getWorldHeight());
+        tileProvider.render(batch,
+            camera.position.x - viewport.getWorldWidth() * camera.zoom / 2,
+            camera.position.y - viewport.getWorldHeight() * camera.zoom / 2,
+            viewport.getWorldWidth() * camera.zoom,
+            viewport.getWorldHeight() * camera.zoom);
         batch.end();
+    }
+
+    private void handleInput() {
+        // Zoom controls
+        if (Gdx.input.isKeyPressed(Input.Keys.PLUS)) {
+            camera.zoom -= 0.02f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) {
+            camera.zoom += 0.02f;
+        }
+        camera.zoom = MathUtils.clamp(camera.zoom, 0.5f, 2f);
+
+        // Camera movement
+        float moveSpeed = 200 * Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            camera.translate(-moveSpeed, 0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            camera.translate(moveSpeed, 0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            camera.translate(0, moveSpeed);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            camera.translate(0, -moveSpeed);
+        }
     }
 
     @Override
