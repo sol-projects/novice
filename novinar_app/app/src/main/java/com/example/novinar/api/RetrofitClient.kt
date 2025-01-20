@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.1.119:8000/"
+    private const val BASE_URL = "http://192.168.94.168:8000/"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(object : Interceptor {
@@ -17,7 +17,7 @@ object RetrofitClient {
                     .addHeader(
                         "Authorization",
                         "Bearer " +
-                                "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0YzAwNjE0NC1lZTU4LTExZWQtYTA1Yi0wMjQyYWMxMjAwMDMiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzczMjU1OTUsImV4cCI6MTczNzMyOTE5NX0.STWb2PQotXjGnxkZb0QyQ5UoQCk4ewzpWtzNpt88j_73oqHbel9uSiFSp1crGz2u-0XpDnY-eTPTjCSDaE_ASIqbPDpYL3nDv4ptAWy46NoRPzl_Q9FtTe187T7iRVf8-je7HbFdyPqH5pmNJGfLPcx5gCqZvNgL7TS3iwj8oY4N4CWVlNYNrCVyMFrV3pXQH1QqgYNoa3j-YCx_BCzw9WnvY2UUC9TJM_smp8_bNc8UHwNpVOOYU_VqOCD1GlZjNU5NDOXAtHDNCpKQNlg2HQYrnbp-dJh-vy5net8sNz-IcTqErORu-ONXuVKM9d94fXJYJ_n2FlqsjjDgvppR8A" /*Run to get JWT KEY uuid is in .env file curl -X POST \ http://192.168.1.119:8000/news/login \ -H "Content-Type: application/json" \ -d '{ "uuid": "" }'*/
+                                "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0YzAwNjE0NC1lZTU4LTExZWQtYTA1Yi0wMjQyYWMxMjAwMDMiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzczNjcwNzQsImV4cCI6MTczNzM3MDY3NH0.JiYPWazYL758pio3ueNCWsCLtcQmmwhkmebQ4s4ggErSjaRiAzjS1WNcgqQ4PnXYHxyn9QeKP0JyBkMTuV6pjUM5XsBh7hSWshnHiDrShiP-nM2UWQYWbfyKSpofRv7VJMIIkgzt7rFYHC9nCez-jzb3mxacmHr4pE4a5zsD2cXU7MeEfGcebaccWXUpKsXKJVdusuILGoQvoHBvPBgpI2h-sWCNk9cCZt1bAoIuNyD6RbnnPQtgf5PnrvuSjzEDJM7QPnGtXTtJjHD5hnWosKwMt3krrvINIB2JLZXf8wONZGqlzH8Jru60kAPhZv_rs0MwkKyyR7p0e8ajUl-nLg" /*Run to get JWT KEY uuid is in .env file curl -X POST \ http://192.168.1.119:8000/news/login \ -H "Content-Type: application/json" \ -d '{ "uuid": "" }'*/
 
                     )
                     .build()

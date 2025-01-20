@@ -40,12 +40,12 @@ class ViewNewsFragment : Fragment() {
     private lateinit var searchOptionSpinner: Spinner
     private lateinit var toggleSourceButton: Button
     private var fullNewsList: List<News> = emptyList()
-    private val blockchainServerUrl = "http://192.168.1.119:5000"
+    private val blockchainServerUrl = "http://192.168.94.168:5000"
     private var viewingBlockchainPosts = false
     private lateinit var captureImageButton: Button
     private val REQUEST_IMAGE_CAPTURE = 1
     private var photoFilePath: String? = null
-    private val pythonServerUrl = "http://192.168.1.119:4000/compare"
+    private val pythonServerUrl = "http://192.168.94.168:6000/compare"
 
     companion object {
         fun newInstance(apiService: ApiService): ViewNewsFragment {

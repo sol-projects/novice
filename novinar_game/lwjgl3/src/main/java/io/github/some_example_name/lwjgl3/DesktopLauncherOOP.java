@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.some_example_name.oop.MainOOP;
 
 public class DesktopLauncherOOP {
-    public static void MainOOP (String[] arg) {
+    public static void main (String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("OOP Version of the Game");
         config.setWindowedMode(800, 480);

@@ -3,11 +3,8 @@ package io.github.some_example_name.oop;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 
-public class Car extends GameObject {
+public class Car2 extends Car {
     private static final float MAX_SPEED_X = 500f;
     private static final float MAX_SPEED_Y = 300f;
     private static final float ACCELERATION = 300f;
@@ -20,8 +17,7 @@ public class Car extends GameObject {
     private float speedY = 0f;
     public int health = 100;
     public float gasRemaining = 100;
-
-    public Car(AtlasRegion carTexture) {
+    public Car2(TextureAtlas.AtlasRegion carTexture) {
         super(carTexture);
         bounds.width = carTexture.getRegionWidth() * 4f; // Apply scaling if needed
         bounds.height = carTexture.getRegionHeight() * 4f;
@@ -42,7 +38,6 @@ public class Car extends GameObject {
         bounds.x += speedX * delta;
         bounds.y += speedY * delta;
 
-        // Ensure the car stays within screen boundaries
         if (bounds.x < 0) {
             bounds.x = 0;
             speedX = 0;
@@ -60,55 +55,28 @@ public class Car extends GameObject {
             speedY = 0;
         }
     }
-
-    private void handleInput(float delta) {
+    protected void handleInput(float delta) {
         float effectiveAcceleration = isSpeedBoosted ? ACCELERATION * 3 : ACCELERATION;
         float effectiveMaxXSpeed = isSpeedBoosted ? MAX_SPEED_X * 2 : MAX_SPEED_X;
         float effectiveMaxYSpeed = isSpeedBoosted ? MAX_SPEED_Y * 2 : MAX_SPEED_Y;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             speedX -= effectiveAcceleration * delta;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             speedX += effectiveAcceleration * delta;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             speedY += effectiveAcceleration * delta;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             speedY -= effectiveAcceleration * delta;
         }
 
-        // Limit speed to maximum allowed values
         speedX = Math.max(-effectiveMaxXSpeed, Math.min(speedX, effectiveMaxXSpeed));
         speedY = Math.max(-effectiveMaxYSpeed, Math.min(speedY, effectiveMaxYSpeed));
 
         applyFriction(delta);
-    }
-
-    void resetSpeed() {
-        speedX = Math.signum(speedX) * (Math.abs(speedX) / 2);
-        speedY = Math.signum(speedY) * (Math.abs(speedY) / 2);
-    }
-
-    public void activateSpeedBoost() {
-        isSpeedBoosted = true;
-        speedBoostTimer = speedBoostDuration;
-    }
-
-    public void applyFriction(float delta) {
-        if (speedX != 0) {
-            speedX += (speedX > 0 ? -FRICTION : FRICTION) * delta;
-            if (Math.abs(speedX) < FRICTION * delta) {
-                speedX = 0;
-            }
-        }
-        if (speedY != 0) {
-            speedY += (speedY > 0 ? -FRICTION : FRICTION) * delta;
-            if (Math.abs(speedY) < FRICTION * delta) {
-                speedY = 0;
-            }
-        }
     }
 
     @Override

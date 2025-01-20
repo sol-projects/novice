@@ -32,10 +32,11 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-  implementation project(':core')
-  implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-  implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+  implementation "com.squareup.okhttp3:okhttp:4.9.3"
+  implementation "com.fasterxml.jackson.core:jackson-databind:2.13.3"
 
+
+  implementation project(':core')
   implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion"){exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'}
 
   if(enableGraalNative == 'true') {

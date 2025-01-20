@@ -41,7 +41,7 @@ class PostNewsFragment : Fragment() {
     private val REQUEST_PERMISSIONS = 100
     private var currentLatitude: Double = 0.0
     private var currentLongitude: Double = 0.0
-    private val blockchainServerUrl = "http://192.168.1.119:5000"
+    private val blockchainServerUrl = "http://192.168.94.168:5000"
 
     companion object {
         fun newInstance(apiService: ApiService): PostNewsFragment {

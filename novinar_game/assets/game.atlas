@@ -6,35 +6,42 @@ filter: Nearest, Nearest
 repeat: none
 Desert_road (64 x 64)
   rotate: false
-  xy: 2, 29
+  xy: 2, 17
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 Misc_prop_road_block
   rotate: false
-  xy: 2, 2
+  xy: 218, 235
   size: 10, 7
   orig: 10, 7
   offset: 0, 0
   index: -1
+Player_blue_single
+  rotate: false
+  xy: 207, 229
+  size: 9, 13
+  orig: 9, 13
+  offset: 0, 0
+  index: -1
 Player_red_single
   rotate: false
-  xy: 207, 241
+  xy: 2, 2
   size: 9, 13
   orig: 9, 13
   offset: 0, 0
   index: -1
 gasoline
   rotate: false
-  xy: 2, 95
+  xy: 2, 83
   size: 203, 159
   orig: 203, 159
   offset: 0, 0
   index: -1
 speedBoost
   rotate: false
-  xy: 2, 11
+  xy: 68, 65
   size: 6, 16
   orig: 6, 16
   offset: 0, 0
