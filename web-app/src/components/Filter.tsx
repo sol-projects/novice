@@ -1,26 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  HStack,
-  VStack,
-  Heading,
-  useDisclosure,
-  Checkbox,
-  CheckboxGroup,
-  AccordionPanel,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionIcon,
-  Radio,
-  RadioGroup,
-  Stack,
-  Box,
-} from "@chakra-ui/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import DynamicInput from "./DynamicInput";
 
 export interface FilterProps {
@@ -39,6 +18,7 @@ export interface FilterData {
 }
 
 export default function Filter({ onChange }: FilterProps) {
+  const filterId = React.useId();
   const [data, setData] = useState<FilterData>({
     websites: [],
     from: new Date(0),
@@ -60,14 +40,14 @@ export default function Filter({ onChange }: FilterProps) {
   const handleFromDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setData((prevState) => ({
       ...prevState,
-      from: new Date(event.target.value),
+      from: event.target.value ? new Date(event.target.value) : new Date(0),
     }));
   };
 
   const handleToDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setData((prevState) => ({
       ...prevState,
-      to: new Date(event.target.value),
+      to: event.target.value ? new Date(`${event.target.value}T23:59:59.999`) : new Date(),
     }));
   };
 
@@ -110,106 +90,30 @@ export default function Filter({ onChange }: FilterProps) {
     onChange(data);
   }, [data, onChange]);
 
-  return (
-    <Accordion allowToggle>
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box as="span" flex="1" textAlign="left">
-              filtriranje
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          <FormControl>
-            <RadioGroup
-              colorScheme="green"
-              onChange={handleSortChange}
-              value={data.sortBy}
-            >
-              <Stack direction="row">
-                <FormLabel>sortiraj: </FormLabel>
-                <Radio value="dateDesc">novejše</Radio>
-                <Radio value="dateAsc">starejše</Radio>
-                <Radio value="popularity">popularnost</Radio>
-                <Radio value="views">ogledi</Radio>
-              </Stack>
-            </RadioGroup>
-            <CheckboxGroup
-              colorScheme="green"
-              defaultValue={[
-                "gov",
-                "rtvslo",
-                "gov-vlada",
-                "24ur",
-                "delo",
-                "mariborinfo",
-                "svet",
-                "sta",
-                "siol",
-                "ekipa24",
-                "dnevnik",
-                "n1",
-              ]}
-              onChange={handleWebsiteChange}
-            >
-              <VStack align="stretch">
-                <HStack>
-                  <Checkbox width="50%" value="rtvslo">
-                    RTV Slovenija
-                  </Checkbox>
-                  <Checkbox value="gov">gov</Checkbox>
-                </HStack>
-                <HStack>
-                  <Checkbox width="50%" value="gov-vlada">
-                    novice vlade
-                  </Checkbox>
-                  <Checkbox value="24ur">24 ur</Checkbox>
-                </HStack>
-                <HStack>
-                  <Checkbox width="50%" value="delo">
-                    Delo
-                  </Checkbox>
-                  <Checkbox value="mariborinfo">Mariborinfo</Checkbox>
-                </HStack>
-                <HStack>
-                  <Checkbox width="50%" value="dnevnik">
-                    Dnevnik
-                  </Checkbox>
-                  <Checkbox value="svet">Svet</Checkbox>
-                </HStack>
-                <HStack>
-                  <Checkbox width="50%" value="siol">
-                    Siol
-                  </Checkbox>
-                  <Checkbox value="sta">STA</Checkbox>
-                </HStack>
-                <HStack>
-                  <Checkbox width="50%" value="n1">
-                    N1
-                  </Checkbox>
-                  <Checkbox value="ekipa24">Ekipa 24</Checkbox>
-                </HStack>
-              </VStack>
-            </CheckboxGroup>
-            <FormLabel>Čas</FormLabel>
-            <HStack>
-              <Input type="date" onChange={handleFromDateChange} />
-              <Input type="date" onChange={handleToDateChange} />
-            </HStack>
-            <FormLabel>Kategorije</FormLabel>
-            <DynamicInput onChange={handleCategoriesChange} />
-            <FormLabel>Avtorji</FormLabel>
-            <DynamicInput onChange={handleAuthorsChange} />
 
-            <FormLabel>Išči po naslovu</FormLabel>
-            <Input type="text" onChange={handleTitleChange} />
-            <FormLabel>Išči po vsebini</FormLabel>
-            <Input type="text" onChange={handleContentChange} />
-          </FormControl>
-        </AccordionPanel>
-      </AccordionItem>
-    </Accordion>
+  return (
+    <div className="filters">
+      <label htmlFor={`${filterId}-sort`}>Razvrsti po</label>
+      <select id={`${filterId}-sort`} value={data.sortBy} onChange={event => handleSortChange(event.target.value)}>
+        <option value="dateDesc">Novejše najprej</option><option value="dateAsc">Starejše najprej</option><option value="popularity">Popularnost</option><option value="views">Ogledi</option>
+      </select>
+      <fieldset className="filter-section"><legend>Viri novic</legend><div className="source-options">
+        {[["rtvslo", "RTV Slovenija"], ["gov", "gov"], ["gov-vlada", "novice vlade"], ["24ur", "24 ur"], ["delo", "Delo"], ["mariborinfo", "Mariborinfo"], ["dnevnik", "Dnevnik"], ["svet", "Svet"], ["siol", "Siol"], ["sta", "STA"], ["n1", "N1"], ["ekipa24", "Ekipa 24"]].map(([value, label]) => (
+          <label key={value}><input type="checkbox" value={value} defaultChecked onChange={event => {
+            const inputs = event.currentTarget.closest("fieldset")!.querySelectorAll<HTMLInputElement>("input:checked");
+            handleWebsiteChange(Array.from(inputs, input => input.value));
+          }} />{label}</label>
+        ))}
+      </div></fieldset>
+      <fieldset className="filter-section"><legend>Čas</legend><div className="date-fields"><label>Od datuma<input type="date" aria-label="Od datuma" onChange={handleFromDateChange} /></label><label>Do datuma<input type="date" aria-label="Do datuma" onChange={handleToDateChange} /></label></div></fieldset>
+      <details className="filter-section" open><summary>Iskanje</summary>
+        <label htmlFor={`${filterId}-title`}>Išči po naslovu</label><input id={`${filterId}-title`} type="search" placeholder="Naslov novice…" onChange={handleTitleChange} />
+        <label htmlFor={`${filterId}-content`}>Išči po vsebini</label><input id={`${filterId}-content`} type="search" placeholder="Beseda v vsebini…" onChange={handleContentChange} />
+      </details>
+      <details className="filter-section"><summary>Kategorije in avtorji</summary>
+        <label>Kategorije</label><DynamicInput onChange={handleCategoriesChange} />
+        <label>Avtorji</label><DynamicInput onChange={handleAuthorsChange} />
+      </details>
+    </div>
   );
 }

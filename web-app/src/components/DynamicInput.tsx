@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Flex, Input, Button } from "@chakra-ui/react";
 
 interface DynamicInputProps {
@@ -10,7 +10,9 @@ export default function DynamicInput({ onChange }: DynamicInputProps) {
   const [inputs, setInputs] = useState<string[]>([]);
 
   const add = () => {
-    setInputs([...inputs, ""]);
+    const updated = [...inputs, ""];
+    setInputs(updated);
+    onChange(updated);
   };
 
   const remove = (index: number) => {
@@ -27,12 +29,8 @@ export default function DynamicInput({ onChange }: DynamicInputProps) {
     onChange(updated);
   };
 
-  useEffect(() => {
-    onChange(inputs);
-  }, [inputs, onChange]);
-
   return (
-    <Flex direction="column">
+    <Flex direction="column" className="dynamic-input">
       {inputs.map((input, index) => (
         <Flex key={index} mb={2}>
           <Input
@@ -40,12 +38,12 @@ export default function DynamicInput({ onChange }: DynamicInputProps) {
             onChange={(e) => change(e.target.value, index)}
             placeholder="Enter a value"
           />
-          <Button ml={2} colorScheme="red" onClick={() => remove(index)}>
+          <Button ml={2} title="Odstrani vrednost" onClick={() => remove(index)}>
             -
           </Button>
         </Flex>
       ))}
-      <Button colorScheme="green" onClick={add}>
+      <Button title="Dodaj vrednost" onClick={add}>
         +
       </Button>
     </Flex>

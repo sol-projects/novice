@@ -1,0 +1,88 @@
+/* Each theme owns its light and dark colors; layout stays in its existing stylesheet. */
+:root[data-theme="almanac"] {
+  --light-paper: #d6dfe6; --light-sheet: #f0f4f7; --light-ink: #14222f; --light-muted: #405262; --light-accent: #941655; --light-accent-ink: #ffffff;
+  --light-chart-2: #34434f; --light-chart-3: #546578; --light-chart-4: #3b625e;
+  --dark-paper: #1b252e; --dark-sheet: #263440; --dark-ink: #edf2f7; --dark-muted: #b8c6d3; --dark-accent: #f69bc4; --dark-accent-ink: #2c1020;
+  --dark-chart-2: #9abfe2; --dark-chart-3: #92ccb9; --dark-chart-4: #e7c183;
+}
+:root[data-theme="apple"] {
+  --light-paper: #f5f5f7; --light-sheet: #ffffff; --light-ink: #1d1d1f; --light-muted: #62626b; --light-accent: #0066cc; --light-accent-ink: #ffffff;
+  --light-chart-2: #7b4abd; --light-chart-3: #217956; --light-chart-4: #b2601c;
+  --dark-paper: #161619; --dark-sheet: #232327; --dark-ink: #f5f5f7; --dark-muted: #b4b4bd; --dark-accent: #8abaff; --dark-accent-ink: #102339;
+  --dark-chart-2: #c3a7ff; --dark-chart-3: #8bd6b5; --dark-chart-4: #efbf86;
+}
+:root[data-theme="liquid-apple"] {
+  --light-paper: #e8f0fc; --light-sheet: #f9fcff; --light-ink: #0f1b2d; --light-muted: #455c7a; --light-accent: #245fae; --light-accent-ink: #f9fcff;
+  --light-chart-2: #457f84; --light-chart-3: #855b99; --light-chart-4: #9c6533;
+  --dark-paper: #0c1829; --dark-sheet: #162940; --dark-ink: #edf5ff; --dark-muted: #b2cae5; --dark-accent: #a6d7ff; --dark-accent-ink: #10243b;
+  --dark-chart-2: #9fd7cb; --dark-chart-3: #ccb4f0; --dark-chart-4: #e5c79e;
+}
+:root[data-theme="maximalist"] {
+  --light-paper: #f6f0d8; --light-sheet: #fffbee; --light-ink: #281536; --light-muted: #5d4565; --light-accent: #87214e; --light-accent-ink: #fffbee;
+  --light-chart-2: #583a99; --light-chart-3: #2c7150; --light-chart-4: #ad5a12;
+  --dark-paper: #211629; --dark-sheet: #31233a; --dark-ink: #fff2d7; --dark-muted: #d7bddb; --dark-accent: #ffc0da; --dark-accent-ink: #3c1731;
+  --dark-chart-2: #c6b1ff; --dark-chart-3: #bada80; --dark-chart-4: #efbf86;
+}
+:root[data-theme="terminal"] {
+  --light-paper: #e5f3e8; --light-sheet: #f4fff6; --light-ink: #0e3620; --light-muted: #386048; --light-accent: #145c31; --light-accent-ink: #f4fff6;
+  --light-chart-2: #14616f; --light-chart-3: #785f16; --light-chart-4: #6a4483;
+  --dark-paper: #080f0c; --dark-sheet: #0e1913; --dark-ink: #c7f8d7; --dark-muted: #8eb69c; --dark-accent: #7defa1; --dark-accent-ink: #08120d;
+  --dark-chart-2: #6cd6e9; --dark-chart-3: #e2d07c; --dark-chart-4: #cfa5ee;
+}
+:root[data-theme="kitty"] {
+  --light-paper: #ffe8f0; --light-sheet: #fff9fc; --light-ink: #57233c; --light-muted: #865268; --light-accent: #b01c57; --light-accent-ink: #ffffff;
+  --light-chart-2: #8656ab; --light-chart-3: #397a79; --light-chart-4: #9c6429;
+  --dark-paper: #2b1523; --dark-sheet: #3b2033; --dark-ink: #ffe8f3; --dark-muted: #e2b7ce; --dark-accent: #ffadd2; --dark-accent-ink: #48112c;
+  --dark-chart-2: #d0b4f5; --dark-chart-3: #aedbe5; --dark-chart-4: #e1c193;
+}
+:root[data-theme="garden"] {
+  --light-paper: #f7f2df; --light-sheet: #fffaf0; --light-ink: #173a27; --light-muted: #4c5f45; --light-accent: #356d34; --light-accent-ink: #ffffff;
+  --light-chart-2: #806b3a; --light-chart-3: #526b75; --light-chart-4: #8a525d;
+  --dark-paper: #19241c; --dark-sheet: #253328; --dark-ink: #f4edd9; --dark-muted: #c1cbb3; --dark-accent: #b0d69b; --dark-accent-ink: #20321e;
+  --dark-chart-2: #d9c18f; --dark-chart-3: #9dc6c8; --dark-chart-4: #dab1bc;
+}
+:root[data-theme="hedgerow"] {
+  --light-paper: #eaf0df; --light-sheet: #f8f9ec; --light-ink: #173b29; --light-muted: #4a6247; --light-accent: #4c6618; --light-accent-ink: #faffed;
+  --light-chart-2: #327464; --light-chart-3: #8c643f; --light-chart-4: #79548b;
+  --dark-paper: #082b1d; --dark-sheet: #103727; --dark-ink: #f2eedf; --dark-muted: #b2c9b5; --dark-accent: #cce454; --dark-accent-ink: #17301f;
+  --dark-chart-2: #9acbc0; --dark-chart-3: #d2b495; --dark-chart-4: #c8afd1;
+}
+:root[data-theme="retro"] {
+  --light-paper: #c0c0c0; --light-sheet: #fffef3; --light-ink: #111128; --light-muted: #414151; --light-accent: #0000a8; --light-accent-ink: #ffffef;
+  --light-chart-2: #8c008c; --light-chart-3: #00665a; --light-chart-4: #982b28;
+  --dark-paper: #15152c; --dark-sheet: #252542; --dark-ink: #f1f1d7; --dark-muted: #c3c3d6; --dark-accent: #a7c5ff; --dark-accent-ink: #101031;
+  --dark-chart-2: #e0b0ed; --dark-chart-3: #8bd2cc; --dark-chart-4: #f0bf91;
+}
+:root[data-theme="newspaper"] {
+  --light-paper: #f0e8d5; --light-sheet: #faf5e9; --light-ink: #251f18; --light-muted: #625747; --light-accent: #70291f; --light-accent-ink: #fff5e6;
+  --light-chart-2: #49443c; --light-chart-3: #71624c; --light-chart-4: #4e6267;
+  --dark-paper: #22201c; --dark-sheet: #2e2b25; --dark-ink: #f4ecd8; --dark-muted: #cec0a5; --dark-accent: #edb9a1; --dark-accent-ink: #382019;
+  --dark-chart-2: #c8c1b4; --dark-chart-3: #d4b784; --dark-chart-4: #a6c5c8;
+}
+:root[data-theme][data-scheme="light"] {
+  --native-scheme: light; color-scheme: light;
+  --color-paper: var(--light-paper); --color-sheet: var(--light-sheet); --color-ink: var(--light-ink); --color-muted: var(--light-muted);
+  --color-accent: var(--light-accent); --color-accent-ink: var(--light-accent-ink); --color-error: #b02233;
+  --color-chart-1: var(--light-accent); --color-chart-2: var(--light-chart-2); --color-chart-3: var(--light-chart-3); --color-chart-4: var(--light-chart-4);
+}
+:root[data-theme][data-scheme="dark"] {
+  --native-scheme: dark; color-scheme: dark;
+  --color-paper: var(--dark-paper); --color-sheet: var(--dark-sheet); --color-ink: var(--dark-ink); --color-muted: var(--dark-muted);
+  --color-accent: var(--dark-accent); --color-accent-ink: var(--dark-accent-ink); --color-error: #ff99a4;
+  --color-chart-1: var(--dark-accent); --color-chart-2: var(--dark-chart-2); --color-chart-3: var(--dark-chart-3); --color-chart-4: var(--dark-chart-4);
+}
+:root[data-theme]:is([data-scheme="light"], [data-scheme="dark"]) {
+  --color-paper-2: color-mix(in srgb, var(--color-paper) 92%, var(--color-ink));
+  --color-paper-3: color-mix(in srgb, var(--color-paper) 84%, var(--color-ink));
+  --color-ink-2: color-mix(in srgb, var(--color-ink) 86%, var(--color-paper));
+  --color-rule: color-mix(in srgb, var(--color-paper) 70%, var(--color-ink));
+  --color-rule-2: color-mix(in srgb, var(--color-paper) 35%, var(--color-ink));
+  --color-accent-2: color-mix(in srgb, var(--color-accent) 85%, var(--color-ink)); --color-focus: var(--color-accent);
+}
+:root[data-theme="maximalist"][data-scheme="light"] { --color-feature: #edfd69; --color-feature-2: #f5b5cd; }
+:root[data-theme="maximalist"][data-scheme="dark"] { --color-feature: #40501a; --color-feature-2: #542b45; }
+:root[data-theme="liquid-apple"][data-scheme="dark"] { --glass-shadow: #00000055; }
+:root[data-theme="terminal"][data-scheme="light"] .leaflet-tile-pane { filter: none; }
+@media (prefers-contrast: more) {
+  :root[data-theme]:is([data-scheme="light"], [data-scheme="dark"]) { --color-muted: var(--color-ink); --color-rule: var(--color-rule-2); }
+}

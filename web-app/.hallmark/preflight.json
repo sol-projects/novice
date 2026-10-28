@@ -1,0 +1,55 @@
+{
+  "scanned": "2026-10-28",
+  "findings": {
+    "framework": "React 18, TypeScript, CRA 5, Chakra 2 (package.json:6-37)",
+    "fonts": "Chakra defaults (src/App.tsx:23 before redesign)",
+    "palette": "Default Chakra teal and green (src/components/NewsArticle.tsx:95, src/components/Filter.tsx:127 before redesign)",
+    "product": "Slovenian news archive, map, GeoLang, charts; API localhost:8000 unavailable",
+    "workingTree": "Existing changes saved in existing-changes.patch; original DynamicInput test copied before changes"
+  },
+  "preserve": [
+    "routes",
+    "all filtering fields",
+    "article source links and view requests",
+    "socket events",
+    "GeoLang execution",
+    "Leaflet clusters",
+    "Nivo chart types",
+    "user changes"
+  ],
+  "introduce": [
+    "Almanac theme",
+    "shared stylesheet",
+    "responsive workspaces",
+    "data loading and failure presentation"
+  ],
+  "themeExpansion": {
+    "date": "2026-10-28",
+    "scope": "app",
+    "material": "24 actual archived Slovenian news articles; existing Leaflet map, GeoLang editor and Nivo charts",
+    "audience": "readers and researchers of Slovenian news",
+    "use": "read, filter and explore the existing archive",
+    "preserve": "existing five themes, routes, links, controls, API calls and dirty tree",
+    "introduce": [
+      "Liquid apple",
+      "Garden as Botanični atlas",
+      "Hedgerow as Nočni observatorij"
+    ],
+    "files": {
+      "edit": [
+        "src/appearance.tsx:4",
+        "src/components/Settings.tsx:8",
+        "src/appearance.css",
+        "public/index.html"
+      ],
+      "create": [
+        "public/themes/liquid-apple.css",
+        "public/themes/garden.css",
+        "public/themes/hedgerow.css"
+      ],
+      "delete": []
+    },
+    "exceptions": "Independent theme layouts explicitly requested. Liquid apple revised against the supplied Apple adoption guide: backdrop blur limited to navigation and filter controls; ordinary article/chart/editor surfaces. No invented marketing sections, metrics or testimonials.",
+    "reference": "https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass"
+  }
+}

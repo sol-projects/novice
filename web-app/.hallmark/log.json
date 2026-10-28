@@ -1,0 +1,110 @@
+[
+ {
+  "mode": "build",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "hedgerow",
+  "axes": "dark/high-contrast-serif/chromatic-green",
+  "hero": "none, app scope",
+  "nav": "top masthead",
+  "footer": "SOL and source code colophon",
+  "imagery": "actual archive, Leaflet and Nivo; no invented proof",
+  "photos": [],
+  "entry": "public/themes/hedgerow.css",
+  "fingerprint": "hedgerow|left-filters|news-map-charts-settings",
+  "sections": [
+   "news",
+   "map and GeoLang",
+   "chart",
+   "settings"
+  ],
+  "signature": "Dispatch index with titles beside actual summaries",
+  "waived": [
+   "71"
+  ],
+  "prompt": "Add independent selectable themes to the existing Slovenian news archive",
+  "sweep": "0 FAIL, 0 open REFLEX; rendered desktop and phone",
+  "finishReview": "subagent; one native calendar contrast finding resolved and visually confirmed",
+  "date": "2026-10-28"
+ },
+ {
+  "mode": "build",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "garden",
+  "axes": "light/roman-serif/chromatic-green",
+  "hero": "none, app scope",
+  "nav": "top masthead",
+  "footer": "SOL and source code colophon",
+  "imagery": "actual archive, Leaflet and Nivo; no invented proof",
+  "photos": [],
+  "entry": "public/themes/garden.css",
+  "fingerprint": "garden|left-filters|news-map-charts-settings",
+  "sections": [
+   "news",
+   "map and GeoLang",
+   "chart",
+   "settings"
+  ],
+  "signature": "Botanical two-column reading atlas of real news sources",
+  "waived": [
+   "25"
+  ],
+  "prompt": "Add independent selectable themes to the existing Slovenian news archive",
+  "sweep": "0 FAIL, 0 open REFLEX; rendered desktop and phone",
+  "finishReview": "subagent; one native calendar contrast finding resolved and visually confirmed",
+  "date": "2026-10-28"
+ },
+ {
+  "mode": "build",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "liquid-apple",
+  "axes": "light/geometric-sans/chromatic-blue",
+  "hero": "none, app scope",
+  "nav": "floating capsule, bottom on compact widths",
+  "footer": "SOL and source code colophon",
+  "imagery": "actual archive, Leaflet and Nivo; no invented proof",
+  "photos": [],
+  "entry": "public/themes/liquid-apple.css",
+  "fingerprint": "liquid-apple|left-filters|news-map-charts-settings",
+  "sections": [
+   "news",
+   "map and GeoLang",
+   "chart",
+   "settings"
+  ],
+  "signature": "Floating liquid navigation above the actual news archive",
+  "waived": [],
+  "prompt": "Add independent selectable themes to the existing Slovenian news archive",
+  "sweep": "0 FAIL, 0 open REFLEX; rendered desktop and phone",
+  "finishReview": "subagent; one native calendar contrast finding resolved and visually confirmed",
+  "date": "2026-10-28"
+ },
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "almanac",
+  "axes": "mid/grotesk-sans/chromatic-magenta",
+  "hero": "none, app scope",
+  "nav": "top bar, existing four routes",
+  "footer": "SOL and GitHub",
+  "imagery": "real Leaflet map, retained category marker assets; QA fixtures used only for testing",
+  "photos": [],
+  "entry": "src/App.tsx",
+  "fingerprint": "news-register|sidebar-filters|map-editor|single-chart|top-navigation|ruled-sheet",
+  "sections": [
+   "news register",
+   "map and GeoLang workspace",
+   "chart workspace"
+  ],
+  "signature": "sourced dated news register",
+  "waived": [],
+  "prompt": "Redesign all Slovenian news archive web UI while preserving every feature",
+  "sweep": "0 FAIL, 0 REFLEX, 0 WARN; replacements of generated IDs and event adapters recorded",
+  "finishReview": "subagent; three fixes applied: mobile chart filter disclosure, visible count control, caption and numeral typography",
+  "date": "2026-10-28"
+ }
+]

@@ -1,0 +1,62 @@
+:root[data-theme="maximalist"] {
+  color-scheme: light;
+  --color-paper: #f6f0d8; --color-paper-2: #e4daec; --color-paper-3: #d8c8e4; --color-sheet: #fffbee;
+  --color-ink: #281536; --color-ink-2: #392246; --color-muted: #5d4565; --color-rule: #a38aa8; --color-rule-2: #281536;
+  --color-accent: #87214e; --color-accent-2: #681539; --color-accent-ink: #fffbee; --color-focus: #87214e;
+  --color-chart-1: #87214e; --color-chart-2: #583a99; --color-chart-3: #2c7150; --color-chart-4: #ad5a12;
+  --color-feature: #edfd69; --color-feature-2: #f5b5cd;
+  --font-display: "Hanken Grotesk", system-ui, sans-serif; --font-prose: "Newsreader", Georgia, serif;
+  --radius-card: 0; --radius-pill: 0; --rule-bar: 3px; --shadow-filters: 6px 6px var(--color-ink); --gutter: 40px; --gap-columns: 32px;
+}
+[data-theme="maximalist"] .site-header { border-bottom: 3px solid var(--color-ink); }
+[data-theme="maximalist"] .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 40px; padding-top: 24px; }
+[data-theme="maximalist"] .wordmark { font-size: clamp(4.5rem, 9vw, 9rem); letter-spacing: -.085em; font-weight: 700; line-height: .95; }
+[data-theme="maximalist"] .wordmark span { color: var(--color-accent); }
+[data-theme="maximalist"] .site-description { border: 0; font-family: var(--font-prose); font-size: 1.2rem; text-align: right; padding: 0; }
+[data-theme="maximalist"] .site-header nav { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 24px 0 0; border-top: 3px solid var(--color-ink); }
+[data-theme="maximalist"] .site-header nav a { justify-content: center; border: 0; border-right: 1px solid var(--color-ink); padding: 16px 8px; font-size: 1rem; font-weight: 700; text-transform: uppercase; }
+[data-theme="maximalist"] .site-header nav a:last-child { border-right: 0; }
+[data-theme="maximalist"] .site-header nav a.active { color: var(--color-accent-ink); background: var(--color-accent); }
+[data-theme="maximalist"] .app-shell main { padding-top: 40px; }
+[data-theme="maximalist"] .filter-panel { border: 3px solid var(--color-ink); }
+[data-theme="maximalist"] .filter-panel > summary { font-size: 1.1rem; text-transform: uppercase; }
+[data-theme="maximalist"] .news-feed { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; background: transparent; border: 0; }
+[data-theme="maximalist"] .feed-toolbar, [data-theme="maximalist"] .results-summary { grid-column: 1 / -1; background: var(--color-sheet); border: 2px solid var(--color-ink); }
+[data-theme="maximalist"] .preset-tabs label { text-transform: uppercase; font-weight: 700; }
+[data-theme="maximalist"] .results-summary { margin-top: -26px; border-top: 0; }
+[data-theme="maximalist"] .news-article { grid-column: span 6; border: 3px solid var(--color-ink); background: var(--color-sheet); box-shadow: 6px 6px var(--color-ink); }
+[data-theme="maximalist"] .news-article:nth-of-type(3n+1) { grid-column: span 12; background: var(--color-feature); }
+[data-theme="maximalist"] .news-article:nth-of-type(3n) { background: var(--color-feature-2); }
+[data-theme="maximalist"] .article-link { padding: 28px; height: 100%; }
+[data-theme="maximalist"] .article-link:hover { background: color-mix(in srgb, var(--color-sheet) 30%, transparent); }
+[data-theme="maximalist"] .article-meta { flex-wrap: wrap; align-items: flex-start; font-family: var(--font-body); gap: 8px; }
+[data-theme="maximalist"] .article-source { display: inline-block; border: 1px solid var(--color-ink); padding: 3px 8px; background: var(--color-sheet); text-transform: uppercase; font-size: .75rem; transform: rotate(-2deg); }
+[data-theme="maximalist"] .article-heading h2 { font-size: clamp(1.6rem, 2.4vw, 2.5rem); letter-spacing: -.045em; line-height: 1.05; font-weight: 700; text-wrap: pretty; }
+[data-theme="maximalist"] .news-article:nth-of-type(3n+1) h2 { font-size: clamp(2rem, 3.8vw, 4rem); max-width: 26ch; }
+[data-theme="maximalist"] .article-excerpt { font-size: 1.15rem; margin-top: 20px; }
+[data-theme="maximalist"] .article-bottom { border-top: 1px solid var(--color-ink); padding-top: 16px; margin-top: 24px; }
+[data-theme="maximalist"] .tag { border: 1px solid var(--color-rule-2); background: var(--color-sheet); }
+[data-theme="maximalist"] .button { border: 2px solid var(--color-ink); box-shadow: 3px 3px var(--color-ink); font-weight: 700; }
+[data-theme="maximalist"] .chart-workspace, [data-theme="maximalist"] .code-panel { border: 3px solid var(--color-ink); box-shadow: 6px 6px var(--color-ink); }
+[data-theme="maximalist"] .workspace-label { border-bottom: 3px solid var(--color-ink); }
+[data-theme="maximalist"] .workspace-label h2 { font-size: 1.5rem; text-transform: uppercase; font-weight: 700; }
+[data-theme="maximalist"] #map { border: 3px solid var(--color-ink); margin-top: 16px; box-shadow: 6px 6px var(--color-ink); }
+[data-theme="maximalist"] .map-workspace { grid-template-columns: minmax(0, 1fr); }
+[data-theme="maximalist"] .settings-heading { border-bottom: 3px solid var(--color-ink); margin-bottom: 32px; }
+[data-theme="maximalist"] .settings-heading h1 { font-size: clamp(2.8rem, 6vw, 6rem); font-weight: 700; text-transform: uppercase; max-width: 14ch; line-height: .95; }
+[data-theme="maximalist"] .settings-heading p { font-family: var(--font-prose); font-size: 1.3rem; }
+[data-theme="maximalist"] .theme-option, [data-theme="maximalist"] .scheme-option { border: 2px solid var(--color-ink); box-shadow: 5px 5px var(--color-ink); }
+[data-theme="maximalist"] .site-footer { border-top: 3px solid var(--color-ink); font-weight: 600; }
+@media (max-width: 70rem) { [data-theme="maximalist"] .news-article { grid-column: span 12; } }
+@media (max-width: 45rem) {
+  :root[data-theme="maximalist"] { --gutter: 20px; --gap-columns: 24px; }
+  [data-theme="maximalist"] .header-inner { padding-top: 20px; }
+  [data-theme="maximalist"] .wordmark { font-size: min(4.5rem, 20vw); }
+  [data-theme="maximalist"] .site-header nav a { min-height: 48px; padding-inline: 3px; font-size: .85rem; white-space: normal; overflow-wrap: anywhere; }
+  [data-theme="maximalist"] .site-header nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-theme="maximalist"] .site-header nav { margin-top: 16px; }
+  [data-theme="maximalist"] .app-shell main { padding-top: 24px; }
+  [data-theme="maximalist"] .article-link { padding: 20px; }
+  [data-theme="maximalist"] .article-meta time { margin-left: 0; }
+  [data-theme="maximalist"] .article-source { width: auto; }
+}

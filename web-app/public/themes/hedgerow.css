@@ -1,0 +1,79 @@
+/* Hallmark · shape: app screen · genre: editorial · theme: Hedgerow (deal 2/3) · nav: split masthead · footer: ruled colophon · signature: wide dispatch index of real Slovenian sources · states: loading, empty, error, full · axes: dark/high-contrast-serif/chromatic-green · posture: drenched · hedgerow: hedge · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R5 V5 · weakest: S, replaced generic luxury cards with news headings beside their actual summaries */
+/* Hallmark · answered F16 · Selection and scrollbars inherit the shared base.css palette tokens */
+/* Hallmark · waive 71 · each news heading is paired with its own excerpt in the adjacent grid column · Hedgerow reads across each dispatch instead of placing its summary underneath the headline */
+/* Hallmark · finish-review: subagent · 1 finding resolved in recapture, native calendar icons now use the dark control scheme */
+:root[data-theme="hedgerow"] {
+  color-scheme: dark;
+  --native-scheme: dark;
+  --color-paper: oklch(24% 0.052 158); --color-paper-2: oklch(19.5% 0.045 158); --color-paper-3: oklch(29.5% 0.05 158); --color-sheet: oklch(27% 0.05 158);
+  --color-ink: oklch(93% 0.022 88); --color-ink-2: oklch(83% 0.035 150); --color-muted: oklch(74% 0.035 150);
+  --color-rule: oklch(39% 0.05 158); --color-rule-2: oklch(64% 0.05 150);
+  --color-accent: oklch(87% 0.19 118); --color-accent-2: oklch(92% 0.13 118); --color-accent-ink: oklch(22% 0.05 158); --color-focus: oklch(92% 0.13 118); --color-error: #ffb7a5;
+  --color-chart-1: #ccdf65; --color-chart-2: #9acbc0; --color-chart-3: #d2b495; --color-chart-4: #c8afd1;
+  --font-display: "Prata", Georgia, serif; --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif; --font-prose: var(--font-body); --font-outlier: "IBM Plex Mono", ui-monospace, monospace;
+  --radius-card: 0; --radius-pill: 24px; --rule-bar: 1px; --shadow-filters: none; --gutter: 48px; --gap-columns: 40px; --display-weight: 400; --container: 1560px;
+}
+[data-theme="hedgerow"] .site-header { border-bottom: 1px solid var(--color-rule); background: var(--color-paper-2); }
+[data-theme="hedgerow"] .header-inner { min-height: 132px; gap: 32px; }
+[data-theme="hedgerow"] .wordmark { font-family: var(--font-display); font-weight: 400; font-size: 3.6rem; letter-spacing: -.045em; }
+[data-theme="hedgerow"] .wordmark span { color: var(--color-ink); }
+[data-theme="hedgerow"] .site-description { font-size: .75rem; padding-left: 24px; border-left-color: var(--color-rule-2); }
+[data-theme="hedgerow"] .site-header nav { align-self: center; gap: 8px; }
+[data-theme="hedgerow"] .site-header nav a { min-height: 44px; padding: 12px 16px; border: 1px solid var(--color-rule); border-radius: 24px; }
+[data-theme="hedgerow"] .site-header nav a.active { background: var(--color-accent); color: var(--color-accent-ink); border-color: var(--color-accent); }
+[data-theme="hedgerow"] main { padding-top: 40px; }
+[data-theme="hedgerow"] .filter-layout { grid-template-columns: 248px minmax(0, 1fr); }
+[data-theme="hedgerow"] .filter-layout:has(> .filter-panel:not([open])) { grid-template-columns: 128px minmax(0, 1fr); }
+[data-theme="hedgerow"] .filter-panel { padding: 20px 16px; background: var(--color-paper-2); color: var(--color-ink); border-top: 1px solid var(--color-rule-2); }
+[data-theme="hedgerow"] .filter-panel[open] > summary { border-bottom-width: 1px; }
+[data-theme="hedgerow"] .source-options { grid-template-columns: minmax(0, 1fr); }
+[data-theme="hedgerow"] .news-feed { border-top: 1px solid var(--color-accent); background: none; }
+[data-theme="hedgerow"] .feed-toolbar { padding-inline: 0; }
+[data-theme="hedgerow"] .results-summary { padding: 16px 0; }
+[data-theme="hedgerow"] .preset-tabs label { min-height: 52px; }
+[data-theme="hedgerow"] .article-link { padding: 32px 0; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px 32px; }
+[data-theme="hedgerow"] .article-link:hover { background: var(--color-paper-3); }
+[data-theme="hedgerow"] .article-meta { grid-column: 1 / -1; font-family: var(--font-body); font-size: .75rem; margin: 0; }
+[data-theme="hedgerow"] .article-heading { grid-column: 1; gap: 16px; }
+[data-theme="hedgerow"] .article-heading h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.728rem; line-height: 1.35; letter-spacing: -.025em; }
+[data-theme="hedgerow"] .article-heading > svg { width: 18px; }
+[data-theme="hedgerow"] .article-excerpt { grid-column: 2; grid-row: 2; margin: 0; font-size: 1rem; line-height: 1.8; }
+[data-theme="hedgerow"] .article-bottom { grid-column: 1 / -1; border-top: 1px solid var(--color-rule); padding-top: 16px; margin: 0; font-size: .75rem; }
+[data-theme="hedgerow"] .tag { background: transparent; border: 1px solid var(--color-rule-2); border-radius: 0; }
+[data-theme="hedgerow"] .article-views > span { font-family: var(--font-body); }
+[data-theme="hedgerow"] .chart-workspace { background: var(--color-paper-2); border-top: 1px solid var(--color-accent); padding: 32px; }
+[data-theme="hedgerow"] .chart-workspace .workspace-label h2 { font-family: var(--font-display); font-size: 1.728rem; font-weight: 400; }
+[data-theme="hedgerow"] .chart-plot { height: 480px; }
+[data-theme="hedgerow"] .map-workspace { grid-template-columns: minmax(0, 1fr); }
+[data-theme="hedgerow"] .map-region { border-top: 1px solid var(--color-accent); }
+[data-theme="hedgerow"] #map { height: 600px; border: 1px solid var(--color-rule-2); margin-top: 16px; }
+[data-theme="hedgerow"] .code-panel { background: var(--color-paper-2); color: var(--color-ink); border: 0; }
+[data-theme="hedgerow"] .app-shell h1, [data-theme="hedgerow"] .app-shell h2, [data-theme="hedgerow"] .app-shell h3 { font-weight: 400; text-wrap: balance; overflow-wrap: break-word; min-width: 0; }
+[data-theme="hedgerow"] .settings-heading { border-bottom: 1px solid var(--color-rule); margin-bottom: 32px; }
+[data-theme="hedgerow"] .settings-heading h1 { font-family: var(--font-display); font-size: 2.488rem; line-height: 1.3; }
+[data-theme="hedgerow"] .theme-option, [data-theme="hedgerow"] .scheme-option { background: var(--color-paper-2); border: 0; border-bottom: 1px solid var(--color-rule-2); }
+[data-theme="hedgerow"] .theme-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-theme="hedgerow"] .theme-detail { color: var(--color-muted); }
+[data-theme="hedgerow"] .site-footer { border-top: 1px solid var(--color-rule-2); }
+@media (max-width: 75rem) { [data-theme="hedgerow"] .article-link { grid-template-columns: minmax(0, 1fr); } [data-theme="hedgerow"] .article-excerpt { grid-column: 1; grid-row: auto; } }
+@media (max-width: 61.99rem) {
+  [data-theme="hedgerow"] .filter-layout, [data-theme="hedgerow"] .filter-layout:has(> .filter-panel:not([open])) { grid-template-columns: minmax(0, 1fr); }
+  [data-theme="hedgerow"] .source-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-theme="hedgerow"] .header-inner { flex-wrap: wrap; padding-block: 24px; gap: 24px; }
+  [data-theme="hedgerow"] .site-header nav { flex-basis: 100%; margin: 0; }
+}
+@media (max-width: 45rem) {
+  :root[data-theme="hedgerow"] { --gutter: 20px; --gap-columns: 24px; }
+  [data-theme="hedgerow"] .wordmark { font-size: 2.488rem; }
+  [data-theme="hedgerow"] .site-header nav { gap: 4px; justify-content: space-between; }
+  [data-theme="hedgerow"] .site-header nav a { padding: 8px; font-size: .75rem; }
+  [data-theme="hedgerow"] .article-heading h2 { font-size: 1.44rem; }
+  [data-theme="hedgerow"] .article-meta { flex-wrap: wrap; gap: 8px; }
+  [data-theme="hedgerow"] .article-meta time { margin-left: 0; }
+  [data-theme="hedgerow"] .article-source { width: auto; }
+  [data-theme="hedgerow"] .chart-workspace { padding: 20px; }
+  [data-theme="hedgerow"] .chart-plot { height: 360px; }
+  [data-theme="hedgerow"] .theme-options { grid-template-columns: minmax(0, 1fr); }
+  [data-theme="hedgerow"] #map { height: 430px; }
+}

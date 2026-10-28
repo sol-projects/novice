@@ -64,7 +64,7 @@ export function title(news: INews[], title: string): INews[] {
 }
 
 export function content(news: INews[], content: string): INews[] {
-  return news.filter((item) => item.title.includes(content));
+  return news.filter((item) => item.content.includes(content));
 }
 
 export function websites(news: INews[], websites: string[]): INews[] {

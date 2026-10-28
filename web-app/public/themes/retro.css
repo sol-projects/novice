@@ -1,0 +1,49 @@
+:root[data-theme="retro"] {
+  color-scheme: light;
+  --color-paper: #c0c0c0; --color-paper-2: #d3d3d3; --color-paper-3: #ababab; --color-sheet: #fffef3;
+  --color-ink: #111128; --color-ink-2: #27273d; --color-muted: #414151; --color-rule: #888898; --color-rule-2: #555566;
+  --color-accent: #0000a8; --color-accent-2: #000070; --color-accent-ink: #ffffef; --color-focus: #0000a8;
+  --color-chart-1: #0000a8; --color-chart-2: #8c008c; --color-chart-3: #00665a; --color-chart-4: #982b28;
+  --font-display: "Times New Roman", Times, serif; --font-body: Arial, Helvetica, sans-serif; --font-prose: "Times New Roman", Times, serif;
+  --radius-card: 0; --radius-pill: 0; --shadow-filters: none; --container: 1180px; --gutter: 32px; --gap-columns: 24px;
+}
+[data-theme="retro"] .header-inner { flex-direction: column; justify-content: center; padding-block: 24px 0; gap: 12px; }
+[data-theme="retro"] .site-header { border-bottom: 4px groove var(--color-rule); }
+[data-theme="retro"] .wordmark { font-family: var(--font-display); font-size: 3.5rem; color: var(--color-accent); text-decoration: underline; letter-spacing: -.03em; }
+[data-theme="retro"] .site-description { display: block; border: 0; padding: 0; text-align: center; }
+[data-theme="retro"] .site-header nav { margin: 8px 0 0; justify-content: center; gap: 0; border: 3px outset var(--color-rule); background: var(--color-paper-2); }
+[data-theme="retro"] .site-header nav a { justify-content: center; padding: 12px 24px; min-height: 44px; border: 0; border-right: 2px groove var(--color-rule); color: var(--color-accent); text-decoration: underline; }
+[data-theme="retro"] .site-header nav a:last-child { border-right: 0; }
+[data-theme="retro"] .site-header nav a.active { background: var(--color-sheet); font-weight: 700; }
+[data-theme="retro"] .filter-panel { border: 3px outset var(--color-rule); background: var(--color-paper-2); }
+[data-theme="retro"] .filter-panel[open] > summary { border-bottom: 3px groove var(--color-rule); }
+[data-theme="retro"] .news-feed { border: 3px inset var(--color-rule); }
+[data-theme="retro"] .feed-toolbar { background: var(--color-paper-2); border-bottom: 3px groove var(--color-rule); padding-inline: 16px; }
+[data-theme="retro"] .preset-tabs { gap: 16px; }
+[data-theme="retro"] .preset-tabs label { color: var(--color-accent); text-decoration: underline; }
+[data-theme="retro"] .preset-tabs label:has(input:checked) { color: var(--color-ink); font-weight: 700; }
+[data-theme="retro"] .results-summary { padding-inline: 16px; }
+[data-theme="retro"] .article-link { padding: 24px 16px; }
+[data-theme="retro"] .article-meta { font-family: var(--font-body); font-size: .8rem; }
+[data-theme="retro"] .article-heading h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; color: var(--color-accent); text-decoration: underline; letter-spacing: 0; }
+[data-theme="retro"] .article-excerpt { font-family: var(--font-prose); font-size: 1.15rem; }
+[data-theme="retro"] .article-bottom { font-size: .8rem; }
+[data-theme="retro"] .tag { background: none; border: 1px dotted var(--color-muted); }
+[data-theme="retro"] .button { border: 3px outset var(--color-rule); background: var(--color-paper-2); color: var(--color-ink); font-weight: 700; }
+[data-theme="retro"] .button:active { border-style: inset; }
+[data-theme="retro"] .chart-workspace, [data-theme="retro"] .code-panel { border: 3px inset var(--color-rule); }
+[data-theme="retro"] .workspace-label h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; }
+[data-theme="retro"] #map { border: 3px inset var(--color-rule); margin-top: 12px; }
+[data-theme="retro"] .map-workspace { grid-template-columns: minmax(0, 1fr); }
+[data-theme="retro"] .theme-option, [data-theme="retro"] .scheme-option { border: 3px outset var(--color-rule); background: var(--color-paper-2); }
+[data-theme="retro"] .settings-heading h1 { font-family: var(--font-display); color: var(--color-accent); font-weight: 700; font-size: 2.5rem; }
+[data-theme="retro"] .site-footer { border-top: 4px groove var(--color-rule); }
+[data-theme="retro"] .site-footer a { color: var(--color-accent); text-decoration: underline; }
+@media (max-width: 45rem) {
+  :root[data-theme="retro"] { --gutter: 16px; }
+  [data-theme="retro"] .wordmark { font-size: min(3.5rem, 18vw); }
+  [data-theme="retro"] .site-header nav { width: 100%; flex-basis: auto; flex-wrap: wrap; }
+  [data-theme="retro"] .site-header nav a { flex: 1 1 auto; padding: 12px 8px; font-size: .8rem; }
+  [data-theme="retro"] .site-header nav a svg { display: none; }
+  [data-theme="retro"] .article-heading h2 { font-size: 1.4rem; }
+}

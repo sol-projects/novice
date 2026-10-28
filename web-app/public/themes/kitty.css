@@ -1,0 +1,61 @@
+:root[data-theme="kitty"] {
+  color-scheme: light;
+  --color-paper: #ffe8f0; --color-paper-2: #f8ccde; --color-paper-3: #f0b8d0; --color-sheet: #fff9fc;
+  --color-ink: #57233c; --color-ink-2: #69334c; --color-muted: #865268; --color-rule: #e8a4bf; --color-rule-2: #b96485;
+  --color-accent: #b01c57; --color-accent-2: #8d1444; --color-accent-ink: #fff; --color-focus: #b01c57;
+  --color-chart-1: #b01c57; --color-chart-2: #8656ab; --color-chart-3: #397a79; --color-chart-4: #9c6429;
+  --font-display: "Hanken Grotesk", system-ui, sans-serif; --font-prose: "Newsreader", Georgia, serif;
+  --radius-card: 24px; --radius-pill: 12px; --shadow-filters: 0 6px 0 var(--color-paper-2); --gutter: 40px; --gap-columns: 28px;
+}
+[data-theme="kitty"] body { background-image: radial-gradient(var(--color-rule) .8px, transparent .8px); background-size: 16px 16px; }
+[data-theme="kitty"] .site-header { border: 0; background: var(--color-sheet); border-bottom: 2px dashed var(--color-rule); }
+[data-theme="kitty"] .header-inner { flex-direction: column; justify-content: center; gap: 16px; padding-block: 28px 20px; }
+[data-theme="kitty"] .wordmark { font-size: 3.1rem; color: var(--color-accent); gap: 8px; }
+[data-theme="kitty"] .kitty-mark { display: block; width: 64px; height: 54px; color: #57233c; margin-right: 8px; }
+[data-theme="kitty"] .site-description { display: none; }
+[data-theme="kitty"] .site-header nav { margin: 0; justify-content: center; gap: 12px; }
+[data-theme="kitty"] .site-header nav a { padding: 12px 22px; min-height: 44px; border: 1px solid var(--color-rule); border-radius: 28px; background: var(--color-paper); }
+[data-theme="kitty"] .site-header nav a.active { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
+[data-theme="kitty"] .app-shell main { padding-top: 36px; }
+[data-theme="kitty"] .filter-panel { border: 2px solid var(--color-rule); border-radius: 24px; padding: 20px; }
+[data-theme="kitty"] .filter-panel[open] > summary { border-bottom-style: dashed; }
+[data-theme="kitty"] .filter-panel > summary { color: var(--color-accent); }
+[data-theme="kitty"] .filter-section { border-top-style: dashed; }
+[data-theme="kitty"] .news-feed { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; background: transparent; border: 0; }
+[data-theme="kitty"] .feed-toolbar { grid-column: 1 / -1; justify-content: center; border: 2px solid var(--color-rule); border-radius: 30px; background: var(--color-sheet); }
+[data-theme="kitty"] .preset-tabs { justify-content: center; }
+[data-theme="kitty"] .preset-tabs label { min-height: 48px; }
+[data-theme="kitty"] .results-summary { grid-column: 1 / -1; background: var(--color-sheet); border: 1px dashed var(--color-rule); border-radius: 16px; }
+[data-theme="kitty"] .news-article { position: relative; border: 2px solid var(--color-rule); border-radius: 24px; background: var(--color-sheet); box-shadow: 0 6px 0 var(--color-paper-2); margin-top: 12px; }
+[data-theme="kitty"] .news-article::before { content: ""; position: absolute; width: 58px; height: 24px; left: calc(50% - 29px); top: -13px; background: var(--color-accent); clip-path: polygon(0 0, 45% 30%, 55% 30%, 100% 0, 100% 100%, 55% 70%, 45% 70%, 0 100%); border-radius: 6px; transform: rotate(-4deg); pointer-events: none; }
+[data-theme="kitty"] .news-article::after { content: ""; position: absolute; width: 13px; height: 17px; left: calc(50% - 6px); top: -10px; border: 2px solid var(--color-accent); border-radius: 6px; background: var(--color-paper-2); pointer-events: none; }
+[data-theme="kitty"] .article-link { height: 100%; padding: 30px 24px 24px; border-radius: 22px; }
+[data-theme="kitty"] .article-meta { display: flex; flex-wrap: wrap; gap: 8px; font-family: var(--font-body); font-size: .75rem; }
+[data-theme="kitty"] .article-source { border-radius: 20px; padding: 3px 10px; color: var(--color-accent); background: var(--color-paper); }
+[data-theme="kitty"] .article-meta time { margin-left: 0; }
+[data-theme="kitty"] .article-heading h2 { font-size: 1.45rem; letter-spacing: -.025em; line-height: 1.25; }
+[data-theme="kitty"] .article-excerpt { font-size: 1.05rem; margin-top: 16px; }
+[data-theme="kitty"] .article-bottom { padding-top: 16px; border-top: 1px dashed var(--color-rule); margin-top: 20px; }
+[data-theme="kitty"] .tag { border-radius: 10px; padding: 3px 8px; }
+[data-theme="kitty"] .button { border-radius: 24px; }
+[data-theme="kitty"] .chart-workspace, [data-theme="kitty"] .code-panel { border: 2px solid var(--color-rule); border-radius: 24px; box-shadow: 0 6px 0 var(--color-paper-2); }
+[data-theme="kitty"] .workspace-label { border-bottom: 2px dashed var(--color-rule); background: var(--color-sheet); border-radius: 16px 16px 0 0; padding-inline: 16px; }
+[data-theme="kitty"] #map { border: 2px solid var(--color-rule); border-radius: 0 0 24px 24px; }
+[data-theme="kitty"] .map-workspace { grid-template-columns: minmax(0, 1fr); }
+[data-theme="kitty"] .map-legend { padding-inline: 12px; background: var(--color-sheet); margin-top: 12px; border-radius: 16px; }
+[data-theme="kitty"] .settings-heading { text-align: center; padding-block: 8px 40px; }
+[data-theme="kitty"] .settings-heading h1 { color: var(--color-accent); font-size: clamp(2rem, 4vw, 3.5rem); }
+[data-theme="kitty"] .settings-heading p { margin-inline: auto; font-family: var(--font-prose); font-size: 1.2rem; }
+[data-theme="kitty"] .theme-option, [data-theme="kitty"] .scheme-option { border: 2px solid var(--color-rule); box-shadow: 0 5px 0 var(--color-paper-2); }
+[data-theme="kitty"] .site-footer { background: var(--color-sheet); border-top: 2px dashed var(--color-rule); }
+@media (max-width: 75rem) { [data-theme="kitty"] .news-feed { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 45rem) {
+  :root[data-theme="kitty"] { --gutter: 20px; }
+  [data-theme="kitty"] .header-inner { padding-block: 24px 16px; gap: 20px; }
+  [data-theme="kitty"] .wordmark { font-size: 2.6rem; }
+  [data-theme="kitty"] .site-header nav { flex-basis: auto; align-self: stretch; gap: 6px; margin: 0; }
+  [data-theme="kitty"] .site-header nav a { padding: 10px 8px; font-size: .7rem; min-height: 44px; }
+  [data-theme="kitty"] .site-header nav a svg { display: none; }
+  [data-theme="kitty"] .article-link { padding: 28px 20px 20px; }
+  [data-theme="kitty"] .article-source { width: auto; }
+}
